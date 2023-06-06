@@ -1,0 +1,27 @@
+{
+  "name": "mind-flip",
+  "version": "1.0.0",
+  "description": "flipping minds",
+  "main": "server.js",
+  "scripts": {
+    "start": "NODE_ENV=production node ./bin/www",
+    "start:dev": "set NODE_ENV=development && nodemon ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "debug": "^4.3.4",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "moment": "^2.29.4",
+    "morgan": "^1.10.0",
+    "pg": "^8.10.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.2.14",
+    "nodemon": "^2.0.22"
+  }
+}
