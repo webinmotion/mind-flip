@@ -1,0 +1,55 @@
+$tabsCount: 3;
+$tabBackground: #fff;
+$activeBorderColor: #333;
+$passiveBorderColor: #ccc;
+
+.tab-view {
+    flex: 1;
+    min-width: 600px;
+    margin-top: 20px;
+    background-color: $tabBackground;
+
+    .tab-labels {
+        display: grid;
+        grid-template-columns: repeat($tabsCount, 20%);
+    }
+
+    .tab-label {
+        display: inline-block;
+        padding: 10px;
+        border-top: 1px solid $passiveBorderColor;
+        border-left: 1px solid $passiveBorderColor;
+        border-right: 1px solid $passiveBorderColor;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        text-decoration: none;
+
+        label {
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        &.active {
+            border-top: 1px solid $activeBorderColor;
+            border-left: 1px solid $activeBorderColor;
+            border-right: 1px solid $activeBorderColor;
+            border-bottom: 2px solid $tabBackground;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            margin-bottom: -1px;
+            z-index: 1;
+        }
+    }
+
+    .tabs {
+        border: 1px solid $activeBorderColor;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        height: 100%;
+    }
+
+    .tab {
+        height: 100%;
+        padding: 20px 10px;
+    }
+}

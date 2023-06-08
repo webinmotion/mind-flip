@@ -1,13 +1,18 @@
 {
   "name": "mind-flip",
   "version": "1.0.0",
-  "description": "flipping minds",
+  "description": "flipping minds all day",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=production node ./bin/www",
-    "start:dev": "set NODE_ENV=development && nodemon ./bin/www"
+    "start": "PORT=5000 && NODE_ENV=production node ./bin/www",
+    "start:watch": "set PORT=5000 && set NODE_ENV=development && nodemon ./bin/www",
+    "start:dev": "concurrently \"npm run serve\" \"npm run start:watch\"",
+    "serve": "npm run --prefix frontend start",
+    "build": "npm run --prefix frontend build",
+    "test": "jest"
   },
   "dependencies": {
+    "axios": "^1.4.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "debug": "^4.3.4",
@@ -21,7 +26,20 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.22.1",
+    "@babel/preset-env": "^7.22.4",
+    "@babel/preset-react": "^7.22.3",
     "@flydotio/dockerfile": "^0.2.14",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/user-event": "^14.4.3",
+    "babel-jest": "^29.5.0",
+    "babel-loader": "^9.1.2",
+    "concurrently": "^8.1.0",
+    "jest": "^29.5.0",
+    "jest-css-modules-transform": "^4.4.2",
+    "jest-environment-jsdom": "^29.5.0",
+    "jest-environment-node": "^29.5.0",
     "nodemon": "^2.0.22"
   }
 }
