@@ -3,7 +3,7 @@
 There are currently two approaches being pursued towards this goal
 
 1. using postman - this is a widely used tool for testing RESTful APIs and does a nice job of capturing a lot of information
-2. using swagger - this is a documentation tool which has some testing capabilities enbedded within it. It is very useful because of the vast amount of information it can capture
+2. using swagger - this is a documentation tool which has some testing capabilities embedded within it. It is very useful because of the vast amount of information it can capture
 
 **postman**
 
@@ -16,6 +16,12 @@ Navigate to the project folder from the command line. When ready, simply execute
 The swagger specifications can be found in *[root-dir]/api-docs/specs/swagger.js*.
 
 Start the development server *(npm run start:watch)* and from a browser, navigate to [/api-docs](http://localhost:5000/api-docs). You will be greated with the documentation page, and should be ready for testing
+
+---
+
+# Color schema
+
+Check out **_frontend\src\css\custom.css_** for the proposed color scheme. The primary color is a soft shade of *red* with a *white* contrast.
 
 ---
 
