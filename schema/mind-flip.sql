@@ -14,9 +14,11 @@ drop table if exists tbl_Playbook;
 drop table if exists tbl_Ticker;
 
 
-DROP TYPE IF EXISTS GameProgression;
 DROP TYPE IF EXISTS GameCategory;
+DROP TYPE IF EXISTS GameProgression;
+DROP TYPE IF EXISTS GameStatus;
 DROP TYPE IF EXISTS PlayerType;
+DROP TYPE IF EXISTS AccountRole;
 
 
 CREATE TYPE GameCategory AS ENUM (
@@ -40,10 +42,26 @@ CREATE TYPE GameProgression AS ENUM (
 );
 
 
+CREATE TYPE GameStatus AS ENUM (
+	'Created',
+	'Accepting',
+    'Playing',
+    'Completed',
+    'Archived'
+);
+
+
 CREATE TYPE PlayerType AS ENUM (
 	'guest',
 	'registered',
 	'business'
+);
+
+
+CREATE TYPE AccountRole AS ENUM (
+	'Basic',
+	'Organizer',
+    'Administrator'
 );
 
 
@@ -68,7 +86,11 @@ create table if not exists tbl_Player (
 	player_id UUID default uuid_generate_v1(),
     screen_name varchar(32) unique not null,
     email_address varchar(128) unique not null,
+    verified_email boolean default false,
+    verification_code varchar(40) default null,
     player_type PlayerType default 'guest',
+    phone_number varchar(15) default null,
+    verified_phone boolean default false,
     date_joined date default now(),
     points bigint default 0,
     city varchar(32),
@@ -82,7 +104,8 @@ create table if not exists tbl_Account (
 	account_id UUID default uuid_generate_v1(),
     username varchar(16) unique not null,
     userpass varchar(256) not null,
-    active boolean default true,
+    is_active boolean default true,
+    account_role AccountRole default 'Basic',
     player_fk UUID references tbl_Player(player_id) not null,
     constraint pk_account primary key(account_id)
 );
@@ -119,6 +142,7 @@ create table if not exists tbl_Game (
     title varchar(64) not null,
     description varchar(256),
     organizer UUID references tbl_Account(account_id) not null,
+    game_status GameStatus not null default 'Created',
     constraint pk_game primary key(game_id)
 );
 
@@ -310,3 +334,28 @@ select high_score from tbl_high_scores where account_fk = 'cebe90e0-ef36-11ed-b6
 -- on conflict (account_fk, high_score) do update set high_score = 2404;
 
 
+update tbl_player set verification_code = 'some random code' where email_address = 'jimmy@email.com';
+
+with target_record as (select player_id from tbl_player where email_address = 'jimmy@email.com' and verification_code = 'some random code')
+    update tbl_player set verified_email = true where player_id = (select player_id from target_record) returning verified_email;
+    
+with target_record as (select player_id from tbl_player where email_address = 'jimmy@email.com')
+    update tbl_player set verified_email = false where player_id = (select player_id from target_record) returning verified_email;
+    
+select exists(select 1 from tbl_player where screen_name='crap$1');
+   
+select player_id, verified_email from tbl_player P where P.email_address = 'happy.camper@venus.com'
+        and verified_email is true and player_type != 'guest';
+
+--listing of trivia (landing page)
+select G.*, P.* from tbl_Game G 
+join tbl_account A on A.account_id = G.organizer
+join tbl_player P on P.player_id = A.player_fk 
+where A.is_active = true
+	and G.game_status in ('Created', 'Accepting', 'Playing');
+
+--delete from tbl_account where username = 'omolloc';
+--delete from tbl_player where screen_name = 'mainas';
+
+--with target_record as (select player_id from tbl_player where email_address = $1 and verification_code = 'e79ea91b-3952-4234-b2bb-9b0a4377ef39')
+--    update tbl_player set verified_email = true where player_id = (select player_id from target_record) returning verified_email

@@ -2,15 +2,28 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# API documentation
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Let's discover the **available API endpoints**.
 
-## Getting Started
+## Type of player
 
-Get started by **creating a new site**.
+You can play either as a **registered player** or a **guest player**.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+As a guest player, you do not get certain benefits
+
+- you do not get to choose a username. A random one will be assigned to your for the duration of the game
+- your score for the game will be discarded once the game is over.
+- your score will not be featured in the summary of top scores for the game
+
+To avoid malicious or unsolicited requests to join a game, both **guest** and **registered** players will
+need to provide a valid email address, which will need to be verified before the player can join a game
+
+## Join as a guest
+
+```bash
+curl 
+```
 
 ### What you'll need
 

@@ -1,4 +1,25 @@
-# Notes
+# API documentation
+
+There are currently two approaches being pursued towards this goal
+
+1. using postman - this is a widely used tool for testing RESTful APIs and does a nice job of capturing a lot of information
+2. using swagger - this is a documentation tool which has some testing capabilities enbedded within it. It is very useful because of the vast amount of information it can capture
+
+**postman**
+
+The collection of postman endpoints can be found in *[root-dir]/schema/postman.json*. Simply import this into postman and you will be ready for testing.
+
+Navigate to the project folder from the command line. When ready, simply execute *npm run start:watch*. This will start the development server and get it ready for testing alongside postman
+
+**swagger**
+
+The swagger specifications can be found in *[root-dir]/api-docs/specs/swagger.js*.
+
+Start the development server *(npm run start:watch)* and from a browser, navigate to [/api-docs](http://localhost:5000/api-docs). You will be greated with the documentation page, and should be ready for testing
+
+---
+
+## Database deployment notes
 
 ```bash
 docker pg client
@@ -30,4 +51,10 @@ docker run -it --rm jbergknoff/postgresql-client postgres://postgres:4dA6nkzWKpo
 
 ```\dt <table-name>```
 
+## generate jwt_secret string
+
+```js
+node <hit enter key>
+require("crypto").randomBytes(35).toString("hex")
+```
 

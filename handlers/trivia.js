@@ -1,4 +1,5 @@
 const { 
+    fetchGamesListing,
     fetchGameInfo,
     fetchProgression,
     fetchGameLayout,
@@ -13,6 +14,16 @@ const {
     fetchCummulativeTally,
     updateHighestScore, 
 } = require('../service/trivia');
+
+const handleFetchGamesListing = async function(rew, res, next) {
+    try{
+        const listing = await fetchGamesListing();
+        res.json(listing);
+    }
+    catch(e){
+        next(e);
+    }
+}
 
 const handleFetchGameInfo = async function (req, res, next) {
     try {
@@ -176,6 +187,7 @@ const handleUpdateHighestScore = async function (req, res, next) {
 }
 
 module.exports = {
+    fetchGamesListing: handleFetchGamesListing,
     fetchGameInfo: handleFetchGameInfo,
     fetchProgression: handleFetchProgression,
     fetchGameLayout: handleFetchGameLayout,

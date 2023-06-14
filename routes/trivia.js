@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { 
+    fetchGamesListing,
     fetchGameInfo,
     fetchProgression,
     fetchGameLayout,
@@ -15,6 +16,8 @@ const {
     fetchCummulativeTally,
     updateHighestScore, 
 } = require('../handlers/trivia');
+
+router.get('/listing', fetchGamesListing);
 
 router.get('/title/:title/organizer/:organizer', fetchGameInfo);
 

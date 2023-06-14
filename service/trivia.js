@@ -1,12 +1,31 @@
 const { execute } = require('../repo');
 
+const fetchGamesListing = async () => {
+    let results = await execute(`select G.*, P.* from tbl_Game G 
+    join tbl_account A on A.account_id = G.organizer
+    join tbl_player P on P.player_id = A.player_fk 
+    where A.is_active = true
+        and P.player_type != 'guest'
+        and G.game_status in ('Created', 'Accepting', 'Playing')`, [])
+    return results?.length == 0 ? [] : results.map(record => {
+        const { game_id, title, description, game_status,
+            player_id, organizer, email_address, screen_name, player_type, city, state, country
+        } = record;
+
+        return ({
+            game_info: { game_id, title, description, game_status },
+            organizer: { player: player_id, account: organizer, email_address, screen_name, player_type, city, state, country }
+        });
+    });
+}
+
 const fetchGameInfo = async (title, organizer) => {
     let result = await execute(`select * from tbl_game where title = $1 and organizer = (
         select a.account_id from tbl_account a inner join tbl_player p on a.player_fk = p.player_id
         where p.email_address = $2)`, [title, organizer]);
-    const { game_id, description } = result[0];
-    return { game_id, description };
-[]}
+    const { game_id, description, game_status } = result[0];
+    return { game_id, description, game_status };
+}
 
 const fetchProgression = async (ticker_id) => {
     let result = await execute("select * from tbl_Ticker where ticker_id = $1", [ticker_id]);
@@ -60,14 +79,14 @@ const updateGameEngine = async (game_id, { current_section, section_index }) => 
     return { game_fk, current_section, section_index };
 }
 
-const addGameParticipant = async(game_id, player_id) => {
+const addGameParticipant = async (game_id, player_id) => {
     let result = await execute(`insert into tbl_game_player (game_fk, player_fk) values ($1::uuid, $2::uuid)
         on conflict (game_fk, player_fk) do update set has_exited = $3 returning participant_id`, [game_id, player_id, false]);
-    const {participant_id} = result[0];
-    return {participant_id, game_id, player_id, };
+    const { participant_id } = result[0];
+    return { participant_id, game_id, player_id, };
 }
 
-const dropGameParticipant = async(participant_id) => {
+const dropGameParticipant = async (participant_id) => {
     let result = await execute("delete from tbl_game_player where participant_id = $1::uuid", [participant_id]);
     return result[0];
 }
@@ -104,6 +123,7 @@ const updateHighestScore = async (participant_id, score) => {
 }
 
 module.exports = {
+    fetchGamesListing,
     fetchGameInfo,
     fetchProgression,
     fetchGameLayout,

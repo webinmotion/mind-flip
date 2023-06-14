@@ -1,0 +1,33 @@
+{
+  "name": "api-doc",
+  "version": "1.0.0",
+  "description": "documenting a rest api using swagger",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "swagger-node.js-rest-api-doc"
+  },
+  "scripts": {
+    "dev": "nodemon ./index.js",
+    "start": "node ./index.js"
+  },
+  "keywords": [],
+  "author": "Maina, Stephen",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "lowdb": "^6.0.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.22",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3"
+  },
+  "nodemonConfig": {
+    "ext": "js",
+    "ignore": [
+      "*.test.ts",
+      "db/*"
+    ],
+    "delay": 2
+  }
+}
