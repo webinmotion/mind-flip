@@ -7,10 +7,10 @@ const playtimeRouter = require('./playtime');
 
 router.use('/', homeRouter);
 
+router.use('/account', accountRouter);
+
 router.use('/trivia', triviaRouter);
 
 router.use('/play', playtimeRouter);
-
-router.use('/account', accountRouter);
 
 module.exports = router;

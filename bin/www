@@ -16,6 +16,12 @@ var debug = require('debug')('mind-flip:server');
 var http = require('http');
 
 /**
+ * Turn on swagger ui in development mode
+ */
+var docs = require('../api-docs/specs/swagger');
+docs(app);
+
+/**
  * Get port from environment and store in Express.
  */
 
