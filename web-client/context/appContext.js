@@ -3,20 +3,15 @@ import {
     fetchGameInfoAction, fetchProgressionAction, fetchGameLayoutAction, fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction, updateGameEngineAction, addGameParticipantAction, updatePointsTallyAction, fetchCummulativeTallyAction, updateHighestScoreAction,
 } from './triviaActions';
 import { triviaReducer } from './triviaReducer';
-import { fetchFolderMetadataAction, fetchPageContentAction, updatePageContentAction, setSelectedPageAction, } from './pagesActions';
-import { pagesReducer } from './pagesReducer';
+// import { fetchFolderMetadataAction, fetchPageContentAction, updatePageContentAction, setSelectedPageAction, } from './pagesActions';
+// import { pagesReducer } from './pagesReducer';
 import GameClient from './GameClient';
+import useAppMenu from "./useAppMenu";
 
 // import useAppFlags from './useAppFlags';
 // import useLocalStorage from './useLocalStorage';
 
 const initialTrivia = new GameClient();
-
-const initialPages = { 
-    meta: {}, 
-    markdown: '**Placeholder text**',
-    selectedPage: '',
-};
 
 const AppContext = createContext();
 
@@ -26,7 +21,7 @@ export const useAppContext = () => {
 
 export const AppProvider = ({ children }) => {
 
-    const [pages, pagesDispatch] = useReducer(pagesReducer, initialPages);
+    const {appMenu, setAuth, setRoute} = useAppMenu();
     const [trivia, triviaDispatch] = useReducer(triviaReducer, initialTrivia);
     // const { flags, setCurrentPage } = useAppFlags();
     // const { storage, setBuckets, setPriorities, setProgress, clearLabels } = useLocalStorage();
@@ -34,7 +29,7 @@ export const AppProvider = ({ children }) => {
     return (
         <AppContext.Provider value={{
             trivia,
-            pages,
+            appMenu,
 
             fetchGameInfo: fetchGameInfoAction(triviaDispatch),
             fetchProgression: fetchProgressionAction(triviaDispatch),
@@ -49,10 +44,8 @@ export const AppProvider = ({ children }) => {
             fetchCummulativeTally: fetchCummulativeTallyAction(triviaDispatch),
             updateHighestScore: updateHighestScoreAction(triviaDispatch),
 
-            fetchFolderMetadata: fetchFolderMetadataAction(pagesDispatch),
-            fetchPageContent: fetchPageContentAction(pagesDispatch),
-            updatePageContent: updatePageContentAction(pagesDispatch),
-            setSelectedPage: setSelectedPageAction(pagesDispatch),
+            setAuth,
+            setRoute,
 
         }}>
             {children}

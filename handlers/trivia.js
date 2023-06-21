@@ -1,35 +1,49 @@
-const { 
+const {
     fetchGamesListing,
     fetchGameInfo,
+    fetchGameInfoById,
     fetchProgression,
     fetchGameLayout,
     fetchGameQuestion,
+    fetchQuestionChoices,
     fetchGameEngine,
     fetchPlayerByEmail,
+    createGameHandle,
     createGameEngine,
     updateGameEngine,
     addGameParticipant,
     dropGameParticipant,
     updatePointsTally,
     fetchCummulativeTally,
-    updateHighestScore, 
+    updateHighestScore,
 } = require('../service/trivia');
 
-const handleFetchGamesListing = async function(rew, res, next) {
-    try{
+const handleFetchGamesListing = async function (rew, res, next) {
+    try {
         const listing = await fetchGamesListing();
         res.json(listing);
     }
-    catch(e){
+    catch (e) {
         next(e);
     }
 }
 
 const handleFetchGameInfo = async function (req, res, next) {
     try {
-        const title = req.params.title; 
+        const title = req.params.title;
         const organizer = req.params.organizer
         const result = await fetchGameInfo(title, organizer);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleFetchGameInfoById = async function (req, res, next) {
+    try {
+        const game_id = req.params.game;
+        const result = await fetchGameInfoById(game_id);
         res.json(result);
     }
     catch (e) {
@@ -70,6 +84,17 @@ const handleFetchGameQuestion = async function (req, res, next) {
     }
 }
 
+const handleFetchQuestionChoices = async function (req, res, next) {
+    try {
+        const que_id = req.params.question;
+        const result = await fetchQuestionChoices(que_id);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 const handleFetchGameEngine = async function (req, res, next) {
     try {
         const game_fk = req.params.game;
@@ -103,6 +128,17 @@ const handleFetchPlayerById = async function (req, res, next) {
     }
 }
 
+const handleCreateGameHandle = async function (req, res, next) {
+    try {
+        const { organizer, title } = req.body;
+        const result = await createGameHandle({ organizer, title });
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 const handleCreateGameEngine = async function (req, res, next) {
     try {
         const game_id = req.params.game;
@@ -127,7 +163,7 @@ const handleUpdateGameEngine = async function (req, res, next) {
     }
 }
 
-const handleAddGameParticipant = async function(req, res, next){
+const handleAddGameParticipant = async function (req, res, next) {
     try {
         const game_id = req.params.game;
         const player_id = req.params.player;
@@ -139,7 +175,7 @@ const handleAddGameParticipant = async function(req, res, next){
     }
 }
 
-const handleDropGameParticipant = async function(req, res, next){
+const handleDropGameParticipant = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
         const result = await dropGameParticipant(participant_id);
@@ -189,12 +225,15 @@ const handleUpdateHighestScore = async function (req, res, next) {
 module.exports = {
     fetchGamesListing: handleFetchGamesListing,
     fetchGameInfo: handleFetchGameInfo,
+    fetchGameInfoById: handleFetchGameInfoById,
     fetchProgression: handleFetchProgression,
     fetchGameLayout: handleFetchGameLayout,
     fetchGameQuestion: handleFetchGameQuestion,
+    fetchQuestionChoices: handleFetchQuestionChoices,
     fetchGameEngine: handleFetchGameEngine,
     fetchPlayerById: handleFetchPlayerById,
     fetchPlayerByEmail: handleFetchPlayerByEmail,
+    createGameHandle: handleCreateGameHandle,
     createGameEngine: handleCreateGameEngine,
     addGameParticipant: handleAddGameParticipant,
     dropGameParticipant: handleDropGameParticipant,

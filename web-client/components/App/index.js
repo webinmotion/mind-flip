@@ -1,42 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, } from 'react-router-dom';
-import TabView from '../TabView';
-import Editable from '../Editable';
-import PageListing from './PageListing';
-import PageViewer from './PageViewer';
+import Trivia from '../Trivia';
+import GameAccepting from '../Trivia/GamesAccepting';
+import GamePlaying from '../Trivia/GamePlaying';
+import OrganizeGame from '../Trivia/OrganizeGame';
+import { useAppContext } from '../../context/appContext';
+import { useHistory } from "react-router-dom";
+import PlayerProfile from '../Trivia/PlayerProfile';
 
-export default function App({ fetchPageContent, updatePageContent, pages }) {
+export default function App() {
 
-    const dateTimeStrFormat = /(\d{1,2})\/(\d{1,2})\/(\d{4}), (\d{1,2}):(\d\d):(\d\d) (.*)/gi
-    const [selectedTab, setSelectedTab] = useState(0);
-    const [title, setTitle] = React.useState("");
+    const { appMenu, profile, setProfile } = useAppContext();
+    const history = useHistory();
 
-    const tabsInfo = [
-        { label: "Pages", link: () => '/' },
-        { label: "Editor", link: () => '/editor' },
-        { label: "Preview", link: () => `/viewer/${pages.selectedPage || ''}` }
-    ];
-
-    function onSubmitPage(content) {
-        const now = new Date();
-        const dateTimeStr = now.toLocaleString("en-US");
-        const pageName = dateTimeStr.replaceAll(dateTimeStrFormat, `$1_$2_$3-$4_$5_$7-${title}.md`);
-        updatePageContent(pageName, content);
-        setTitle("");
-        setSelectedTab(2);
-    }
+    useEffect(() => {
+        history.push(`/${appMenu.route}`)
+    }, [appMenu.route])
 
     return (
         <div className="app">
             <Switch>
-                {/* <TabView tabsInfo={tabsInfo} active={selectedTab} selectTab={setSelectedTab}> */}
-                    <Route exact path="/" render={(props) =>
-                        <PageListing {...props} />} />
-                    <Route path="/editor" render={(props) =>
-                        <Editable title={title} setTitle={setTitle} onSubmit={onSubmitPage} {...props} />} />
-                    <Route path="/viewer/:pageName" render={(props) =>
-                        <PageViewer fetchPageContent={fetchPageContent} setSelectedTab={setSelectedTab} selectedPage={pages.selectedPage} pages={pages} {...props} />} />
-                {/* </TabView> */}
+                <Route exact path="/eee" render={(props) =>
+                    <Trivia {...props} />} />
+                <Route path="/accepting/:gameId" render={(props) =>
+                    <GameAccepting {...props} />} />
+                <Route path="/" render={(props) =>
+                    <GamePlaying {...props} />} />
+                <Route path="/organize" render={(props) =>
+                    <OrganizeGame {...props} />} />
+                <Route path="/profile" render={(props) =>
+                    <PlayerProfile profile={profile} setProfile={setProfile} {...props} />} />
             </Switch>
         </div>
     )

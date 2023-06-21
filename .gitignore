@@ -25,3 +25,6 @@ yarn-debug.log*
 yarn-error.log*
 
 *stackdump
+
+# dev images
+mobile/www/img

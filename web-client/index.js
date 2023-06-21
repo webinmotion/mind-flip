@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDom from "react-dom";
 import { BrowserRouter } from 'react-router-dom';
-// import App from "./containers/App";
-import Trivia from "./containers/Trivia";
+import App from "./containers/App";
 import Layout from "./components/Layout";
 import { AppProvider } from './context/appContext';
 
@@ -12,7 +11,7 @@ ReactDom.render(<React.StrictMode>
     <AppProvider>
         <BrowserRouter>
             <Layout>
-                <Trivia />
+                <App />
             </Layout>
         </BrowserRouter>
     </AppProvider>

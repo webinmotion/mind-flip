@@ -384,7 +384,7 @@ const options = {
     },
     paths: {
       "/": {
-        post: {
+        get: {
           description: "The landing page",
           tags: ["Home"],
           responses: {
@@ -402,7 +402,7 @@ const options = {
         },
       },
       "/health": {
-        post: {
+        get: {
           description: "The health check endpoint",
           tags: ["Home"],
           responses: {
