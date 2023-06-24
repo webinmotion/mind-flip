@@ -71,7 +71,7 @@ export default function Topnav() {
               </li>
             </ul>
 
-            <div className="mt-3 space-y-2 md:inline-block lg:hidden">
+            <div className="mt-3 space-y-2 md:hidden lg:hidden">
               <NavLink
                 to="/login"
                 className="text-white bg-gray-600 hover:bg-primary inline-block w-full rounded-md px-4 py-2 text-center shadow"
