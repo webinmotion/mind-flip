@@ -15,7 +15,7 @@ export default function Filter() {
               type="text"
               id="name"
               placeholder="john doe"
-              className="border-gray-300 focus:border-orange-300 focus:ring-orange-200 mt-2 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+              className="p-2 border-gray-300 focus:border-orange-300 focus:ring-orange-200 mt-2 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50"
             />
           </div>
 
@@ -27,7 +27,7 @@ export default function Filter() {
               type="email"
               id="email"
               placeholder="johndoe@example.com"
-              className="border-gray-300 focus:border-orange-300 focus:ring-orange-200 mt-2 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+              className="p-2 border-gray-300 focus:border-orange-300 focus:ring-orange-200 mt-2 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50"
             />
           </div>
 
@@ -38,7 +38,7 @@ export default function Filter() {
             <input
               type="date"
               id="date"
-              className="border-gray-300 focus:border-orange-300 focus:ring-orange-200 mt-2 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+              className="p-2 border-gray-300 focus:border-orange-300 focus:ring-orange-200 mt-2 block w-full rounded-md shadow-sm focus:ring focus:ring-opacity-50"
             />
           </div>
 
