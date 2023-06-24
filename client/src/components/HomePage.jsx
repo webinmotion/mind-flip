@@ -1,5 +1,6 @@
+import Filter from "./FilterComponent";
 import GameCard from "./GameCard";
-import SearchComponent from "./Searchcomponent";
+// import SearchComponent from "./Searchcomponent";
 import Topnav from "./Topnav";
 
 export default function HomePage() {
@@ -19,16 +20,21 @@ export default function HomePage() {
           qualify for rewards
         </h6>
       </div>
-      <SearchComponent />
-      <div className="mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:max-w-[90%] lg:grid-cols-4">
-        <GameCard />
-        <GameCard />
-        <GameCard />
-        <GameCard />
-        <GameCard />
-        <GameCard />
-        <GameCard />
-        <GameCard />
+      <div className="mt mx-auto mb-3 flex max-w-[1024px] flex-col lg:flex-row">
+        {/* <SearchComponent /> */}
+        <div className="lg:overflow-auto lg:sticky  lg:h-screen lg:sticky lg:top-20">
+          <Filter />
+        </div>
+        <div className="mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-2">
+          <GameCard />
+          <GameCard />
+          <GameCard />
+          <GameCard />
+          <GameCard />
+          <GameCard />
+          <GameCard />
+          <GameCard />
+        </div>
       </div>
     </div>
   );

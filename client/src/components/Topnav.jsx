@@ -5,13 +5,13 @@ export default function Topnav() {
   const [navbar, setNavbar] = useState(false);
 
   return (
-    <nav className="bg-purple-500 w-full shadow">
+    <nav className="bg-purple-500 w-full shadow sticky top-0 bg-background-color z-50">
       <div className="mx-auto justify-between px-4 md:flex md:items-center md:px-8 lg:max-w-7xl">
         <div>
           <div className="flex items-center justify-between py-3 md:block md:py-5">
-            <a to="">
+            <NavLink to="/">
               <h2 className="text-white text-2xl font-bold">MindFlip</h2>
-            </a>
+            </NavLink>
             <div className="md:hidden">
               <button
                 className="text-gray-700 focus:border-gray-400 rounded-md p-2 outline-none focus:border"
@@ -57,16 +57,16 @@ export default function Topnav() {
             }`}
           >
             <ul className="items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0">
-              <li className="text-white hover:text-indigo-200">
+              <li className="text-white hover:text-primary-darkest ">
                 <NavLink to="/">Home</NavLink>
               </li>
-              <li className="text-white hover:text-indigo-200">
+              <li className="text-white hover:text-primary-darkest ">
                 <NavLink to="/blog">Blog</NavLink>
               </li>
-              <li className="text-white hover:text-indigo-200">
+              <li className="text-white hover:text-primary-darkest ">
                 <NavLink to="/about">About US</NavLink>
               </li>
-              <li className="text-white hover:text-indigo-200">
+              <li className="text-white hover:text-primary-darkest ">
                 <NavLink to="/contact">Contact US</NavLink>
               </li>
             </ul>
@@ -74,13 +74,13 @@ export default function Topnav() {
             <div className="mt-3 space-y-2 md:inline-block lg:hidden">
               <NavLink
                 to="/login"
-                className="text-white bg-gray-600 hover:bg-gray-800 inline-block w-full rounded-md px-4 py-2 text-center shadow"
+                className="text-white bg-gray-600 hover:bg-primary inline-block w-full rounded-md px-4 py-2 text-center shadow"
               >
                 Sign in
               </NavLink>
               <NavLink
                 to="/register"
-                className="text-gray-800 bg-white hover:bg-gray-100 inline-block w-full rounded-md px-4 py-2 text-center shadow"
+                className="text-gray-800 bg-white hover:bg-primary inline-block w-full rounded-md px-4 py-2 text-center shadow"
               >
                 Sign up
               </NavLink>
@@ -90,13 +90,13 @@ export default function Topnav() {
         <div className="hidden space-x-2 md:inline-block">
           <NavLink
             to="/login"
-            className="text-white bg-gray-600 hover:bg-gray-800 rounded-md px-4 py-2 shadow"
+            className="text-white bg-gray-600 hover:bg-primary-light rounded-md px-4 py-2 shadow"
           >
             Sign in
           </NavLink>
           <NavLink
             to="/register"
-            className="text-gray-800 bg-white hover:bg-gray-100 rounded-md px-4 py-2 shadow"
+            className="text-gray-800 bg-white hover:bg-primary-light rounded-md px-4 py-2 shadow"
           >
             Sign up
           </NavLink>

@@ -6,7 +6,7 @@ export default function GameCard() {
   const [showModal, setShowModal] = useState(false);
   return (
     <Fragment>
-      <div>
+      <div className="mx-2">
         <div className="bg-white border-pink-200 max-w-sm overflow-hidden rounded border shadow-lg">
           <div className="">
             <div className="mb-2 flex justify-between bg-primary-lightest px-3  py-2 text-xl font-bold">
