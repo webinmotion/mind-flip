@@ -4,10 +4,10 @@ import { Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
 import "./index.css";
 // import Guest from "./routes/guest/Guest";
-import Login from "./routes/Auth/login/Login";
-import Register from "./routes/Auth/register/Register";
+import Login from "./routes/Login";
 import Faqs from "./routes/faqs/Faqs";
 import HomePage from "./components/HomePage";
+import Registration from "./routes/Register";
 function App() {
   return (
     <div className="bg-background-color">
@@ -15,7 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Registration />} />
           <Route path="/faqs" element={<Faqs />} />
         </Routes>
         <Footer />

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 export default function Topnav() {
   const [navbar, setNavbar] = useState(false);
@@ -8,8 +9,8 @@ export default function Topnav() {
       <div className="mx-auto justify-between px-4 md:flex md:items-center md:px-8 lg:max-w-7xl">
         <div>
           <div className="flex items-center justify-between py-3 md:block md:py-5">
-            <a href="javascript:void(0)">
-              <h2 className="text-white text-2xl font-bold">MindFlip </h2>
+            <a to="">
+              <h2 className="text-white text-2xl font-bold">MindFlip</h2>
             </a>
             <div className="md:hidden">
               <button
@@ -57,48 +58,48 @@ export default function Topnav() {
           >
             <ul className="items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0">
               <li className="text-white hover:text-indigo-200">
-                <a href="javascript:void(0)">Home</a>
+                <NavLink to="/">Home</NavLink>
               </li>
               <li className="text-white hover:text-indigo-200">
-                <a href="javascript:void(0)">Blog</a>
+                <NavLink to="/blog">Blog</NavLink>
               </li>
               <li className="text-white hover:text-indigo-200">
-                <a href="javascript:void(0)">About US</a>
+                <NavLink to="/about">About US</NavLink>
               </li>
               <li className="text-white hover:text-indigo-200">
-                <a href="javascript:void(0)">Contact US</a>
+                <NavLink to="/contact">Contact US</NavLink>
               </li>
             </ul>
 
             <div className="mt-3 space-y-2 md:inline-block lg:hidden">
-              <a
-                href="javascript:void(0)"
+              <NavLink
+                to="/login"
                 className="text-white bg-gray-600 hover:bg-gray-800 inline-block w-full rounded-md px-4 py-2 text-center shadow"
               >
                 Sign in
-              </a>
-              <a
-                href="javascript:void(0)"
+              </NavLink>
+              <NavLink
+                to="/register"
                 className="text-gray-800 bg-white hover:bg-gray-100 inline-block w-full rounded-md px-4 py-2 text-center shadow"
               >
                 Sign up
-              </a>
+              </NavLink>
             </div>
           </div>
         </div>
         <div className="hidden space-x-2 md:inline-block">
-          <a
-            href="javascript:void(0)"
+          <NavLink
+            to="/login"
             className="text-white bg-gray-600 hover:bg-gray-800 rounded-md px-4 py-2 shadow"
           >
             Sign in
-          </a>
-          <a
-            href="javascript:void(0)"
+          </NavLink>
+          <NavLink
+            to="/register"
             className="text-gray-800 bg-white hover:bg-gray-100 rounded-md px-4 py-2 shadow"
           >
             Sign up
-          </a>
+          </NavLink>
         </div>
       </div>
     </nav>

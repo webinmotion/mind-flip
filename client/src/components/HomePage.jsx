@@ -4,7 +4,7 @@ import Topnav from "./Topnav";
 
 export default function HomePage() {
   return (
-    <div className="mx-4 py-4">
+    <div className=" ">
       <Topnav />
       <div className="mx-auto mb-4 mt-2 flex max-w-[1024px] flex-col justify-center">
         <h1 className="mt-2 text-center text-3xl font-semibold">
