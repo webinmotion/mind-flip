@@ -26,5 +26,6 @@ yarn-error.log*
 
 *stackdump
 
-# dev images
-mobile/www/img
+# local files
+.mail
+sendmail.js

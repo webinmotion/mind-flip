@@ -72,7 +72,7 @@ const handleVerifyLoginAttempt = async function (req, res, next) {
     }
 }
 
-const handleVerifyRegistrationEmail = async function(req, res, nest){
+const handleVerifyRegistrationEmail = async function (req, res, nest) {
     try {
         const { email_address, verification_code } = req.query;
         const result = await verifyRegistrationEmail({ email_address, verification_code });
@@ -83,7 +83,7 @@ const handleVerifyRegistrationEmail = async function(req, res, nest){
     }
 }
 
-const handleResetVerificationCode = async function(req, res, next) {
+const handleResetVerificationCode = async function (req, res, next) {
     try {
         const { email_address } = req.query;
         const result = await resetVerificationCode(email_address);
@@ -117,6 +117,28 @@ const handleDropGuestPlayer = async function (req, res, next) {
     }
 }
 
+const handleAccountLogout = async function (req, res, next) {
+    try {
+        const username = req.params.username;
+        const result = { username } //TODO: figure out what needs to be cleaned up and what the response needs to be
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleAccountRecover = async function (req, res, next) {
+    try {
+        const email_address = req.params.email_address;
+        const result = { email_address } //TODO: figure out what needs to be cleaned up and what the response needs to be
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 module.exports = {
     registerNewPlayer: handleRegisterNewPlayer,
     registerNewAccount: handleRegisterNewAccount,
@@ -125,4 +147,6 @@ module.exports = {
     dropGuestPlayer: handleDropGuestPlayer,
     verifyRegistrationEmail: handleVerifyRegistrationEmail,
     resetVerificationCode: handleResetVerificationCode,
+    accountLogout: handleAccountLogout,
+    accountRecover: handleAccountRecover,
 }

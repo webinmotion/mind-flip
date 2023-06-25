@@ -1,30 +1,25 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Switch, Route, } from 'react-router-dom';
 import Trivia from '../Trivia';
-import GameAccepting from '../Trivia/GamesAccepting';
+import GameAccepting from '../../containers/Trivia/GameAccepting';
 import GamePlaying from '../Trivia/GamePlaying';
 import OrganizeGame from '../Trivia/OrganizeGame';
-import { useAppContext } from '../../context/appContext';
-import { useHistory } from "react-router-dom";
 import PlayerProfile from '../Trivia/PlayerProfile';
+import AlertMessage from '../Layout/AlertMessage';
 
-export default function App() {
+export default function App({...rest}) {
 
-    const { appMenu, profile, setProfile } = useAppContext();
-    const history = useHistory();
-
-    useEffect(() => {
-        history.push(`/${appMenu.route}`)
-    }, [appMenu.route])
+    const { profile, setProfile, alert, clearAlert } = rest
 
     return (
         <div className="app">
+            <AlertMessage {...alert} clearAlert={clearAlert} />
             <Switch>
-                <Route exact path="/eee" render={(props) =>
-                    <Trivia {...props} />} />
-                <Route path="/accepting/:gameId" render={(props) =>
-                    <GameAccepting {...props} />} />
-                <Route path="/" render={(props) =>
+                <Route exact path="/" render={(props) =>
+                    <Trivia {...props} {...rest} />} />
+                <Route path="/accepting/:gameId/participant/:participant" render={(props) =>
+                    <GameAccepting {...props} {...rest} />} />
+                <Route path="/playing/:gameId/participant/:participant" render={(props) =>
                     <GamePlaying {...props} />} />
                 <Route path="/organize" render={(props) =>
                     <OrganizeGame {...props} />} />

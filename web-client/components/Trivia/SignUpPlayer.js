@@ -8,26 +8,61 @@ import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
 
-export default function SignUpPlayer({ setPlayer }) {
+export default function SignUpPlayer({ signUpForm, setSignUpForm, setSignInForm, registerPlayer }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        setPlayer(player => ({
-            ...player,
-            emailAddress: data.get('email'),
-            screenName: data.get('screenName'),
+        const formData = {
+            email_address: data.get('email_address'),
+            screen_name: data.get('screen_name'),
             username: data.get('username'),
             password: data.get('password'),
+        };
+
+        const { email_address, screen_name, username, password } = formData;
+
+        setSignUpForm(form => ({
+            ...form,
+            email_address: { ...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : '' },
+            screen_name: { ...form.screen_name, value: screen_name, error: !screen_name, message: !screen_name ? 'screen name is a required field' : '' },
+            username: { ...form.username, value: username, error: !username, message: !username ? 'username is a required field' : '' },
+            password: { ...form.password, value: password, error: !password, message: !password ? 'password is a required field' : '' }
         }));
+
+        //if all is good, register the details
+        if (email_address && screen_name && username && password) {
+            registerPlayer({
+                email_address,
+                screen_name,
+                username,
+                password
+            }, function(error){
+                if(!error){
+                    setSignUpForm(form => ({
+                        ...form,
+                        registering: false,
+                    }));
+                    setSignInForm(form => ({
+                        ...form,
+                        username: {...form.username, value: signUpForm.username.value},
+                        account_exists: true
+                    }));
+                }
+            });
+        }
     };
 
     const showSignIn = (e) => {
         e.preventDefault();
-        setPlayer(player => ({
-            ...player,
-            accountExists: true
-        }))
+        setSignInForm(form => ({
+            ...form,
+            account_exists: true
+        }));
+        setSignUpForm(form => ({
+            ...form,
+            registering: false,
+        }));
     };
 
     return (
@@ -51,20 +86,24 @@ export default function SignUpPlayer({ setPlayer }) {
                         <TextField
                             required
                             fullWidth
-                            id="email"
+                            id="email_address"
                             label="Email Address"
-                            name="email"
+                            name="email_address"
                             autoComplete="email"
+                            error={signUpForm.email_address.error}
+                            helperText={signUpForm.email_address.message}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
                             required
                             fullWidth
-                            name="screenName"
+                            name="screen_name"
                             label="Screen Name"
-                            id="screenName"
+                            id="screen_name"
                             autoComplete="screen name"
+                            error={signUpForm.screen_name.error}
+                            helperText={signUpForm.screen_name.message}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -75,6 +114,8 @@ export default function SignUpPlayer({ setPlayer }) {
                             label="Username"
                             name="username"
                             autoComplete="username"
+                            error={signUpForm.username.error}
+                            helperText={signUpForm.username.message}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -86,6 +127,8 @@ export default function SignUpPlayer({ setPlayer }) {
                             type="password"
                             id="password"
                             autoComplete="new-password"
+                            error={signUpForm.password.error}
+                            helperText={signUpForm.password.message}
                         />
                     </Grid>
                 </Grid>

@@ -1,17 +1,20 @@
 import { createContext, useContext, useReducer } from "react";
 import {
-    fetchGameInfoAction, fetchProgressionAction, fetchGameLayoutAction, fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction, updateGameEngineAction, addGameParticipantAction, updatePointsTallyAction, fetchCummulativeTallyAction, updateHighestScoreAction,
+    fetchGamesListingAction, fetchGameInfoAction, fetchProgressionAction, fetchGameLayoutAction,
+    fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction,
+    updateGameEngineAction, addGameParticipantAction, updatePointsTallyAction, fetchCummulativeTallyAction,
+    updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, fetchGameParticipantsAction,
 } from './triviaActions';
 import { triviaReducer } from './triviaReducer';
-// import { fetchFolderMetadataAction, fetchPageContentAction, updatePageContentAction, setSelectedPageAction, } from './pagesActions';
-// import { pagesReducer } from './pagesReducer';
-import GameClient from './GameClient';
-import useAppMenu from "./useAppMenu";
-
-// import useAppFlags from './useAppFlags';
-// import useLocalStorage from './useLocalStorage';
-
-const initialTrivia = new GameClient();
+import {
+    accountSignUpAction, accountSignInAction, accountSignOutAction, resetPasswordAction, resetVerifictionAction,
+    registerPlayerAction, registerGuestAction, verifyEmailAddressAction, dropGuestPlayerAction, recoverPasswordAction,
+} from './accountActions';
+import { accountReducer, initialAccount } from './accountReducer';
+import { showAlertAction, clearAlertAction } from "./alertActions";
+import { alertReducer, initialAlert } from './alertReducer';
+import GameClient, { initialGameState } from './GameClient';
+import useAppOptions from "./useAppOptions";
 
 const AppContext = createContext();
 
@@ -21,21 +24,38 @@ export const useAppContext = () => {
 
 export const AppProvider = ({ children }) => {
 
-    const {appMenu, setAuth, setRoute} = useAppMenu();
-    const [trivia, triviaDispatch] = useReducer(triviaReducer, initialTrivia);
-    // const { flags, setCurrentPage } = useAppFlags();
-    // const { storage, setBuckets, setPriorities, setProgress, clearLabels } = useLocalStorage();
+    const { globals, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm,
+        setAuth, setRoute, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
+        setRecoveryForm } = useAppOptions();
+    const [trivia, triviaDispatch] = useReducer(triviaReducer, initialGameState);
+    const [account, accountDispatch] = useReducer(accountReducer, initialAccount);
+    const [alert, alertDispatch] = useReducer(alertReducer, initialAlert);
 
     return (
         <AppContext.Provider value={{
+            //domain entities
             trivia,
-            appMenu,
+            account,
+            alert,
+            gameClient: new GameClient(trivia),
 
+            //app options
+            globals,
+            playerTypeForm,
+            guestEmailForm,
+            signUpForm,
+            signInForm,
+            verificationForm,
+            recoveryForm,
+
+            //trivia actions
+            fetchGamesListing: fetchGamesListingAction(triviaDispatch),
             fetchGameInfo: fetchGameInfoAction(triviaDispatch),
             fetchProgression: fetchProgressionAction(triviaDispatch),
             fetchGameLayout: fetchGameLayoutAction(triviaDispatch),
             fetchGameQuestion: fetchGameQuestionAction(triviaDispatch),
             fetchGameEngine: fetchGameEngineAction(triviaDispatch),
+            fetchGameParticipants: fetchGameParticipantsAction(triviaDispatch),
             fetchPlayerByEmail: fetchPlayerByEmailAction(triviaDispatch),
             createGameEngine: createGameEngineAction(triviaDispatch),
             updateGameEngine: updateGameEngineAction(triviaDispatch),
@@ -44,9 +64,35 @@ export const AppProvider = ({ children }) => {
             fetchCummulativeTally: fetchCummulativeTallyAction(triviaDispatch),
             updateHighestScore: updateHighestScoreAction(triviaDispatch),
 
+            //trivia events actions
+            onGameListingEvents: onGameListingEventsAction(triviaDispatch),
+            onParticipantEvents: onParticipantEventsAction(triviaDispatch),
+
+            //account actions
+            registerPlayer: registerPlayerAction(accountDispatch, alertDispatch),
+            registerGuest: registerGuestAction(accountDispatch, alertDispatch),
+            verifyEmailAddress: verifyEmailAddressAction(accountDispatch),
+            dropGuestPlayer: dropGuestPlayerAction(accountDispatch),
+            accountSignUp: accountSignUpAction(accountDispatch, alertDispatch),
+            accountSignIn: accountSignInAction(accountDispatch, alertDispatch),
+            accountSignOut: accountSignOutAction(accountDispatch),
+            resetPassword: resetPasswordAction(accountDispatch),
+            resetVerification: resetVerifictionAction(accountDispatch),
+            recoverPassword: recoverPasswordAction(accountDispatch),
+
+            //alert actions
+            showAlert: showAlertAction(alertDispatch),
+            clearAlert: clearAlertAction(alertDispatch),
+
+            //app options functions
             setAuth,
             setRoute,
-
+            setPlayerTypeForm,
+            setGuestEmailForm,
+            setSignUpForm,
+            setSignInForm,
+            setVerificationForm,
+            setRecoveryForm,
         }}>
             {children}
         </AppContext.Provider>

@@ -5,9 +5,9 @@ drop table if exists tbl_Game_Tally;
 drop table if exists tbl_Game_Engine;
 drop table if exists tbl_Game_Player;
 drop table if exists tbl_Game_Layout;
-drop table if exists tbl_Game;
 drop table if exists tbl_Choice;
 drop table if exists tbl_Question;
+drop table if exists tbl_Game;
 drop table if exists tbl_Account;
 drop table if exists tbl_Player;
 drop table if exists tbl_Playbook;
@@ -67,7 +67,7 @@ CREATE TYPE AccountRole AS ENUM (
 
 create table if not exists tbl_Ticker (
 	ticker_id varchar(64) primary key,
-	duration int default 10000,
+	duration int default 13000,
 	delay int default 3000,
 	"period" int default 200
 );
@@ -111,16 +111,24 @@ create table if not exists tbl_Account (
 );
 
 
+create table if not exists tbl_Game (
+    game_id UUID default uuid_generate_v1(),
+    title varchar(64) not null,
+    description varchar(256),
+    organizer UUID references tbl_Account(account_id) not null,
+    game_status GameStatus not null default 'Created',
+    constraint pk_game primary key(game_id)
+);
+
+
 create table if not exists tbl_Question (
     que_id UUID default uuid_generate_v1(),
     que_value varchar(256) unique not null,
     que_answer varchar(32) not null,
     category GameCategory default 'general',
     asked_by UUID references tbl_Player(player_id) not null,
-    numeric_answer boolean default false,
     has_choices boolean default false,
-    has_clues boolean default false,
-    has_points boolean default false,
+    max_points integer default 0,
     publish_time timestamp default now(),
     constraint pk_question primary key(que_id)
 );
@@ -134,16 +142,6 @@ create table if not exists tbl_Choice (
     clue varchar(64),
 	constraint pk_multiple_choice primary key(choice_id),
 	constraint uniq_choice unique (choice_value, question_fk)
-);
-
-
-create table if not exists tbl_Game (
-    game_id UUID default uuid_generate_v1(),
-    title varchar(64) not null,
-    description varchar(256),
-    organizer UUID references tbl_Account(account_id) not null,
-    game_status GameStatus not null default 'Created',
-    constraint pk_game primary key(game_id)
 );
 
 
@@ -168,7 +166,7 @@ create table if not exists tbl_Game_Player (
 
 create table if not exists tbl_Game_Engine (
 	game_fk UUID references tbl_Game(game_id) not null,
-	scheduled_start timestamp default now(),
+	scheduled_start timestamp not null,
 	current_section int default 1,
 	section_index int default 1,
 	progression GameProgression default 'auto',
@@ -230,24 +228,27 @@ insert into tbl_Ticker (ticker_id, delay) values ('aggresive ticker', 0);
 insert into tbl_Ticker (ticker_id, delay) values ('2 seconds cushion', 2000);
 
 -- register some new players
-insert into tbl_player (email_address, screen_name) values ('jimmy@email.com', 'thirsty whale');
+insert into tbl_player (email_address, screen_name, player_type) values ('jimmy@email.com', 'thirsty whale', 'registered');
 insert into tbl_player (email_address, screen_name) values ('winnie@email.com', 'crocked pots');
-insert into tbl_player (email_address, screen_name) values ('kadzoe@email.com', 'rusty frog');
+insert into tbl_player (email_address, screen_name) values ('kadzoe@email.com', 'rustic beaver');
 insert into tbl_player (email_address, screen_name) values ('wakili@email.com', 'dancing fish');
 insert into tbl_player (email_address, screen_name) values ('julisha@email.com', 'laughing hyena');
 
 --register an account
-with author as (select player_id from tbl_player where email_address = 'jimmy@email.com')
-insert into tbl_account (username, userpass, player_fk) values ('thirsty_whale', 's3cr3ts', (select player_id from author));
+with author1 as (select player_id from tbl_player where email_address = 'jimmy@email.com')
+insert into tbl_account (username, userpass, player_fk) values ('thirsty_whale', 's3cr3ts1', (select player_id from author1));
+
+with author2 as (select player_id from tbl_player where email_address = 'kadzoe@email.com')
+insert into tbl_account (username, userpass, player_fk) values ('rustic_beaver', 's3cr3ts!', (select player_id from author2));
 
 --create a question
 with author as (select player_id from tbl_player where email_address = 'jimmy@email.com')
-insert into tbl_question (que_value, que_answer, numeric_answer, asked_by) values 
-('1 + 1', '2', true, (select player_id from author)),
-('2 + 1', '3', true, (select player_id from author)),
-('3 + 1', '4', true, (select player_id from author)),
-('4 + 1', '5', true, (select player_id from author)),
-('5 + 1', '6', true, (select player_id from author));
+insert into tbl_question (que_value, que_answer, has_choices, max_points, asked_by) values 
+('1 + 1', '2', true, 5000, (select player_id from author)),
+('2 + 1', '3', true, 5000, (select player_id from author)),
+('3 + 1', '4', false, 5000, (select player_id from author)),
+('4 + 1', '5', false, 5000, (select player_id from author)),
+('5 + 1', '6', false, 5000, (select player_id from author));
 
 --(optional) create multiple choices for a question
 with question as (select que_id from tbl_question where que_value = '1 + 1')
@@ -269,7 +270,7 @@ insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
 
 --create a game
 insert into tbl_game (organizer, title) values 
-((select ta.account_id from tbl_account ta, tbl_player tp where tp.email_address = 'jimmy@email.com'), 'friendly numbers');
+((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'friendly numbers');
 
 --create a game layout
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
@@ -359,3 +360,18 @@ where A.is_active = true
 
 --with target_record as (select player_id from tbl_player where email_address = $1 and verification_code = 'e79ea91b-3952-4234-b2bb-9b0a4377ef39')
 --    update tbl_player set verified_email = true where player_id = (select player_id from target_record) returning verified_email
+
+--select ta.* from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'
+
+select tg.*, tp.* from tbl_game tg 
+inner join tbl_account ta on tg.organizer = ta.account_id 
+inner join tbl_player tp on ta.player_fk = tp.player_id 
+where tg.game_id = '7d9c5730-0d8e-11ee-b8cb-0242ac110002'::uuid;
+
+
+select tg.*, tp.* from tbl_game tg 
+    inner join tbl_account ta on tg.organizer = ta.account_id 
+    inner join tbl_player tp on ta.player_fk = tp.player_id 
+    where tg.title = 'friendly numbers' and tp.email_address = 'jimmy@email.com';
+    
+select * from tbl_game_player gp inner join tbl_player p on p.player_id = gp.player_fk;

@@ -24,11 +24,11 @@ const fetchGameInfo = async (title, organizer) => {
     inner join tbl_account ta on tg.organizer = ta.account_id 
     inner join tbl_player tp on ta.player_fk = tp.player_id 
     where tg.title = $1 and tp.email_address = $2`, [title, organizer]);
-        const { game_id, description, game_status, player_id, screen_name, email_address, city, state, country } = result[0];
-        return ({
-            game: { game_id, description, game_status },
-            organizer: { player_id, screen_name, email_address, city, state, country }
-        });
+    const { game_id, description, game_status, player_id, screen_name, email_address, city, state, country } = result[0];
+    return ({
+        game: { game_id, description, game_status },
+        organizer: { player_id, screen_name, email_address, city, state, country }
+    });
 }
 
 const fetchGameInfoById = async (gameid) => {
@@ -95,6 +95,13 @@ const createGameHandle = async ({ organizer, title }) => {
     return { game_id, game_status, organizer, title };
 }
 
+const updateGameStatus = async (game_id, game_status) => {
+    let result = await execute(`
+    update tbl_game set game_status = $2 where game_id = $1 returning game_status`, [game_id, game_status]);
+    const updatedStatus = result[0].game_status;
+    return { game_id, game_status: updatedStatus };
+}
+
 const createGameEngine = async (game_id, { scheduled_start, progression, display_duration, time_ticker }) => {
     let result = await execute(`
     insert into tbl_game_engine (game_fk, scheduled_start, progression, display_duration, time_ticker) values 
@@ -109,6 +116,14 @@ const updateGameEngine = async (game_id, { current_section, section_index }) => 
         [game_id, current_section, section_index]);
     const { game_fk } = result[0];
     return { game_fk, current_section, section_index };
+}
+
+const fetchGameParticipants = async (game_id) => {
+    let result = await execute(`
+    select * from tbl_game_player gp inner join tbl_player p on gp.player_fk = p.player_id where gp.game_fk = $1`,
+        [game_id]);
+    // const { participant_id, player_id, screen_name, city, state, country } = result;
+    return result;
 }
 
 const addGameParticipant = async (game_id, player_id) => {
@@ -166,8 +181,10 @@ module.exports = {
     fetchPlayerById,
     fetchPlayerByEmail,
     createGameHandle,
+    updateGameStatus,
     createGameEngine,
     updateGameEngine,
+    fetchGameParticipants,
     addGameParticipant,
     dropGameParticipant,
     updatePointsTally,

@@ -91,9 +91,10 @@ const registerNewAccount = async ({ username, userpass, email_address }) => {
             throw Error(`'${email_address}' is already registered as a guest player`);
         }
 
-        if (!verified_email) {
-            throw Error(`'${email_address}' is already registered but still unverified`);
-        }
+        //TODO: consider email verification - is it necessary during creation time or should it be addressed later on?
+        // if (!verified_email) {
+        //     throw Error(`'${email_address}' is already registered but still unverified`);
+        // }
 
         let existing_username = await execute(`select exists(select 1 from tbl_account where username = $1)`, [username]);
         let { exists } = existing_username[0];
@@ -103,7 +104,7 @@ const registerNewAccount = async ({ username, userpass, email_address }) => {
 
         let registration = await execute(`insert into tbl_account (username, userpass, player_fk) values ($1, $2, $3::uuid) 
         returning account_id, account_role`, [username, userpass, player_id]);
-        return { username, player_id, ...registration[0] }
+        return { username, player_id, verified_email, ...registration[0] }
     }
 }
 

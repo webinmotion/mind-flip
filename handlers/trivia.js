@@ -7,8 +7,10 @@ const {
     fetchGameQuestion,
     fetchQuestionChoices,
     fetchGameEngine,
+    fetchGameParticipants,
     fetchPlayerByEmail,
     createGameHandle,
+    updateGameStatus,
     createGameEngine,
     updateGameEngine,
     addGameParticipant,
@@ -17,6 +19,8 @@ const {
     fetchCummulativeTally,
     updateHighestScore,
 } = require('../service/trivia');
+
+const studio = require("../trivia/GameStudio");
 
 const handleFetchGamesListing = async function (rew, res, next) {
     try {
@@ -139,6 +143,22 @@ const handleCreateGameHandle = async function (req, res, next) {
     }
 }
 
+const handleUpdateGameStatus = async function (req, res, next) {
+    //curl -X PUT ${host}/trivia/game/:game_id -H "Content-Type: application/json" -d '{"game_status": ${status}}'
+    try {
+        const { game_id } = req.params;
+        const { game_status } = req.body;
+        const result = await updateGameStatus(game_id, game_status);
+        res.json(result);
+        //update clients
+        console.log(result)
+        studio.sendGameStatusEvent(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 const handleCreateGameEngine = async function (req, res, next) {
     try {
         const game_id = req.params.game;
@@ -163,12 +183,26 @@ const handleUpdateGameEngine = async function (req, res, next) {
     }
 }
 
+const handleFetchGameParticipants = async function(req, res, next){
+    try {
+        const game_id = req.params.game;
+        const result = await fetchGameParticipants(game_id);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 const handleAddGameParticipant = async function (req, res, next) {
     try {
         const game_id = req.params.game;
         const player_id = req.params.player;
         const result = await addGameParticipant(game_id, player_id);
         res.json(result);
+        //update clients
+        console.log(result)
+        studio.sendAddParticipantEvent(game_id, result);
     }
     catch (e) {
         next(e);
@@ -180,6 +214,9 @@ const handleDropGameParticipant = async function (req, res, next) {
         const participant_id = req.params.participant;
         const result = await dropGameParticipant(participant_id);
         res.json(result);
+        //update clients
+        console.log(result)
+        studio.sendDropParticipantEvent(game_id, result);
     }
     catch (e) {
         next(e);
@@ -234,7 +271,9 @@ module.exports = {
     fetchPlayerById: handleFetchPlayerById,
     fetchPlayerByEmail: handleFetchPlayerByEmail,
     createGameHandle: handleCreateGameHandle,
+    updateGameStatus: handleUpdateGameStatus,
     createGameEngine: handleCreateGameEngine,
+    fetchGameParticipants: handleFetchGameParticipants,
     addGameParticipant: handleAddGameParticipant,
     dropGameParticipant: handleDropGameParticipant,
     updateGameEngine: handleUpdateGameEngine,

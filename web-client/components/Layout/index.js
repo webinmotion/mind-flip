@@ -32,11 +32,11 @@ const defaultTheme = createTheme();
 
 function Layout({ children }) {
 
-    const {appMenu, setAuth, setRoute} = useAppContext();
+    const {globals, setAuth, setRoute} = useAppContext();
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleSignOut = () => {
-        setAuth(!appMenu.auth);
+        setAuth(!globals.auth);
         handleClose();
     };
 
@@ -91,7 +91,7 @@ function Layout({ children }) {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             Mind Flip
                         </Typography>
-                        {appMenu.auth && (
+                        {globals.auth && (
                             <div>
                                 <IconButton
                                     size="large"

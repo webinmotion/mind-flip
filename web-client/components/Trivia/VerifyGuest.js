@@ -7,12 +7,33 @@ import Box from '@mui/material/Box';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import Typography from '@mui/material/Typography';
 
-export default function VerifyGuest({ setPlayer }) {
+export default function VerifyGuest({ guestEmailForm, setGuestEmailForm, verificationForm, setVerificationForm, verifyEmailAddress }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        setPlayer(player => ({ ...player, verificationCode: data.get('code') }))
+        const formData = {
+            code: data.get('code'),
+        };
+
+        const { code } = formData;
+
+        setVerificationForm(form => ({
+            ...form,
+            code: { ...form.code, value: code, error: !code, message: !code ? 'verification code is a required field' : '' },
+        }));
+
+        //if all is good, register the details
+        if (code && guestEmailForm?.email_address.value) {
+            verifyEmailAddress({ email_address: guestEmailForm?.email_address.value, verification_code: code }, function(error){
+                if(!error){
+                    setGuestEmailForm(form => ({
+                        ...form,
+                        verified: true,
+                    }))
+                }
+            });
+        }
     };
 
     return (
@@ -40,6 +61,8 @@ export default function VerifyGuest({ setPlayer }) {
                             label="verification Code"
                             id="code"
                             autoComplete="verification code"
+                            error={verificationForm?.code.error}
+                            helperText={verificationForm?.code.message}
                         />
                     </Grid>
                 </Grid>

@@ -7,12 +7,27 @@ import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
 
-export default function JoinAsGuest({ setPlayer }) {
+export default function JoinAsGuest({ guestEmailForm, setGuestEmailForm, registerGuest }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        setPlayer(player => ({...player, emailAddress: data.get('email')}));
+        const formData = {
+            email_address: data.get('email'),
+        };
+
+        const { email_address, } = formData;
+
+        setGuestEmailForm(form => ({
+            ...form,
+            verified: false,
+            email_address: {...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : ''} ,
+        }));
+
+        //if all is good, register the guest
+        if (email_address) {
+            registerGuest(email_address);
+        }
     };
 
     return (
@@ -40,6 +55,8 @@ export default function JoinAsGuest({ setPlayer }) {
                             label="Email Address"
                             name="email"
                             autoComplete="email"
+                            error={guestEmailForm?.email_address.error}
+                            helperText={guestEmailForm?.email_address.message}
                         />
                     </Grid>
                 </Grid>

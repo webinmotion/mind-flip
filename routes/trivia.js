@@ -9,15 +9,17 @@ const {
     fetchGameQuestion,
     fetchQuestionChoices,
     fetchGameEngine,
+    fetchGameParticipants,
     fetchPlayerByEmail,
     createGameHandle,
+    updateGameStatus, 
     createGameEngine,
     updateGameEngine,
     addGameParticipant,
     dropGameParticipant,
     updatePointsTally,
     fetchCummulativeTally,
-    updateHighestScore, 
+    updateHighestScore,
 } = require('../handlers/trivia');
 
 router.get('/listing', fetchGamesListing);
@@ -40,9 +42,13 @@ router.get('/player/:email', fetchPlayerByEmail);
 
 router.post('/game', createGameHandle);
 
+router.put('/game/:game_id', updateGameStatus);
+
 router.post('/engine/:game', createGameEngine);
 
 router.put('/engine/:game', updateGameEngine);
+
+router.get('/participant/:game', fetchGameParticipants);
 
 router.put('/participant/:game/player/:player', addGameParticipant);
 

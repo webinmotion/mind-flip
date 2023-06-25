@@ -22,7 +22,6 @@ describe("Testing database queries against live database", () => {
             let res = await execute(statement.trim(), []);
             console.log(res);
         };
-
     });
 
     test('using an unknown player_type should throw an error', async () => {

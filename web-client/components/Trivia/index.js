@@ -8,43 +8,66 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import GamesListing from './GamesListing';
 import GameDetails from './GameDetails';
-import RegisterOptions from './RegisterOptions';
-import { games, gameStatus } from '../../__mocks__/mock-games-listing';
+import Registration from './Registration';
 
 const steps = ['Games Listing', 'Game Details', 'Registration'];
 
-function getStepContent(step, selectedGame, setSelectedGame, playerType, setPlayerType, playerAttributes, setPlayerAttributes) {
+function getStepContent({ globals, games, gameStatus, step, selectedGame, setSelectedGame, setAuth,
+  playerTypeForm, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
+  verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword,
+  verifyEmailAddress }) {
   switch (step) {
     case 0:
-      return <GamesListing games={games} gameStatus={gameStatus} selectedGame={selectedGame} setSelectedGame={setSelectedGame} />;
+      return <GamesListing
+        games={games}
+        gameStatus={gameStatus}
+        selectedGame={selectedGame}
+        setSelectedGame={setSelectedGame} />;
     case 1:
       const selectedGameInfo = games.find(game => game.game_info.game_id === selectedGame);
-      return <GameDetails {...selectedGameInfo} playerType={playerType} setPlayerType={setPlayerType} />;
+      return <GameDetails
+        {...selectedGameInfo}
+        playerType={playerTypeForm.value}
+        setPlayerType={value => setPlayerTypeForm(type => ({...type, value}))} />;
     case 2:
-      return <RegisterOptions selectedGame={selectedGame} playerType={playerType} playerAttributes={playerAttributes} setPlayerAttributes={setPlayerAttributes} />;
+      return <Registration
+        globals={globals}
+        setAuth={setAuth}
+        playerType={playerTypeForm.value}
+        setPlayerType={value => setPlayerTypeForm(type => ({...type, value}))}
+        guestEmailForm={guestEmailForm}
+        setGuestEmailForm={setGuestEmailForm}
+        signInForm={signInForm}
+        setSignInForm={setSignInForm}
+        signUpForm={signUpForm}
+        setSignUpForm={setSignUpForm}
+        verificationForm={verificationForm}
+        setVerificationForm={setVerificationForm}
+        recoveryForm={recoveryForm}
+        setRecoveryForm={setRecoveryForm}
+        registerPlayer={registerPlayer}
+        registerGuest={registerGuest}
+        accountSignIn={accountSignIn}
+        recoverPassword={recoverPassword}
+        verifyEmailAddress={verifyEmailAddress} />;
     default:
       throw new Error('Unknown step');
   }
 }
 
-export default function Trivia({ history }) {
+export default function Trivia({ globals, trivia, history, playerTypeForm, setAuth, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
+  verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress, showAlert }) {
 
+  const { listing: games, gameStatus } = trivia;
   const [activeStep, setActiveStep] = useState(0);
   const [selectedGame, setSelectedGame] = useState('');
-  const [playerType, setPlayerType] = useState('registered');
-  const [playerAttributes, setPlayerAttributes] = useState({
-    emailAddress: '',
-    screenName: '',
-    username: '',
-    password: '',
-    verificationCode: '',
-    rememberMe: false,
-    accountExists: false,
-    recoverPassword: false,
-  });
 
   const handleNext = () => {
     if (steps.length > activeStep + 1) {
+      if (activeStep == 0 && !selectedGame) {
+        showAlert({ message: 'You should select a game before proceeding', severity: 'error', autoClose: true });
+        return;
+      }
       setActiveStep(activeStep + 1);
     }
     else {
@@ -55,7 +78,7 @@ export default function Trivia({ history }) {
       else if (game_info.game_status === 'Accepting') {
         history.push(`/accepting/${game_info.game_id}`)
       }
-      else{
+      else {
         console.log('Game is not accepting or currently playing');
       }
     }
@@ -79,7 +102,10 @@ export default function Trivia({ history }) {
       </Stepper>
       {
         <React.Fragment>
-          {getStepContent(activeStep, selectedGame, setSelectedGame, playerType, setPlayerType, playerAttributes, setPlayerAttributes)}
+          {getStepContent({
+            globals, games, gameStatus, step: activeStep, selectedGame, setSelectedGame, setAuth, playerTypeForm, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
+            verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress
+          })}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             {activeStep !== 0 && (
               <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>

@@ -2,12 +2,31 @@ const moment = require('moment');
 const GameDriver = require('../trivia/GameDriver');
 const ScoreKeeper = require("../trivia/ScoreKeeper");
 const studio = require("../trivia/GameStudio");
+const { ON_GAME_AWAITING_EVENT, ON_GAME_CREATED_EVENT, ON_GAME_PLAYING_EVENT, ON_SSE_TESTING_EVENT, ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED } = require('../trivia/Constants');
 
 const scorer = new ScoreKeeper();
 
-function handleGameEvents(request, response, next) {
-    const game = request.params.game;
-    const participant = request.params.participant;
+function handleGamesListing(req, resp, next) {
+    const headers = {
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache'
+    };
+    resp.writeHead(200, headers);
+
+    studio.subscribe(resp, [ON_GAME_CREATED_EVENT, ON_GAME_AWAITING_EVENT, ON_GAME_PLAYING_EVENT, ON_SSE_TESTING_EVENT]);
+
+    resp.write(`data: subscription to game listing accepted\n\n`);
+
+    req.on('close', () => {
+        console.log(`sse Connection closed`);
+        studio.unsubscribeAll([ON_GAME_CREATED_EVENT, ON_GAME_AWAITING_EVENT, ON_GAME_PLAYING_EVENT, ON_SSE_TESTING_EVENT], resp)
+    });
+}
+
+function handleParticipantEvents(req, resp, next) {
+    const game = req.params.game;
+    const participant = req.params.participant;
     console.log(`request made by ${participant} to join game ${game}`);
 
     const headers = {
@@ -15,40 +34,53 @@ function handleGameEvents(request, response, next) {
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache'
     };
-    response.writeHead(200, headers);
-    
-   studio.subscribe(game, participant, response);
+    resp.writeHead(200, headers);
 
-    request.on('close', () => {
+    studio.subscribe(resp, [ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED], participant);
+
+    resp.write(`data: subscription to ${game} participant events accepted\n\n`);
+
+    req.on('close', () => {
         console.log(`${clientId} Connection closed`);
-        studio.unsubscribe(game, participant)
+        studio.unsubscribe([ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED], participant)
     });
 }
 
-async function enrollDriver(request, respsonse, next) {
-    const title = request.params.title;
-    const organizer = request.params.organizer;
-    const { pregame_delay, progression, ticker, ticker_delay, display_duration } = request.body;
+async function enrollDriver(req, resp, next) {
+    const title = req.params.title;
+    const organizer = req.params.organizer;
+    const { pregame_delay, progression, ticker, ticker_delay, display_duration } = req.body;
     let start_time = moment(new Date()).add(moment.duration(pregame_delay, 'seconds'));
     const driver = new GameDriver(studio, studio, scorer, start_time, progression, ticker, ticker_delay, display_duration);
     await driver.initialize(title, organizer);
-    respsonse.json({ "success": true });
+    resp.json({ "success": true });
 }
 
-async function enrollPlayer(request, respsonse, next) {
-    const game_id = request.params.game;
-    const player_id = request.params.player;
+async function enrollPlayer(req, resp, next) {
+    const game_id = req.params.game;
+    const player_id = req.params.player;
     const { participant_id, screen_name } = await studio.enroll(game_id, player_id);
-    respsonse.json({ game_id, participant_id, screen_name });
-    return sendEventsToAll("joined", { screen_name });
+    resp.json({ game_id, participant_id, screen_name });
+    studio.broadcastMessage("joined", { screen_name });
 }
 
-function sendEventsToAll(event, payload) {
-    clients.forEach(client => client.response.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`))
+async function sendTestMessage(req, resp, next) {
+    //use - curl -X POST ${host}/play/test/ON_SSE_TESTING_EVENT -H "Content-Type: application/json" -d '{"sample": 1}'
+    const { event } = req.params;
+    const data = req.body;
+    studio.broadcastMessage(event, data);
+    resp.json({
+        reason: 'testing',
+        event,
+        data,
+    })
 }
 
 module.exports = {
     enrollDriver,
     enrollPlayer,
-    handleGameEvents
+    sendTestMessage,
+    handleParticipantEvents,
+    handleGamesListing,
+    handleParticipantEvents,
 };

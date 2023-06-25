@@ -1,6 +1,12 @@
 import axios from 'axios';
 import { serverUrl } from './common';
 
+export const remoteFetchGamesListing = async () => {
+    const result = await axios.get(`${serverUrl()}/trivia/listing`)
+        .then(resp => resp.data);
+    return result;
+}
+
 export const remoteFetchGameInfo = async (title, organizer) => {
     const result = await axios.get(`${serverUrl()}/trivia/title/${title}/organizer/${organizer}`)
         .then(resp => resp.data);
@@ -57,6 +63,12 @@ export const remoteUpdateGameEngine = async (game, { current_section, section_in
                 "Content-Type": 'application/json'
             }
         })
+        .then(resp => resp.data);
+    return result;
+}
+
+export const remoteFetchGameParticipants = async (game) => {
+    const result = await axios.get(`${serverUrl()}/trivia/participant/${game}`)
         .then(resp => resp.data);
     return result;
 }

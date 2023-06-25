@@ -1,4 +1,5 @@
 import {
+    FETCH_GAMES_LISTING,
     FETCH_GAME_INFO,
     FETCH_PROGRESSION,
     FETCH_GAME_LAYOUT,
@@ -7,55 +8,91 @@ import {
     FETCH_PLAYER_BY_EMAIL,
     CREATE_GAME_ENGINE,
     UPDATE_GAME_ENGINE,
+    FETCH_GAME_PARTICIPANTS,
     ADD_GAME_PARTICIPANT,
     DROP_GAME_PARTICIPANT,
     UPDATE_POINTS_TALLY,
     FETCH_CUMMULATIVE_TALLY,
-    UPDATE_HIGHEST_SCORE
+    UPDATE_HIGHEST_SCORE,
+    ON_GAME_AWAITING_EVENT,
+    ON_GAME_CREATED_EVENT,
+    ON_GAME_PLAYING_EVENT,
 }
     from './triviaActions';
 
 export const triviaReducer = (game, action) => {
     console.log('state type', typeof game, 'state value', game);
     switch (action.type) {
-        case FETCH_GAME_INFO:
-            game.info = action.info;
-            game.organizer = action.organizer;
-            game.title = action.title;
+        case FETCH_GAMES_LISTING: {
+            return ({ ...game, listing: action.listing });
+        }
+        case FETCH_GAME_INFO: {
+            const { info, organizer, title } = action;
+            return ({ ...game, info, organizer, title });
+        }
+        case FETCH_PROGRESSION: {
+            const { ticker } = action;
+            return ({ ...game, ticker });
+        }
+        case FETCH_GAME_LAYOUT: {
+            const { layout } = action;
+            return ({ ...game, layout });
+        }
+        case FETCH_GAME_QUESTION: {
+            const { queIndex, question } = action;
+            return ({ ...game, queIndex, question });
+        }
+        case FETCH_GAME_ENGINE: {
+            const { engine } = action;
+            return ({ ...game, engine });
+        }
+        case FETCH_PLAYER_BY_EMAIL: {
+            const { player } = action;
+            return ({ ...game, player });
+        }
+        case CREATE_GAME_ENGINE: {
             return game;
-        case FETCH_PROGRESSION:
-            game.ticker = action.ticker;
+        }
+        case UPDATE_GAME_ENGINE: {
             return game;
-        case FETCH_GAME_LAYOUT:
-            game.layout = action.layout;
+        }
+        case FETCH_GAME_PARTICIPANTS: {
+            const { participants } = action;
+            return ({ ...game, participants });
+        }
+        case ADD_GAME_PARTICIPANT: {
+            const { participant } = action;
+            return ({ ...game, participant });
+        }
+        case DROP_GAME_PARTICIPANT: {
+            const participant = null;
+            return ({ ...game, participant });
+        }
+        case UPDATE_POINTS_TALLY: {
             return game;
-        case FETCH_GAME_QUESTION:
-            game.queIndex = action.queIndex;
-            game.question = action.question;
+        }
+        case FETCH_CUMMULATIVE_TALLY: {
             return game;
-        case FETCH_GAME_ENGINE:
-            game.engine = action.engine;
+        }
+        case UPDATE_HIGHEST_SCORE: {
             return game;
-        case FETCH_PLAYER_BY_EMAIL:
-            game.player = action.player;
+        }
+        case ON_GAME_CREATED_EVENT:
+        case ON_GAME_AWAITING_EVENT:
+        case ON_GAME_PLAYING_EVENT: {
+            const { game_id, game_status } = action.data;
+            console.log('game', game_id, 'status', game_status);
+            return ({
+                ...game, listing: game.listing.map(g => {
+                    if (g.game_info.game_id === game_id) {
+                        return ({ ...g, game_info: { ...g.game_info, game_status } })
+                    }
+                    return g;
+                })
+            })
+        }
+        default: {
             return game;
-        case CREATE_GAME_ENGINE:
-            return game;
-        case UPDATE_GAME_ENGINE:
-            return game;
-        case ADD_GAME_PARTICIPANT:
-            game.participant = action.participant;
-            return game;
-        case DROP_GAME_PARTICIPANT:
-            game.participant = null;
-            return game;
-        case UPDATE_POINTS_TALLY:
-            return game;
-        case FETCH_CUMMULATIVE_TALLY:
-            return game;
-        case UPDATE_HIGHEST_SCORE:
-            return game;
-        default:
-            return game;
+        }
     }
 }

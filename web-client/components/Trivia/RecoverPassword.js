@@ -8,24 +8,50 @@ import LockIcon from '@mui/icons-material/Lock';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 
-export default function RecoverPassword({ setPlayer }) {
+export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSignUpForm, setSignInForm, setVerificationForm, recoverPassword }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        setPlayer(player => ({
-            ...player,
-            emailAddress: data.get('email'),
+        const formData = {
+            email_address: data.get('email_address'),
+        };
+
+        const { email_address } = formData;
+
+        setRecoveryForm(form => ({
+            ...form,
+            recovering: false,
+            email_address: { ...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : '' },
         }));
+
+        setVerificationForm(form => ({
+            ...form,
+            verifying: true,
+        }))
+
+        //if all is good, register the details
+        if (email_address) {
+            recoverPassword(email_address);
+        }
     };
 
     const showSignUp = (e) => {
         e.preventDefault();
-        setPlayer(player => ({
-            ...player,
-            recoverPassword: false,
-            emailAddress: '',
-        }))
+        setRecoveryForm(form => ({
+            ...form,
+            recovering: false,
+            email_address: '',
+        }));
+        setSignInForm(form => ({
+            ...form,
+            account_exists: false,
+        }));
+        setSignUpForm(form => ({
+            ...form,
+            registering: true,
+            email_address: { ...form.email_address, value: '' },
+        }));
     };
 
     return (
@@ -49,10 +75,12 @@ export default function RecoverPassword({ setPlayer }) {
                         <TextField
                             required
                             fullWidth
-                            id="email"
+                            id="email_address"
                             label="Email Address"
-                            name="email"
+                            name="email_address"
                             autoComplete="email"
+                            error={recoveryForm.email_address.error}
+                            helperText={recoveryForm.email_address.message}
                         />
                     </Grid>
                 </Grid>

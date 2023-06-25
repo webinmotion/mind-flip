@@ -12,10 +12,6 @@ import FormLabel from '@mui/material/FormLabel';
 
 export default function GameDetails({ game_info, organizer, playerType, setPlayerType }) {
 
-    const handleChange = (event) => {
-        setPlayerType(event.target.value);
-    };
-
     return (
         <Box sx={{ minWidth: 275 }}>
             <Card variant="outlined">
@@ -38,7 +34,7 @@ export default function GameDetails({ game_info, organizer, playerType, setPlaye
                             aria-labelledby="demo-controlled-radio-buttons-group"
                             name="controlled-radio-buttons-group"
                             value={playerType}
-                            onChange={handleChange}
+                            onChange={e => setPlayerType(e.target.value)}
                         >
                             <FormControlLabel value="guest" control={<Radio />} label="Guest" />
                             <FormControlLabel value="registered" control={<Radio />} label="Registered" />
