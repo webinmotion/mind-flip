@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import Typography from '@mui/material/Typography';
 
-export default function VerifyGuest({ guestEmailForm, setGuestEmailForm, verificationForm, setVerificationForm, verifyEmailAddress }) {
+export default function VerifyGuest({ showAlert, guestEmailForm, setGuestEmailForm, verificationForm, setVerificationForm, verifyEmailAddress }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -31,6 +31,19 @@ export default function VerifyGuest({ guestEmailForm, setGuestEmailForm, verific
                         ...form,
                         verified: true,
                     }))
+
+                    showAlert({
+                        message: "Your email has been validated successfully",
+                        autoClose: true,
+                        severity: 'success',
+                    })
+                }
+                else{
+                    showAlert({
+                        message: error,
+                        autoClose: true,
+                        severity: 'error',
+                    });
                 }
             });
         }

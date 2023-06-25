@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
 
-export default function SignUpPlayer({ signUpForm, setSignUpForm, setSignInForm, registerPlayer }) {
+export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, setSignInForm, registerPlayer }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -37,17 +37,30 @@ export default function SignUpPlayer({ signUpForm, setSignUpForm, setSignInForm,
                 screen_name,
                 username,
                 password
-            }, function(error){
-                if(!error){
+            }, function (error) {
+                if (!error) {
                     setSignUpForm(form => ({
                         ...form,
                         registering: false,
                     }));
                     setSignInForm(form => ({
                         ...form,
-                        username: {...form.username, value: signUpForm.username.value},
+                        username: { ...form.username, value: signUpForm.username.value },
                         account_exists: true
                     }));
+
+                    showAlert({
+                        message: "Congratulations. You have been registered successfully",
+                        autoClose: true,
+                        severity: 'success',
+                    });
+                }
+                else {
+                    showAlert({
+                        message: error,
+                        autoClose: true,
+                        severity: 'error',
+                    });
                 }
             });
         }

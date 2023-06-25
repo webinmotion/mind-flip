@@ -39,7 +39,7 @@ export const AppProvider = ({ children }) => {
             alert,
             gameClient: new GameClient(trivia),
 
-            //app options
+            //app forms and variables
             globals,
             playerTypeForm,
             guestEmailForm,
@@ -69,12 +69,12 @@ export const AppProvider = ({ children }) => {
             onParticipantEvents: onParticipantEventsAction(triviaDispatch),
 
             //account actions
-            registerPlayer: registerPlayerAction(accountDispatch, alertDispatch),
-            registerGuest: registerGuestAction(accountDispatch, alertDispatch),
+            registerPlayer: registerPlayerAction(accountDispatch),
+            registerGuest: registerGuestAction(accountDispatch),
             verifyEmailAddress: verifyEmailAddressAction(accountDispatch),
             dropGuestPlayer: dropGuestPlayerAction(accountDispatch),
-            accountSignUp: accountSignUpAction(accountDispatch, alertDispatch),
-            accountSignIn: accountSignInAction(accountDispatch, alertDispatch),
+            accountSignUp: accountSignUpAction(accountDispatch),
+            accountSignIn: accountSignInAction(accountDispatch),
             accountSignOut: accountSignOutAction(accountDispatch),
             resetPassword: resetPasswordAction(accountDispatch),
             resetVerification: resetVerifictionAction(accountDispatch),

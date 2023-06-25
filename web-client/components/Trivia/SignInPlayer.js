@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
 
-export default function SignInPlayer({ setAuth, signInForm, setSignInForm, setSignUpForm, setRecoveryForm, accountSignIn }) {
+export default function SignInPlayer({ setAuth, showAlert, signInForm, setSignInForm, setSignUpForm, setRecoveryForm, accountSignIn }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -45,6 +45,19 @@ export default function SignInPlayer({ setAuth, signInForm, setSignInForm, setSi
             registering: false,
           }));
           setAuth(true);
+
+          showAlert({
+            message: "Congratulations. You have been signed in successfully",
+            autoClose: true,
+            severity: 'success',
+          })
+        }
+        else{
+          showAlert({
+            message: error,
+            autoClose: true,
+            severity: 'error',
+        });
         }
       });
     }

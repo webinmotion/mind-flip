@@ -12,7 +12,7 @@ import Registration from './Registration';
 
 const steps = ['Games Listing', 'Game Details', 'Registration'];
 
-function getStepContent({ globals, games, gameStatus, step, selectedGame, setSelectedGame, setAuth,
+function getStepContent({ globals, games, gameStatus, step, selectedGame, setSelectedGame, setAuth, showAlert,
   playerTypeForm, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
   verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword,
   verifyEmailAddress }) {
@@ -33,6 +33,7 @@ function getStepContent({ globals, games, gameStatus, step, selectedGame, setSel
       return <Registration
         globals={globals}
         setAuth={setAuth}
+        showAlert={showAlert}
         playerType={playerTypeForm.value}
         setPlayerType={value => setPlayerTypeForm(type => ({...type, value}))}
         guestEmailForm={guestEmailForm}
@@ -104,7 +105,7 @@ export default function Trivia({ globals, trivia, history, playerTypeForm, setAu
         <React.Fragment>
           {getStepContent({
             globals, games, gameStatus, step: activeStep, selectedGame, setSelectedGame, setAuth, playerTypeForm, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
-            verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress
+            verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress, showAlert,
           })}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             {activeStep !== 0 && (

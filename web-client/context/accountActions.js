@@ -23,55 +23,37 @@ export const RESET_PASSWORD = "RESET_PASSWORD";
 export const RESET_VERIFICATION = "RESET_VERIFICATION";
 export const RECOVER_PASSWORD = "RECOVER_PASSWORD";
 
-export const registerPlayerAction = (dispatch, alertDispatch) => ({ screen_name, email_address, username, password }, callback) => {
+export const registerPlayerAction = (dispatch) => ({ screen_name, email_address, username, password }, callback) => {
     remoteRegisterPlayer({ screen_name, email_address }).then(player => {
         dispatch({ type: REGISTER_PLAYER, player });
-
         //register an account
-        accountSignUpAction(dispatch, alertDispatch)({ username, password, email_address }, callback);
+        accountSignUpAction(dispatch)({ username, password, email_address }, callback);
     }).catch(error => {
-        alertDispatch({
-            type: SHOW_ALERT_MESSAGE, alert: {
-                message: extractErrorText(error),
-                autoClose: true,
-                severity: 'error',
-                show: true,
-            }
-        });
+        callback(extractErrorText(error));
     });
 }
 
-export const verifyEmailAddressAction = dispatch => ({ email_address, verification_code }, callback = () => {}) => {
+export const verifyEmailAddressAction = dispatch => ({ email_address, verification_code }, callback) => {
     remoteVerifyEmailAddr({ email_address, verification_code }).then(verification => {
-        dispatch({ type: VERIFY_EMAIL_ADDRESS, verification });
-        callback();
+        if (verification.verified) {
+            dispatch({ type: VERIFY_EMAIL_ADDRESS, verification });
+            callback();
+        }
+        else {
+            callback("Email verification using code submitted did not work");
+        }
+    }).catch(error => {
+        callback(extractErrorText(error))
     });
 }
 
-export const registerGuestAction = (dispatch, alertDispatch) => (email_address) => {
+export const registerGuestAction = (dispatch) => (email_address, callback) => {
     remoteRegisterGuest(email_address).then(guest => {
-
         //register a guest
         dispatch({ type: REGISTER_GUEST, guest });
-
-        //notify success
-        alertDispatch({
-            type: SHOW_ALERT_MESSAGE, alert: {
-                message: "Congratulations. You have been registered successfully",
-                autoClose: true,
-                severity: 'success',
-                show: true,
-            }
-        });
+        callback();
     }).catch(error => {
-        alertDispatch({
-            type: SHOW_ALERT_MESSAGE, alert: {
-                message: extractErrorText(error),
-                autoClose: true,
-                severity: 'error',
-                show: true,
-            }
-        })
+        callback(extractErrorText(error))
     });
 }
 
@@ -81,57 +63,21 @@ export const dropGuestPlayerAction = dispatch => ({ screen_name, email_address, 
     });
 }
 
-export const accountSignUpAction = (dispatch, alertDispatch) => ({ username, password, email_address }, callback) => {
+export const accountSignUpAction = (dispatch) => ({ username, password, email_address }, callback) => {
     remoteAccountSignUp({ username, password, email_address }).then(account => {
         dispatch({ type: ACCOUNT_SIGN_UP, account });
-
-        //notify success
-        alertDispatch({
-            type: SHOW_ALERT_MESSAGE, alert: {
-                message: "Congratulations. You have been registered successfully",
-                autoClose: true,
-                severity: 'success',
-                show: true,
-            }
-        });
-
         callback();
     }).catch(error => {
-        alertDispatch({
-            type: SHOW_ALERT_MESSAGE, alert: {
-                message: extractErrorText(error),
-                autoClose: true,
-                severity: 'error',
-                show: true,
-            }
-        })
+        callback(extractErrorText(error))
     });
 }
 
-export const accountSignInAction = (dispatch, alertDispatch) => ({ username, password }, callback) => {
+export const accountSignInAction = (dispatch) => ({ username, password }, callback) => {
     remoteAccountSignIn({ username, password }).then(account => {
         dispatch({ type: ACCOUNT_SIGN_IN, account });
-
-        //notify success
-        alertDispatch({
-            type: SHOW_ALERT_MESSAGE, alert: {
-                message: "Congratulations. You have been signed in successfully",
-                autoClose: true,
-                severity: 'success',
-                show: true,
-            }
-        });
-
         callback();
     }).catch(error => {
-        alertDispatch({
-            type: SHOW_ALERT_MESSAGE, alert: {
-                message: extractErrorText(error),
-                autoClose: true,
-                severity: 'error',
-                show: true,
-            }
-        });
+        callback(extractErrorText(error));
     });
 }
 

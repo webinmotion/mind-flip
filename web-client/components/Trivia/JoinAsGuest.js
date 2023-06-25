@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
 
-export default function JoinAsGuest({ guestEmailForm, setGuestEmailForm, registerGuest }) {
+export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailForm, registerGuest }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -21,12 +21,28 @@ export default function JoinAsGuest({ guestEmailForm, setGuestEmailForm, registe
         setGuestEmailForm(form => ({
             ...form,
             verified: false,
-            email_address: {...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : ''} ,
+            email_address: { ...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : '' },
         }));
 
         //if all is good, register the guest
         if (email_address) {
-            registerGuest(email_address);
+            registerGuest(email_address, function (error) {
+
+                if (!error) {
+                    showAlert({
+                        message: "Congratulations. You have been registered successfully",
+                        autoClose: true,
+                        severity: 'success',
+                    })
+                }
+                else {
+                    showAlert({
+                        message: error,
+                        autoClose: true,
+                        severity: 'error',
+                    })
+                }
+            });
         }
     };
 
