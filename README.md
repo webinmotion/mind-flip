@@ -72,3 +72,19 @@ node <hit enter key>
 require("crypto").randomBytes(35).toString("hex")
 ```
 
+## Env variables that need to be set up. 
+
+The values to be supplied with the properties are specific to a particular deployment environment. 
+
+Some properties also apply to only a specific deployment environment and not necessarily to others
+
+- HEALTHY_MESSAGE=
+- SERVER_HOST_URL=
+- POSTGRES_USER=
+- POSTGRES_PASSWORD=
+- POSTGRES_HOST=
+- POSTGRES_DATABASE=
+- POSTGRES_PORT=
+- FLYCAST_IPv6=
+- PG_PROXY_PORT=
+- PG_CONNECTION_STRING=

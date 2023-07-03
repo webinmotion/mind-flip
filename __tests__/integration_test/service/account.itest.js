@@ -4,7 +4,7 @@ const { TextEncoder, TextDecoder } = require('util');
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-require('dotenv').config({ path: path.join(process.cwd(), '.env.test') });
+require('dotenv').config({ path: path.join(process.cwd(), '.env.test.local') });
 const { execute } = require('../../../repo');
 const { registerNewPlayer, verifyRegistrationEmail, resetVerificationCode, dropGuestPlayer, registerNewAccount } = require('../../../service/account');
 
