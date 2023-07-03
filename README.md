@@ -25,6 +25,14 @@ Check out **_frontend\src\css\custom.css_** for the proposed color scheme. The p
 
 ---
 
+to create a random sequence of characters, like secrets, you can use the _crypto_ library that ships with nodejs
+
+```js
+node
+require('crypto').randomBytes(64).toString('hex');
+.exit
+```
+
 ## Database deployment notes
 
 ```bash

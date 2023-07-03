@@ -8,6 +8,7 @@ import {
     remoteAccountSignOut,
     remoteResetPassword,
     remoteResetVerification,
+    remoteFetchPlayerById,
 } from '../services/account';
 import { SHOW_ALERT_MESSAGE, extractErrorText } from './alertActions';
 
@@ -25,11 +26,11 @@ export const RECOVER_PASSWORD = "RECOVER_PASSWORD";
 
 export const registerPlayerAction = (dispatch) => ({ screen_name, email_address, username, password }, callback) => {
     remoteRegisterPlayer({ screen_name, email_address }).then(player => {
+        //register a player - {screen_name, email_address, verification_code, player_type, city, state, country}
         dispatch({ type: REGISTER_PLAYER, player });
-        //register an account
         accountSignUpAction(dispatch)({ username, password, email_address }, callback);
     }).catch(error => {
-        callback(extractErrorText(error));
+        if (callback) callback(extractErrorText(error));
     });
 }
 
@@ -37,23 +38,23 @@ export const verifyEmailAddressAction = dispatch => ({ email_address, verificati
     remoteVerifyEmailAddr({ email_address, verification_code }).then(verification => {
         if (verification.verified) {
             dispatch({ type: VERIFY_EMAIL_ADDRESS, verification });
-            callback();
+            if (callback) callback(null, verification);
         }
         else {
-            callback("Email verification using code submitted did not work");
+            if (callback) callback("Email verification using code submitted did not work");
         }
     }).catch(error => {
-        callback(extractErrorText(error))
+        if (callback) callback(extractErrorText(error))
     });
 }
 
 export const registerGuestAction = (dispatch) => (email_address, callback) => {
     remoteRegisterGuest(email_address).then(guest => {
-        //register a guest
+        //register a guest - {screen_name, email_address, verification_code, player_type, city, state, country}
         dispatch({ type: REGISTER_GUEST, guest });
-        callback();
+        if (callback) callback(null, guest);
     }).catch(error => {
-        callback(extractErrorText(error))
+        if (callback) callback(extractErrorText(error))
     });
 }
 
@@ -66,18 +67,28 @@ export const dropGuestPlayerAction = dispatch => ({ screen_name, email_address, 
 export const accountSignUpAction = (dispatch) => ({ username, password, email_address }, callback) => {
     remoteAccountSignUp({ username, password, email_address }).then(account => {
         dispatch({ type: ACCOUNT_SIGN_UP, account });
-        callback();
+        if (callback) callback(null, account);
     }).catch(error => {
-        callback(extractErrorText(error))
+        if (callback) callback(extractErrorText(error))
     });
 }
 
 export const accountSignInAction = (dispatch) => ({ username, password }, callback) => {
     remoteAccountSignIn({ username, password }).then(account => {
         dispatch({ type: ACCOUNT_SIGN_IN, account });
-        callback();
+        if (callback) callback(null, account);
+        fetchPlayerByIdAction(dispatch)(account.userInfo.player_id)
     }).catch(error => {
-        callback(extractErrorText(error));
+        if (callback) callback(extractErrorText(error));
+    });
+}
+
+export const fetchPlayerByIdAction = (dispatch) => (player_id, callback) => {
+    remoteFetchPlayerById(player_id).then(player => {
+        dispatch({ type: REGISTER_PLAYER, player });
+        if (callback) callback(null, player)
+    }).catch(error => {
+        if (callback) callback(extractErrorText(error));
     });
 }
 

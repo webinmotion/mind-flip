@@ -1,9 +1,24 @@
 import { useState } from "react";
 
+export const initialAuth = {
+    userInfo: {
+        username: null,
+        is_active: false,
+        player_id: null,
+        role: null
+    },
+    accessToken: null,
+    refreshToken: null
+};
+
+export const isAuthenticated = (entity) => {
+    return entity?.auth?.accessToken;
+}
+
 export default () => {
 
     const [globals, setGlobals] = useState({
-        auth: false,
+        auth: initialAuth,
         route: '',
     });
 
@@ -13,7 +28,7 @@ export default () => {
 
     const [guestEmailForm, setGuestEmailForm] = useState({
         verified: false,
-        email_address: {value: '', error: false, message: ''},
+        email_address: { value: '', error: false, message: '' },
     });
 
     const [signUpForm, setSignUpForm] = useState({
@@ -42,6 +57,8 @@ export default () => {
         email_address: { value: false, error: false, message: '' },
     });
 
+    const [selectedGame, setSelectedGame] = useState(null);
+
     function setAuth(auth) {
         setGlobals(options => ({ ...options, auth, route: '' }))
     }
@@ -51,8 +68,8 @@ export default () => {
     }
 
     return ({
-        globals, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm,
+        globals, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm, selectedGame,
         setAuth, setRoute, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
-        setRecoveryForm,
+        setRecoveryForm, setSelectedGame,
     });
 }

@@ -20,14 +20,14 @@ function handleGamesListing(req, resp, next) {
 
     req.on('close', () => {
         console.log(`sse Connection closed`);
-        studio.unsubscribeAll([ON_GAME_CREATED_EVENT, ON_GAME_AWAITING_EVENT, ON_GAME_PLAYING_EVENT, ON_SSE_TESTING_EVENT], resp)
+        studio.unBroadcast([ON_GAME_CREATED_EVENT, ON_GAME_AWAITING_EVENT, ON_GAME_PLAYING_EVENT, ON_SSE_TESTING_EVENT], resp)
     });
 }
 
 function handleParticipantEvents(req, resp, next) {
     const game = req.params.game;
-    const participant = req.params.participant;
-    console.log(`request made by ${participant} to join game ${game}`);
+    const player = req.params.player;
+    console.log(`request made by ${player} to join game ${game}`);
 
     const headers = {
         'Content-Type': 'text/event-stream',
@@ -36,13 +36,13 @@ function handleParticipantEvents(req, resp, next) {
     };
     resp.writeHead(200, headers);
 
-    studio.subscribe(resp, [ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED], participant);
+    studio.subscribe(resp, [ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED], game, player);
 
-    resp.write(`data: subscription to ${game} participant events accepted\n\n`);
+    resp.write(`data: player ${player} subscription to game ${game} participant events accepted\n\n`);
 
     req.on('close', () => {
-        console.log(`${clientId} Connection closed`);
-        studio.unsubscribe([ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED], participant)
+        console.log(`${game} Connection closed`);
+        studio.unsubscribe([ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED], player)
     });
 }
 
@@ -80,7 +80,6 @@ module.exports = {
     enrollDriver,
     enrollPlayer,
     sendTestMessage,
-    handleParticipantEvents,
     handleGamesListing,
     handleParticipantEvents,
 };

@@ -4,9 +4,11 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 var routes = require('./routes');
+const errors = require('./middleware/error-handler');
 
 var app = express();
 
+app.use(errors);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

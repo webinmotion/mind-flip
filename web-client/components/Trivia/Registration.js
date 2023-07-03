@@ -6,37 +6,40 @@ import SignInPlayer from './SignInPlayer';
 import VerifyRegistered from './VerifyRegistered';
 import RecoverPassword from './RecoverPassword';
 import ReadyToGo from './ReadyToGo';
+import { isAuthenticated } from '../../context/useAppOptions';
 
-function guestOptions({ showAlert, guestEmailForm, setGuestEmailForm, verificationForm, setVerificationForm, registerGuest, verifyEmailAddress }) {
+
+
+function guestOptions({ userInfo, showAlert, guestEmailForm, setGuestEmailForm, verificationForm, setVerificationForm, registerGuest, verifyEmailAddress, selectedGame, addGameParticipant }) {
   if (!guestEmailForm?.email_address.value) {
     return <JoinAsGuest showAlert={showAlert} guestEmailForm={guestEmailForm} setGuestEmailForm={setGuestEmailForm} registerGuest={registerGuest} />;
   }
   if (!guestEmailForm?.verified) {
     return <VerifyGuest showAlert={showAlert} guestEmailForm={guestEmailForm} setGuestEmailForm={setGuestEmailForm} verificationForm={verificationForm} setVerificationForm={setVerificationForm} verifyEmailAddress={verifyEmailAddress} />
   }
-  return <ReadyToGo />
+  return <ReadyToGo userInfo={userInfo} selectedGame={selectedGame} addGameParticipant={addGameParticipant} />
 }
 
-function registerOptions({ globals, setAuth, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm, setRecoveryForm, setVerificationForm, registerPlayer, accountSignIn, recoverPassword, verifyEmailAddress }) {
-  if (!globals.auth && recoveryForm?.recovering) {
+function registerOptions({ globals, userInfo, setAuth, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm, setRecoveryForm, setVerificationForm, registerPlayer, accountSignIn, recoverPassword, verifyEmailAddress, selectedGame, addGameParticipant }) {
+  if (!isAuthenticated(globals) && recoveryForm?.recovering) {
     return <RecoverPassword recoveryForm={recoveryForm} setRecoveryForm={setRecoveryForm} setSignUpForm={setSignUpForm} setSignInForm={setSignInForm} setVerificationForm={setVerificationForm} recoverPassword={recoverPassword} />
   }
-  if (!globals.auth && verificationForm?.verifying) {
+  if (!isAuthenticated(globals) && verificationForm?.verifying) {
     return <VerifyRegistered recoveryForm={recoveryForm} verificationForm={verificationForm} setVerificationForm={setVerificationForm} verifyEmailAddress={verifyEmailAddress} />
   }
-  if (!globals.auth && signInForm?.account_exists && !signUpForm?.registering) {
+  if (!isAuthenticated(globals) && signInForm?.account_exists && !signUpForm?.registering) {
     return <SignInPlayer setAuth={setAuth} showAlert={showAlert} signInForm={signInForm} setSignInForm={setSignInForm} setSignUpForm={setSignUpForm} setRecoveryForm={setRecoveryForm} accountSignIn={accountSignIn} />
   }
-  if (!globals.auth && signUpForm?.registering && !signInForm?.account_exists) {
+  if (!isAuthenticated(globals) && signUpForm?.registering && !signInForm?.account_exists) {
     return <SignUpPlayer showAlert={showAlert} signUpForm={signUpForm} setSignUpForm={setSignUpForm} setSignInForm={setSignInForm} registerPlayer={registerPlayer} />
   }
-  return <ReadyToGo />
+  return <ReadyToGo userInfo={userInfo} selectedGame={selectedGame} addGameParticipant={addGameParticipant} />
 }
 
 export default function Registration({
-  globals, showAlert, setAuth, playerType, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm,
-  setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
-  setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress }) {
+  globals, showAlert, userInfo, setAuth, playerType, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm,
+  setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm, setRecoveryForm, registerPlayer, registerGuest,
+  accountSignIn, recoverPassword, verifyEmailAddress, selectedGame, addGameParticipant }) {
 
   useEffect(() => {
     if (globals.require_auth) {
@@ -55,10 +58,14 @@ export default function Registration({
   return (
     <React.Fragment>
       {playerType === 'guest' ?
-        guestOptions({ showAlert, guestEmailForm, setGuestEmailForm, verificationForm, setVerificationForm, registerGuest, verifyEmailAddress }) :
+        guestOptions({
+          userInfo, showAlert, guestEmailForm, setGuestEmailForm, verificationForm, setVerificationForm, registerGuest,
+          verifyEmailAddress, selectedGame, addGameParticipant
+        }) :
         registerOptions({
-          globals, setAuth, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm,
-          setRecoveryForm, setVerificationForm, registerPlayer, accountSignIn, recoverPassword, verifyEmailAddress
+          globals, userInfo, setAuth, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm,
+          setRecoveryForm, setVerificationForm, registerPlayer, accountSignIn, recoverPassword, verifyEmailAddress, selectedGame, 
+          addGameParticipant,
         })
       }
     </React.Fragment>

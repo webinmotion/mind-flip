@@ -12,15 +12,16 @@ import ExtensionIcon from '@mui/icons-material/Extension';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { useAppContext } from '../../context/appContext';
 import { Divider } from '@mui/material';
+import { useAppContext } from '../../context/appContext';
+import { initialAuth, isAuthenticated } from '../../context/useAppOptions';
 
 function Copyright() {
     return (
         <Typography variant="body2" color="text.secondary">
             {'Copyright © '}
             <Link color="inherit" href="https://mui.com/">
-                practicaldime
+                akilisha
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -36,7 +37,7 @@ function Layout({ children }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleSignOut = () => {
-        setAuth(!globals.auth);
+        setAuth(initialAuth);
         handleClose();
     };
 
@@ -91,7 +92,7 @@ function Layout({ children }) {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             Mind Flip
                         </Typography>
-                        {globals.auth && (
+                        {isAuthenticated(globals) && (
                             <div>
                                 <IconButton
                                     size="large"

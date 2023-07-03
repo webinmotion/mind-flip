@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { serverUrl } from './common';
+import axios, { serverUrl } from './request';
 
 export const remoteRegisterPlayer = async ({ screen_name, email_address }) => {
     const result = await axios.post(`${serverUrl()}/account/player`,
@@ -81,6 +80,12 @@ export const remoteResetPassword = async ({ username, password }) => {
 
 export const remoteResetVerification = async (email_address) => {
     const result = await axios.get(`${serverUrl()}/account/${email_address}/recover`)
+        .then(resp => resp.data);
+    return result;
+}
+
+export const remoteFetchPlayerById = async (player_id) => {
+    const result = await axios.get(`${serverUrl()}/account/player/${player_id}`)
         .then(resp => resp.data);
     return result;
 }

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { homePage, healthCheck } = require('../handlers/home');
+const { homePage, healthCheck  } = require('../handlers/home');
 
 router.get('/', homePage);
 

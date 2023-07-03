@@ -26,6 +26,10 @@ yarn-error.log*
 
 *stackdump
 
+# IDEs
+.vscode
+.idea
+
 # local files
 .mail
 sendmail.js

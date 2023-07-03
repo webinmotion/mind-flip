@@ -18,7 +18,7 @@ export default function GamesAccepting({ game, trivia }) {
             </Typography>
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                 {participants && participants.map(p => (
-                    <ListItem>
+                    <ListItem key={p.screen_name}>
                         <ListItemAvatar>
                             <Avatar>
                                 <PersonPinIcon />

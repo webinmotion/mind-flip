@@ -11,12 +11,13 @@ import {
     FETCH_GAME_PARTICIPANTS,
     ADD_GAME_PARTICIPANT,
     DROP_GAME_PARTICIPANT,
-    UPDATE_POINTS_TALLY,
-    FETCH_CUMMULATIVE_TALLY,
+    FETCH_CUMULATIVE_TALLY,
     UPDATE_HIGHEST_SCORE,
     ON_GAME_AWAITING_EVENT,
     ON_GAME_CREATED_EVENT,
     ON_GAME_PLAYING_EVENT,
+    ON_PARTICIPANT_JOINED,
+    ON_PARTICIPANT_EXITED,
 }
     from './triviaActions';
 
@@ -68,10 +69,7 @@ export const triviaReducer = (game, action) => {
             const participant = null;
             return ({ ...game, participant });
         }
-        case UPDATE_POINTS_TALLY: {
-            return game;
-        }
-        case FETCH_CUMMULATIVE_TALLY: {
+        case FETCH_CUMULATIVE_TALLY: {
             return game;
         }
         case UPDATE_HIGHEST_SCORE: {
@@ -90,6 +88,22 @@ export const triviaReducer = (game, action) => {
                     return g;
                 })
             })
+        }
+        case ON_PARTICIPANT_JOINED: {
+            const { participant } = action;
+            console.log('participant joining', participant);
+            if(!game.participants.some(p => p.participant_id === participant.participant_id)){
+                return ({...game, participants: [...game.participants, participant]});
+            }
+            return game;
+        }
+        case ON_PARTICIPANT_EXITED: {
+            const { participant_id } = action;
+            console.log('participant exiting', participant_id);
+            if(game.participants.some(p => p.participant_id === participant_id)){
+                return ({...game, participants: [...game.participants.filter(p => p.participant_id !== participant_id)]});
+            }
+            return game;
         }
         default: {
             return game;

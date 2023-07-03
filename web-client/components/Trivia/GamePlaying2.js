@@ -1,0 +1,135 @@
+import * as React from 'react';
+import { styled } from '@mui/material/styles';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import { gameEngine, gameLayout } from '../../__mocks__/mock-game-layout';
+
+function nextQuestion(idx) {
+    const limit = gameLayout.length;
+    if (limit > idx) {
+        const { current_section, section_index, question, choices } = gameLayout[idx];
+        return { round: current_section, number: section_index, ...question, choices };
+    }
+}
+
+const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.h5,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+}));
+
+export default function GamesPlaying({ match }) {
+
+    const [{ idx, current }, setCurrent] = React.useState({ idx: 0, current: nextQuestion(0) });
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        // submitAnswer(data.get('answer'));
+    };
+
+    function onHandleNext(e){
+        e.preventDefault();
+        setCurrent(curr => {
+            let idx = curr.idx + 1
+            let current = nextQuestion(idx);
+            return ({ idx, current });
+        });
+    }
+
+    return (
+        <React.Fragment>
+            <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 4, pb: 4 }}>
+                <Typography
+                    component="p"
+                    variant="h5"
+                    align="center"
+                    color="text.secondary"
+                    gutterBottom
+                >
+                    Round {current?.round} - Question {current?.number}
+                </Typography>
+
+                <Typography
+                    component="h1"
+                    variant="h3"
+                    align="center"
+                    color="text.primary"
+                    gutterBottom
+                >
+                    {current?.que_value}
+                </Typography>
+
+                <Typography
+                    component="p"
+                    variant="subtitle"
+                    align="right"
+                    color="text.secondary"
+                >
+                    {current?.max_points} points
+                </Typography>
+            </Container>
+
+            {current?.has_choices &&
+                <Box sx={{ width: '100%', mb: 5 }}>
+                    <Typography variant="subtitle" align="left" color="text.secondary" component="p">
+                        Choices
+                    </Typography>
+
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        {current?.choices.map(choice => (
+                            <Grid key={choice.choice_id} item xs={6}>
+                                <Item>{choice.choice_value}</Item>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+            }
+
+            {!current?.has_choices &&
+                <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                id="answer"
+                                label="Answer"
+                                name="answer"
+                                autoComplete="answer"
+                            />
+                        </Grid>
+                    </Grid>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Submit Answer
+                    </Button>
+                </Box>
+            }
+
+            {gameLayout.length > idx + 1 && gameEngine.progression === 'manual' &&
+                <Box component="form" noValidate onSubmit={onHandleNext} sx={{ mt: 3 }}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Next
+                    </Button>
+                </Box>
+            }
+        </React.Fragment>
+    )
+}

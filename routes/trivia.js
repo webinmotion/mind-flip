@@ -10,6 +10,7 @@ const {
     fetchQuestionChoices,
     fetchGameEngine,
     fetchGameParticipants,
+    fetchParticipantById,
     fetchPlayerByEmail,
     createGameHandle,
     updateGameStatus, 
@@ -17,14 +18,15 @@ const {
     updateGameEngine,
     addGameParticipant,
     dropGameParticipant,
-    updatePointsTally,
-    fetchCummulativeTally,
+    respondToQuestion,
+    fetchCumulativeTally,
     updateHighestScore,
 } = require('../handlers/trivia');
+const { validateAccessToken } = require('../middleware/authorize');
 
 router.get('/listing', fetchGamesListing);
 
-router.get('/title/:title/organizer/:organizer', fetchGameInfo);
+router.get('/title/:title/organizer/:organizer', validateAccessToken, fetchGameInfo);
 
 router.get('/info/:game', fetchGameInfoById);
 
@@ -40,23 +42,25 @@ router.get('/engine/:game', fetchGameEngine);
 
 router.get('/player/:email', fetchPlayerByEmail);
 
-router.post('/game', createGameHandle);
+router.post('/game', validateAccessToken, createGameHandle);
 
-router.put('/game/:game_id', updateGameStatus);
+router.put('/game/:game_id', validateAccessToken, updateGameStatus);
 
-router.post('/engine/:game', createGameEngine);
+router.post('/engine/:game', validateAccessToken, createGameEngine);
 
-router.put('/engine/:game', updateGameEngine);
+router.put('/engine/:game', validateAccessToken, updateGameEngine);
 
 router.get('/participant/:game', fetchGameParticipants);
+
+router.get('/participant/:participant/details', fetchParticipantById);
 
 router.put('/participant/:game/player/:player', addGameParticipant);
 
 router.delete('/participant/:participant', dropGameParticipant);
 
-router.put('/participant/:participant/question/:question', updatePointsTally);
+router.put('/participant/:participant/question/:question', respondToQuestion);
 
-router.get('/participant/:participant/score', fetchCummulativeTally);
+router.get('/participant/:participant/score', fetchCumulativeTally);
 
 router.put('/participant/:participant/highscore/:score', updateHighestScore);
 

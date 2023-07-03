@@ -2,8 +2,9 @@ import { createContext, useContext, useReducer } from "react";
 import {
     fetchGamesListingAction, fetchGameInfoAction, fetchProgressionAction, fetchGameLayoutAction,
     fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction,
-    updateGameEngineAction, addGameParticipantAction, updatePointsTallyAction, fetchCummulativeTallyAction,
-    updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, fetchGameParticipantsAction,
+    updateGameEngineAction, addGameParticipantAction, respondToQuestionAction, fetchCumulativeTallyAction,
+    updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, onGameStartingEventAction,
+    fetchGameParticipantsAction, onNextQuestionEventAction
 } from './triviaActions';
 import { triviaReducer } from './triviaReducer';
 import {
@@ -15,6 +16,7 @@ import { showAlertAction, clearAlertAction } from "./alertActions";
 import { alertReducer, initialAlert } from './alertReducer';
 import GameClient, { initialGameState } from './GameClient';
 import useAppOptions from "./useAppOptions";
+import useInitialState from "../hooks/useInitialState";
 
 const AppContext = createContext();
 
@@ -24,12 +26,15 @@ export const useAppContext = () => {
 
 export const AppProvider = ({ children }) => {
 
-    const { globals, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm,
+    const { globals, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm, selectedGame,
         setAuth, setRoute, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
-        setRecoveryForm } = useAppOptions();
-    const [trivia, triviaDispatch] = useReducer(triviaReducer, initialGameState);
-    const [account, accountDispatch] = useReducer(accountReducer, initialAccount);
-    const [alert, alertDispatch] = useReducer(alertReducer, initialAlert);
+        setRecoveryForm, setSelectedGame } = useAppOptions();
+    const initialValues = useInitialState({trivia: initialGameState, account: initialAccount, alert: initialAlert});
+
+    //initialize application state
+    const [trivia, triviaDispatch] = useReducer(triviaReducer, initialValues.trivia);
+    const [account, accountDispatch] = useReducer(accountReducer, initialValues.account);
+    const [alert, alertDispatch] = useReducer(alertReducer, initialValues.alert);
 
     return (
         <AppContext.Provider value={{
@@ -47,6 +52,7 @@ export const AppProvider = ({ children }) => {
             signInForm,
             verificationForm,
             recoveryForm,
+            selectedGame,
 
             //trivia actions
             fetchGamesListing: fetchGamesListingAction(triviaDispatch),
@@ -60,13 +66,15 @@ export const AppProvider = ({ children }) => {
             createGameEngine: createGameEngineAction(triviaDispatch),
             updateGameEngine: updateGameEngineAction(triviaDispatch),
             addGameParticipant: addGameParticipantAction(triviaDispatch),
-            updatePointsTally: updatePointsTallyAction(triviaDispatch),
-            fetchCummulativeTally: fetchCummulativeTallyAction(triviaDispatch),
+            respondToQuestion: respondToQuestionAction(triviaDispatch),
+            fetchCumulativeTally: fetchCumulativeTallyAction(triviaDispatch),
             updateHighestScore: updateHighestScoreAction(triviaDispatch),
 
             //trivia events actions
             onGameListingEvents: onGameListingEventsAction(triviaDispatch),
             onParticipantEvents: onParticipantEventsAction(triviaDispatch),
+            onGameStartingEvent: onGameStartingEventAction(triviaDispatch),
+            onNextQuestionEvent: onNextQuestionEventAction(triviaDispatch),
 
             //account actions
             registerPlayer: registerPlayerAction(accountDispatch),
@@ -93,6 +101,8 @@ export const AppProvider = ({ children }) => {
             setSignInForm,
             setVerificationForm,
             setRecoveryForm,
+            setSelectedGame,
+            cleanupOnSignOut: initialValues.cleanup,
         }}>
             {children}
         </AppContext.Provider>

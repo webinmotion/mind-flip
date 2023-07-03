@@ -12,10 +12,10 @@ import Registration from './Registration';
 
 const steps = ['Games Listing', 'Game Details', 'Registration'];
 
-function getStepContent({ globals, games, gameStatus, step, selectedGame, setSelectedGame, setAuth, showAlert,
+function getStepContent({ globals, games, gameStatus, step, userInfo, selectedGame, setSelectedGame, setAuth, showAlert,
   playerTypeForm, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
   verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword,
-  verifyEmailAddress }) {
+  verifyEmailAddress, addGameParticipant, }) {
   switch (step) {
     case 0:
       return <GamesListing
@@ -28,14 +28,15 @@ function getStepContent({ globals, games, gameStatus, step, selectedGame, setSel
       return <GameDetails
         {...selectedGameInfo}
         playerType={playerTypeForm.value}
-        setPlayerType={value => setPlayerTypeForm(type => ({...type, value}))} />;
+        setPlayerType={value => setPlayerTypeForm(type => ({ ...type, value }))} />;
     case 2:
       return <Registration
         globals={globals}
+        userInfo={userInfo}
         setAuth={setAuth}
         showAlert={showAlert}
         playerType={playerTypeForm.value}
-        setPlayerType={value => setPlayerTypeForm(type => ({...type, value}))}
+        setPlayerType={value => setPlayerTypeForm(type => ({ ...type, value }))}
         guestEmailForm={guestEmailForm}
         setGuestEmailForm={setGuestEmailForm}
         signInForm={signInForm}
@@ -50,22 +51,25 @@ function getStepContent({ globals, games, gameStatus, step, selectedGame, setSel
         registerGuest={registerGuest}
         accountSignIn={accountSignIn}
         recoverPassword={recoverPassword}
-        verifyEmailAddress={verifyEmailAddress} />;
+        verifyEmailAddress={verifyEmailAddress}
+        selectedGame={selectedGame}
+        addGameParticipant={addGameParticipant} />;
     default:
       throw new Error('Unknown step');
   }
 }
 
-export default function Trivia({ globals, trivia, history, playerTypeForm, setAuth, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
-  verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress, showAlert }) {
+export default function Trivia({ globals, trivia, account, history, playerTypeForm, setAuth, selectedGame, setSelectedGame, setPlayerTypeForm,
+  guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm, verificationForm, setVerificationForm,
+  recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress, showAlert,
+  addGameParticipant }) {
 
   const { listing: games, gameStatus } = trivia;
   const [activeStep, setActiveStep] = useState(0);
-  const [selectedGame, setSelectedGame] = useState('');
 
   const handleNext = () => {
     if (steps.length > activeStep + 1) {
-      if (activeStep == 0 && !selectedGame) {
+      if (activeStep === 0 && !selectedGame) {
         showAlert({ message: 'You should select a game before proceeding', severity: 'error', autoClose: true });
         return;
       }
@@ -73,11 +77,12 @@ export default function Trivia({ globals, trivia, history, playerTypeForm, setAu
     }
     else {
       const { game_info } = games.find(game => game.game_info.game_id === selectedGame);
+      const { participant } = trivia;
       if (game_info.game_status === 'Playing') {
-        history.push(`/playing/${game_info.game_id}`)
+        history.push(`/playing/${game_info.game_id}/player/${participant.player_id}`)
       }
       else if (game_info.game_status === 'Accepting') {
-        history.push(`/accepting/${game_info.game_id}`)
+        history.push(`/accepting/${game_info.game_id}/player/${participant.player_id}`)
       }
       else {
         console.log('Game is not accepting or currently playing');
@@ -104,8 +109,8 @@ export default function Trivia({ globals, trivia, history, playerTypeForm, setAu
       {
         <React.Fragment>
           {getStepContent({
-            globals, games, gameStatus, step: activeStep, selectedGame, setSelectedGame, setAuth, playerTypeForm, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
-            verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress, showAlert,
+            globals, games, gameStatus, step: activeStep, userInfo: account, selectedGame, setSelectedGame, setAuth, playerTypeForm, setPlayerTypeForm, guestEmailForm, setGuestEmailForm, signInForm, setSignInForm, signUpForm, setSignUpForm,
+            verificationForm, setVerificationForm, recoveryForm, setRecoveryForm, registerPlayer, registerGuest, accountSignIn, recoverPassword, verifyEmailAddress, showAlert, addGameParticipant,
           })}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             {activeStep !== 0 && (

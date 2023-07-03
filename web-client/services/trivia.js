@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { serverUrl } from './common';
+import axios, { serverUrl } from './request';
 
 export const remoteFetchGamesListing = async () => {
     const result = await axios.get(`${serverUrl()}/trivia/listing`)
@@ -33,6 +32,12 @@ export const remoteFetchGameQuestion = async (question) => {
 
 export const remoteFetchGameEngine = async (game) => {
     const result = await axios.get(`${serverUrl()}/trivia/engine/${game}`)
+        .then(resp => resp.data);
+    return result;
+}
+
+export const remoteFetchGameParticipant = async (participant) => {
+    const result = await axios.get(`${serverUrl()}/trivia/participant/${participant}/details`)
         .then(resp => resp.data);
     return result;
 }
@@ -85,7 +90,7 @@ export const remoteDropGameParticipant = async (participant) => {
     return result;
 }
 
-export const remoteUpdatePointsTally = async (participant, question, { answer_submitted, clock_remaining, tally_points }) => {
+export const remoteRespondToQuestion = async (participant, question, { answer_submitted, clock_remaining, tally_points }) => {
     const result = await axios.put(`${serverUrl()}/trivia/participant/${participant}/question/${question}`,
         { answer_submitted, clock_remaining, tally_points },
         {
@@ -97,7 +102,7 @@ export const remoteUpdatePointsTally = async (participant, question, { answer_su
     return result;
 }
 
-export const remoteFetchCummulativeTally = async (participant) => {
+export const remoteFetchCumulativeTally = async (participant) => {
     const result = await axios.get(`${serverUrl()}/trivia/participant/${participant}/score`)
         .then(resp => resp.data);
     return result;

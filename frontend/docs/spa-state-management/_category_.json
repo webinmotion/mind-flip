@@ -1,0 +1,8 @@
+{
+  "label": "SPA - State Management",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Investigating how to manage the state of single-page apps using different state solutions"
+  }
+}

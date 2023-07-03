@@ -82,8 +82,8 @@ const registerNewAccount = async ({ username, userpass, email_address }) => {
             throw Error(`'${email_address}' is not yet registered. Register a player first`);
         }
 
-        let existing_player = await execute(`select player_id, verified_email, player_type from tbl_player P where P.email_address = $1`, 
-        [email_address]);
+        let existing_player = await execute(`select player_id, verified_email, player_type from tbl_player P where P.email_address = $1`,
+            [email_address]);
 
         let { player_id, verified_email, player_type } = existing_player[0];
 
@@ -146,7 +146,9 @@ const verifyLoginAttempt = async ({ username, password }) => {
         throw Error("Login attempt was not successful");
     }
 
-    return success;
+    const { account_id, is_active, player_fk, account_role } = result[0]
+
+    return { account_id, username, is_active, player_fk, account_role };
 }
 
 const resetLoginPassword = async ({ username, password }) => {
@@ -160,8 +162,13 @@ const resetLoginPassword = async ({ username, password }) => {
     }
 
     let update = await execute('update tbl_account set userpass = $1, is_active = true where username = $2 returning account_id',
-    [password, username]);
+        [password, username]);
     return { username, ...update[0] }
+}
+
+const fetchPlayerById = async (player_id) => {
+    const result = await execute('select p.* from tbl_player p where p.player_id = $1', [player_id]);
+    return (result.length > 0 && result[0]) || null;
 }
 
 module.exports = {
@@ -172,4 +179,5 @@ module.exports = {
     registerNewAccount,
     verifyLoginAttempt,
     resetLoginPassword,
+    fetchPlayerById,
 }

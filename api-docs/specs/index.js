@@ -13,7 +13,7 @@ module.exports = function (app) {
         contact: {
           name: "Maina, Stephen", // your name
           email: "m41na@yahoo.com", // your email
-          url: "practicaldime.org", // your website
+          url: "akilisha.org", // your website
         },
       },
       servers: [

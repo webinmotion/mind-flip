@@ -24,10 +24,6 @@ function selectIcon(status) {
 
 export default function GamesListing({games, gameStatus, selectedGame, setSelectedGame}) {
 
-    const handleListItemClick = (event, index) => {
-        setSelectedGame(index);
-    };
-
     return (
         <React.Fragment>
             <Typography variant="h6" gutterBottom>
@@ -45,7 +41,7 @@ export default function GamesListing({games, gameStatus, selectedGame, setSelect
                                 }>
                                     <ListItemButton
                                         selected={selectedGame === game_info.game_id}
-                                        onClick={(event) => handleListItemClick(event, game_info.game_id)}
+                                        onClick={(e) => setSelectedGame(game_info.game_id)}
                                     >
                                         <ListItemIcon>
                                             {selectIcon(game_info.game_status)}

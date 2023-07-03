@@ -1,7 +1,6 @@
 const { registerNewAccount, verifyLoginAttempt, resetLoginPassword, dropGuestPlayer, registerNewPlayer,
-    verifyRegistrationEmail, resetVerificationCode } = require('../service/account');
-const jwt = require('jsonwebtoken');
-const jwtSecret = process.env.JWT_SECRET;
+    verifyRegistrationEmail, resetVerificationCode, fetchPlayerById, } = require('../service/account');
+const { signAccessToken, signRefreshToken, cookieOptions, } = require('../middleware/jwt-tokens');
 
 const handleRegisterNewPlayer = async function (req, res, next) {
     try {
@@ -18,26 +17,8 @@ const handleRegisterNewAccount = async function (req, res, next) {
     try {
         const { username, email_address } = req.body;
         const { userpass } = req.locals;
-
         const details = await registerNewAccount({ username, userpass, email_address });
-        const maxAge = 3 * 60 * 60;
-        const token = jwt.sign(
-            { player_id: details.player_id, username, role: details.account_role },
-            jwtSecret,
-            {
-                expiresIn: maxAge, // 3hrs in sec
-            }
-        );
-
-        res.cookie("jwt", token, {
-            httpOnly: true,
-            maxAge: maxAge * 1000, // 3hrs in ms
-        });
-
-        res.json({
-            message: "User successfully created",
-            token,
-        });
+        res.json(details);
     }
     catch (e) {
         next(e);
@@ -47,24 +28,22 @@ const handleRegisterNewAccount = async function (req, res, next) {
 const handleVerifyLoginAttempt = async function (req, res, next) {
     try {
         const { username, password } = req.body;
-        const user = await verifyLoginAttempt({ username, password });
-        const maxAge = 3 * 60 * 60;
-        const token = jwt.sign(
-            { player_id: user.player_id, username, role: user.account_role },
-            jwtSecret,
-            {
-                expiresIn: maxAge, // 3hrs in sec
-            }
-        );
+        const { account_id, is_active, player_fk, account_role } = await verifyLoginAttempt({ username, password });
+        const userInfo = { username, is_active, player_id: player_fk, role: account_role };
 
-        res.cookie("jwt", token, {
-            httpOnly: true,
-            maxAge: maxAge * 1000, // 3hrs in ms
-        });
+        const accessToken = signAccessToken(userInfo, account_id);
+        const refreshToken = signRefreshToken(userInfo, account_id);
+
+        //TODO: consider saving refresh token in a database or cache for invalidation purposes
+        console.log(refreshToken);
+
+        //respond with the tokens
+        res.cookie("jwt", { refreshToken }, cookieOptions());
 
         res.json({
             message: "User successfully logged in",
-            user,
+            userInfo,
+            accessToken,
         });
     }
     catch (e) {
@@ -106,6 +85,17 @@ const handleResetLoginPassword = async function (req, res, next) {
     }
 }
 
+const handleFetchPlayerById = async function (req, res, next) {
+    try {
+        const { player_id } = req.params;
+        const result = await fetchPlayerById(player_id);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 const handleDropGuestPlayer = async function (req, res, next) {
     try {
         const screen_name = req.params.screen_name;
@@ -119,9 +109,20 @@ const handleDropGuestPlayer = async function (req, res, next) {
 
 const handleAccountLogout = async function (req, res, next) {
     try {
-        const username = req.params.username;
-        const result = { username } //TODO: figure out what needs to be cleaned up and what the response needs to be
-        res.json(result);
+        const cookies = req.cookies;
+        if (!cookies?.jwt) return res.sendStatus(204); //No Content
+
+        //TODO: clear refresh token from database or cache, if one was saved
+        const refreshToken = cookies.jwt;
+        console.log(refreshToken);
+
+        //clear cookies
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            sameSite: 'None',
+            secure: true
+        });
+        res.sendStatus(204);
     }
     catch (e) {
         next(e);
@@ -144,6 +145,7 @@ module.exports = {
     registerNewAccount: handleRegisterNewAccount,
     verifyLoginAttempt: handleVerifyLoginAttempt,
     resetLoginPassword: handleResetLoginPassword,
+    fetchPlayerById: handleFetchPlayerById,
     dropGuestPlayer: handleDropGuestPlayer,
     verifyRegistrationEmail: handleVerifyRegistrationEmail,
     resetVerificationCode: handleResetVerificationCode,

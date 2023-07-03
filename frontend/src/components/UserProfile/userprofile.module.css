@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.container{
+    margin: 0;
+    min-height: 100vh;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    box-sizing: border-box;
+    font-family: Montserrat, sans-serif;
+}
+
+.cardContainer {
+    background-color: #ebedf0;
+    border-radius: 5px;
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.75);
+    color: #333;
+    padding-top: 30px;
+    position: relative;
+    width: 350px;
+    max-width: 100%;
+    text-align: center;
+}
+
+.cardContainerPro {
+    color: #231E39;
+    background-color: #FEBB0B;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 3px 7px;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+.cardContainerAvatar {
+    border: 1px solid #03BFCB;
+    border-radius: 50%;
+    padding: 7px;
+    max-width: 150px;
+}
+
+.cardContainerButtons {
+    padding: 5px;
+}
+
+.primaryButton {
+    background-color: #03BFCB;
+    border: 1px solid #03BFCB;
+    border-radius: 3px;
+    color: #231E39;
+    font-family: Montserrat, sans-serif;
+    font-weight: 500;
+    padding: 10px 25px;
+}
+
+.primaryButton:hover {
+    background: azure;
+}
+
+.primaryButtonGhost {
+    background-color: transparent;
+    color: #02899C;
+    margin-left: 5px;
+}
+
+h3 {
+    margin: 10px 0;
+}
+
+h6 {
+    margin: 5px 0;
+    text-transform: uppercase;
+}
+
+p {
+    font-size: 14px;
+    line-height: 21px;
+}
+
+

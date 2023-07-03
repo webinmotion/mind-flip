@@ -33,7 +33,7 @@ export default function SignInPlayer({ setAuth, showAlert, signInForm, setSignIn
       accountSignIn({
         username,
         password
-      }, function(error){
+      }, function(error, data){
         if(!error){
           setSignInForm(form => ({
             ...form,
@@ -44,7 +44,7 @@ export default function SignInPlayer({ setAuth, showAlert, signInForm, setSignIn
             email_address: { ...form.email_address, value: '' },
             registering: false,
           }));
-          setAuth(true);
+          setAuth(data);
 
           showAlert({
             message: "Congratulations. You have been signed in successfully",

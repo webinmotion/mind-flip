@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import { useAppContext } from '../../context/appContext';
 import App from '../../components/App';
-import { serverUrl } from '../../services/common';
+import { serverUrl } from '../../services/request';
 
 function AppContainer() {
 

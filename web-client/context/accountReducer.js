@@ -12,27 +12,25 @@ import {
     from './accountActions';
 
 export const initialAccount = {
-    signed_in: false,
     screen_name: '',
     email_address: '',
     username: '',
-    resetting: false,
-    recovering: false,
-    verifying: false,
-    registered: false,
-    completed: false,
+    player_type: null,
+    player_id: false,
 }
 
 export const accountReducer = (account, action) => {
     console.log('state type', typeof account, 'state value', account);
     switch (action.type) {
         case REGISTER_PLAYER: {
+            //player details - {screen_name, email_address, verification_code, player_type, city, state, country}
             const { screen_name, email_address, player_type, player_id } = action.player;
             return { ...account, screen_name, email_address, player_type, player_id, registered: true };
         }
         case REGISTER_GUEST: {
+            //player details - {screen_name, email_address, verification_code, player_type, city, state, country}
             const { screen_name, email_address, player_type, player_id } = action.guest;
-            return { ...account, screen_name, email_address, player_type, player_id, registered: true };
+            return { ...account, screen_name, email_address, player_type, player_id, registered: false };
         }
         case DROP_GUEST_PLAYER: {
             const { player_id } = action.guest;
@@ -53,11 +51,11 @@ export const accountReducer = (account, action) => {
             return { ...account, message, token };
         }
         case ACCOUNT_SIGN_IN: {
-            const { message, user } = action.account;
-            return { ...account, message, signed_in: user };
+            const { message, userInfo } = action.account;
+            return { ...account, message, userInfo };
         }
         case ACCOUNT_SIGN_OUT: {
-            return { ...account, message: '', signed_in: false };
+            return { ...account, message: '', userInfo: null };
         }
         case RESET_VERIFICATION: {
             const { email_address } = action.verification;

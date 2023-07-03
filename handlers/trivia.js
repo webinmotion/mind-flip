@@ -8,6 +8,7 @@ const {
     fetchQuestionChoices,
     fetchGameEngine,
     fetchGameParticipants,
+    fetchParticipantById,
     fetchPlayerByEmail,
     createGameHandle,
     updateGameStatus,
@@ -15,8 +16,8 @@ const {
     updateGameEngine,
     addGameParticipant,
     dropGameParticipant,
-    updatePointsTally,
-    fetchCummulativeTally,
+    respondToQuestion,
+    fetchCumulativeTally,
     updateHighestScore,
 } = require('../service/trivia');
 
@@ -194,6 +195,17 @@ const handleFetchGameParticipants = async function(req, res, next){
     }
 }
 
+const handleFetchParticipantById = async function(req, res, next){
+    try {
+        const participant_id = req.params.participant;
+        const result = await fetchParticipantById(participant_id);
+        res.json(result[0]); //expecting single result
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 const handleAddGameParticipant = async function (req, res, next) {
     try {
         const game_id = req.params.game;
@@ -201,8 +213,8 @@ const handleAddGameParticipant = async function (req, res, next) {
         const result = await addGameParticipant(game_id, player_id);
         res.json(result);
         //update clients
-        console.log(result)
-        studio.sendAddParticipantEvent(game_id, result);
+        console.log('adding participant', result)
+        studio.sendAddParticipantEvent(game_id, { participant_id: result.participant_id });
     }
     catch (e) {
         next(e);
@@ -212,23 +224,23 @@ const handleAddGameParticipant = async function (req, res, next) {
 const handleDropGameParticipant = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
-        const result = await dropGameParticipant(participant_id);
-        res.json(result);
+        const { game_fk, player_fk } = await dropGameParticipant(participant_id);
+        res.status(201).json({game_fk, player_fk});
         //update clients
-        console.log(result)
-        studio.sendDropParticipantEvent(game_id, result);
+        console.log('dropping participant', `game-${game_fk}`, `player-${player_fk}`)
+        studio.sendDropParticipantEvent(game_fk, { participant_id });
     }
     catch (e) {
         next(e);
     }
 }
 
-const handleUpdatePointsTally = async function (req, res, next) {
+const handleRespondToQuestion = async function (req, res, next) {
     try {
         const participant_fk = req.params.participant;
         const question_fk = req.params.question;
         const { answer_submitted, clock_remaining, tally_points } = req.body;
-        const result = await updatePointsTally(participant_fk, question_fk, { answer_submitted, clock_remaining, tally_points });
+        const result = await respondToQuestion(participant_fk, question_fk, { answer_submitted, clock_remaining, tally_points });
         res.json(result);
     }
     catch (e) {
@@ -236,10 +248,10 @@ const handleUpdatePointsTally = async function (req, res, next) {
     }
 }
 
-const handleFetchCummulativeTally = async function (req, res, next) {
+const handleFetchCumulativeTally = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
-        const result = await fetchCummulativeTally(participant_id);
+        const result = await fetchCumulativeTally(participant_id);
         res.json(result);
     }
     catch (e) {
@@ -270,6 +282,7 @@ module.exports = {
     fetchGameEngine: handleFetchGameEngine,
     fetchPlayerById: handleFetchPlayerById,
     fetchPlayerByEmail: handleFetchPlayerByEmail,
+    fetchParticipantById: handleFetchParticipantById,
     createGameHandle: handleCreateGameHandle,
     updateGameStatus: handleUpdateGameStatus,
     createGameEngine: handleCreateGameEngine,
@@ -277,7 +290,7 @@ module.exports = {
     addGameParticipant: handleAddGameParticipant,
     dropGameParticipant: handleDropGameParticipant,
     updateGameEngine: handleUpdateGameEngine,
-    updatePointsTally: handleUpdatePointsTally,
-    fetchCummulativeTally: handleFetchCummulativeTally,
+    respondToQuestion: handleRespondToQuestion,
+    fetchCumulativeTally: handleFetchCumulativeTally,
     updateHighestScore: handleUpdateHighestScore,
 }

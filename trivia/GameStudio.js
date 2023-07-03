@@ -1,4 +1,10 @@
-const { ON_GAME_AWAITING_EVENT, ON_GAME_CREATED_EVENT, ON_GAME_PLAYING_EVENT, ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED } = require('./Constants');
+const {
+    ON_GAME_AWAITING_EVENT,
+    ON_GAME_CREATED_EVENT,
+    ON_GAME_PLAYING_EVENT,
+    ON_PARTICIPANT_JOINED,
+    ON_PARTICIPANT_EXITED
+} = require('./Constants');
 
 class GameStudio {
 
@@ -25,9 +31,9 @@ class GameStudio {
 
     complete(driver, message = "game completed successfully") {
         let game_id = driver.gameInfo.game_id;
-        console.log(`deregistering game ${game_id}`);
+        console.log(`unregistering game ${game_id}`);
         delete this.running[game_id];
-        console.log(`unsubscribeing participants for ${game_id}`);
+        console.log(`unsubscribing participants for ${game_id}`);
         this.unsubscribe([game_id]);
         console.log(`removing ticker for game ${game_id}`);
         delete this.ticker[game_id];
@@ -50,43 +56,46 @@ class GameStudio {
         }
     }
 
-    subscribe(socket, eventNames, participant) {
+    subscribe(response, eventNames, channel, recipient) {
         eventNames.forEach(eventName => {
-            if (participant) {
+            if (channel && recipient) {
                 if (!this.participants[eventName]) {
                     this.participants[eventName] = {};
                 }
-                if (!this.participants[eventName][participant]) {
-                    this.participants[eventName][participant] = socket;
+                if(!this.participants[eventName][channel]){
+                    this.participants[eventName][channel] = [];
                 }
+                response.recipient = recipient;
+                this.participants[eventName][channel].push(response);
             }
-            else {
+            if(eventName && !(channel && recipient)) {
                 if (!this.broadcast[eventName]) {
                     this.broadcast[eventName] = [];
                 }
-                this.broadcast[eventName].push(socket)
+                this.broadcast[eventName].push(response)
             }
         });
     }
 
-    unsubscribe(eventNames, participant) {
+    unsubscribe(eventNames, channel, recipient) {
         eventNames.forEach(eventName => {
-            if (this.participants[eventName] && this.participants[eventName][participant]) {
-                let socket = this.participants[eventName][participant]
-                delete this.participants[eventName][participant];
-                socket.end();
+            if (this.participants[eventName] && this.participants[eventName][channel]) {
+                let targets = this.participants[eventName][channel]
+                const idx = targets.findIndex(client => client.recipient === recipient);
+                const target = targets.splice(idx, 1);
+                target.end();
             }
         });
     }
 
-    unsubscribeAll(eventNames, resp) {
+    unBroadcast(eventNames, resp) {
         eventNames.forEach(eventName => {
             if (this.broadcast[eventName]) {
-                let sockets = this.broadcast[eventName]
-                let idx = sockets.findIndex(s => s === resp);
+                let responses = this.broadcast[eventName]
+                let idx = responses.findIndex(s => s === resp);
                 if (idx > -1) {
-                    let socket = sockets.splice(idx, 1)[0];
-                    socket.end();
+                    let resp = responses.splice(idx, 1)[0];
+                    resp.end();
                 }
             }
         });
@@ -97,17 +106,19 @@ class GameStudio {
     }
 
     broadcastMessage(event, payload) {
-        this.broadcast[event].forEach(client => client.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`))
+        this.broadcast[event]?.forEach(client => client.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`))
     }
 
     publishMessage(event, channel, payload) {
-        this.participants[channel].forEach(client => client.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`))
+        if(this.participants[event]) {
+            this.participants[event][channel]?.forEach(client => client.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`))
+        }
     }
 
     onChange(game_id, question, { progression, duration, index }) {
-        //send data to all partipants
-        this.participants[game_id] && this.participants[game_id].forEach(socket => {
-            socket.response.write(this.formatOutput({
+        //send data to all participants
+        this.participants[ON_QUESTION_CHANGED][game_id] && this.participants[ON_QUESTION_CHANGED][game_id].forEach(response => {
+            response.write(this.formatOutput({
                 index, question, ticker: this.ticker
             }));
         });
@@ -136,6 +147,7 @@ class GameStudio {
             }
             case "Playing": {
                 this.broadcastMessage(ON_GAME_PLAYING_EVENT, { game_id, game_status });
+                break;
             }
             default: {
                 console.log(game_status, 'this is currently not handled');
@@ -143,12 +155,12 @@ class GameStudio {
         }
     }
 
-    sendAddParticipantEvent(game_id, result) {
-        this.publishMessage(ON_PARTICIPANT_JOINED, game_id, result);
+    sendAddParticipantEvent(game_id, participant) {
+        this.publishMessage(ON_PARTICIPANT_JOINED, game_id, participant);
     }
 
-    sendDropParticipantEvent(game_id, result) {
-        this.publishMessage(ON_PARTICIPANT_EXITED, game_id, result);
+    sendDropParticipantEvent(game_id, participant) {
+        this.publishMessage(ON_PARTICIPANT_EXITED, game_id, participant);
     }
 
     onComplete() {

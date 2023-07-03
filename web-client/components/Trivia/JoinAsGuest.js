@@ -26,21 +26,24 @@ export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailFo
 
         //if all is good, register the guest
         if (email_address) {
-            registerGuest(email_address, function (error) {
+            registerGuest(email_address, function (error, data) {
 
                 if (!error) {
                     showAlert({
                         message: "Congratulations. You have been registered successfully",
                         autoClose: true,
                         severity: 'success',
-                    })
+                    });
+
+                    //save guest gredentials
+                    
                 }
                 else {
                     showAlert({
                         message: error,
                         autoClose: true,
                         severity: 'error',
-                    })
+                    });
                 }
             });
         }

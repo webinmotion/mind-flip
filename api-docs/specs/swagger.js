@@ -11,7 +11,7 @@ const options = {
       contact: {
         name: "Maina, Stephen", // your name
         email: "m41na@yahoo.com", // your email
-        url: "practicaldime.org", // your website
+        url: "akilisha.org", // your website
       },
     },
     servers: [
@@ -21,7 +21,7 @@ const options = {
       },
     ],
     tags: [{
-      "name": "Home",
+      "name": "Index",
       "description": "The landing page and health check endpoints"
     },
     {
@@ -386,7 +386,7 @@ const options = {
       "/": {
         get: {
           description: "The landing page",
-          tags: ["Home"],
+          tags: ["Index"],
           responses: {
             200: {
               description: "Details of the newly created player",
@@ -404,7 +404,7 @@ const options = {
       "/health": {
         get: {
           description: "The health check endpoint",
-          tags: ["Home"],
+          tags: ["Index"],
           responses: {
             200: {
               description: "Tells whether the server is up and running",

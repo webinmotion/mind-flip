@@ -1,5 +1,5 @@
 const { fetchGameInfo, fetchGameLayout, fetchGameQuestion, fetchProgression, createGameEngine, updateGameEngine,
-    updatePointsTally, updateHighestScore, addGameParticipant, fetchPlayerById } = require('../service/trivia');
+    respondToQuestion, updateHighestScore, addGameParticipant, fetchPlayerById } = require('../service/trivia');
 
 module.exports = class GameDriver {
 
@@ -97,7 +97,7 @@ module.exports = class GameDriver {
 
     async onSubmission(participant_id, answer_submitted, clock_remaining) {
         let tally_points = this.scorer.calcScore(this.currentQuestion.que_answer, answer_submitted, clock_remaining);
-        await updatePointsTally(participant_id, {
+        await respondToQuestion(participant_id, {
             question_fk: this.currentQuestion.que_id, answer_submitted, clock_remaining, tally_points
         });
         //update local score tally
