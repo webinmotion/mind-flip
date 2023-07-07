@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { enrollDriver, enrollPlayer, sendTestMessage, 
-    handleGamesListing, handleParticipantEvents, } = require('../handlers/playtime');
+    handleGamesListing, handleParticipantEvents, handlePushGameQuestion, } = require('../handlers/playtime');
 const { validateOrganizerAuth } = require('../middleware/authorize');
 
 /* GET listen for game listing events */
@@ -18,5 +18,8 @@ router.post('/title/:title/organizer/:organizer', validateOrganizerAuth, enrollD
 
 /* GET listen for participant joining and exiting events */
 router.get('/game/:game/player/:player', handleParticipantEvents);
+
+/** GET push game question for broadcasting to game participants */
+router.get('/push/:game/question/:question', handlePushGameQuestion)
 
 module.exports = router;

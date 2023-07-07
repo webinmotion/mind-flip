@@ -12,7 +12,11 @@ module.exports = class GameSample {
         this.title = "friendly numbers";
         this.organizer = "jimmy@email.com";
         this.ticker = {};
-        this.driver.initialize(this.title, this.organizer);
+    }
+
+    start(){
+        this.driver.initialize(this.title, this.organizer)
+            .then(() => console.log("Game driver has been successfully initialized"));
     }
 
     timeTicker(game_id, ticker) {

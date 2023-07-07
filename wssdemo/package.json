@@ -1,0 +1,26 @@
+{
+  "name": "wssdemo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/ws-server.js",
+  "scripts": {
+    "ws:server": "nodemon src/ws-server",
+    "ws:client": "nodemon src/ws-client"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "morgan": "^1.10.0",
+    "ws": "^8.13.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.7",
+    "utf-8-validate": "^6.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}

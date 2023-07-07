@@ -76,10 +76,15 @@ async function sendTestMessage(req, resp, next) {
     })
 }
 
+async function handlePushGameQuestion(req, resp, next){
+    const { game: game_id, question: question_id } = req.params;
+}
+
 module.exports = {
     enrollDriver,
     enrollPlayer,
     sendTestMessage,
     handleGamesListing,
     handleParticipantEvents,
+    handlePushGameQuestion,
 };

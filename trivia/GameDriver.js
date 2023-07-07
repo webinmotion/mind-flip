@@ -3,7 +3,7 @@ const { fetchGameInfo, fetchGameLayout, fetchGameQuestion, fetchProgression, cre
 
 module.exports = class GameDriver {
 
-    constructor(studio, subscriber, scorer, start_time = new Date(), progression = 'auto', time_ticker = '2 seconds delay', ticker_delay = 5000, display_duration = 5000) {
+    constructor(studio, subscriber, scorer, start_time = new Date(), progression = 'manual', time_ticker = '2 seconds delay', ticker_delay = 5000, display_duration = 5000) {
         this.gameInfo = null;
         this.gameLayout = null;
         this.gameEngine = null;

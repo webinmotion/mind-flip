@@ -106,7 +106,7 @@ create table if not exists tbl_Account (
     userpass varchar(256) not null,
     is_active boolean default true,
     account_role AccountRole default 'Basic',
-    player_fk UUID references tbl_Player(player_id) not null,
+    player_fk UUID not null references tbl_Player(player_id) on delete cascade,
     constraint pk_account primary key(account_id)
 );
 
@@ -169,7 +169,7 @@ create table if not exists tbl_Game_Engine (
 	scheduled_start timestamp not null,
 	current_section int default 1,
 	section_index int default 1,
-	progression GameProgression default 'auto',
+	progression GameProgression default 'manual',
 	initial_delay int default 5000,
 	display_duration int default 10000,
 	time_ticker varchar(64) references tbl_Ticker(ticker_id) default '2 seconds cushion',
@@ -363,10 +363,10 @@ where A.is_active = true
 
 --select ta.* from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'
 
-select tg.*, tp.* from tbl_game tg 
-inner join tbl_account ta on tg.organizer = ta.account_id 
-inner join tbl_player tp on ta.player_fk = tp.player_id 
-where tg.game_id = '7d9c5730-0d8e-11ee-b8cb-0242ac110002'::uuid;
+--select tg.*, tp.* from tbl_game tg 
+--inner join tbl_account ta on tg.organizer = ta.account_id 
+--inner join tbl_player tp on ta.player_fk = tp.player_id 
+--where tg.game_id = '7d9c5730-0d8e-11ee-b8cb-022ac110002'::uuid;
 
 
 select tg.*, tp.* from tbl_game tg 
@@ -375,3 +375,7 @@ select tg.*, tp.* from tbl_game tg
     where tg.title = 'friendly numbers' and tp.email_address = 'jimmy@email.com';
     
 select * from tbl_game_player gp inner join tbl_player p on p.player_id = gp.player_fk;
+
+--delete from tbl_game_player where player_fk = (select player_id from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com'));
+--delete from tbl_account where username in ('zumba');
+--delete from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com');

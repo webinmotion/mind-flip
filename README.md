@@ -88,3 +88,26 @@ Some properties also apply to only a specific deployment environment and not nec
 - FLYCAST_IPv6=
 - PG_PROXY_PORT=
 - PG_CONNECTION_STRING=
+
+### Material to review for refactoring
+
+- Bun js
+- uWebsockets
+- React Query
+- Discord Nodejs Bot
+- Tailwindcss
+- Complete guide to Flexbox
+- Complete guide to css Grid
+- Railway app
+- Cyclic app
+- Jotai
+- Zustand
+- Qwik/Astro/SolidJS
+- Axios interceptors - refreshing API token
+- Detect user leaving page to save state to locastorage
+- jsonwebtoken docs
+- Nodemailer
+- Mailersend
+- React Native
+- React Navigation
+- React Native Paper
