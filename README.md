@@ -88,6 +88,8 @@ Some properties also apply to only a specific deployment environment and not nec
 - FLYCAST_IPv6=
 - PG_PROXY_PORT=
 - PG_CONNECTION_STRING=
+- ACCESS_TOKEN_SECRET=
+- REFRESH_TOKEN_SECRET=
 
 ### Material to review for refactoring
 
