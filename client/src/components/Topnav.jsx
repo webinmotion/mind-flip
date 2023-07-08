@@ -5,7 +5,7 @@ export default function Topnav() {
   const [navbar, setNavbar] = useState(false);
 
   return (
-    <nav className="bg-purple-500 w-full shadow sticky top-0 bg-background-color z-50">
+    <nav className="bg-purple-500 w-full shadow sticky top-0 bg-primary-lightest z-50 dark:text-darkest">
       <div className="mx-auto justify-between px-4 md:flex md:items-center md:px-8 lg:max-w-7xl">
         <div>
           <div className="flex items-center justify-between py-3 md:block md:py-5">

@@ -7,9 +7,9 @@ export default function GameCard() {
   return (
     <Fragment>
       <div className="mx-2">
-        <div className="bg-white border-pink-200 max-w-sm overflow-hidden rounded border shadow-lg">
+        <div className="bg-white border-pink-200 dark:border-primary-lightest max-w-sm overflow-hidden rounded border shadow-lg">
           <div className="">
-            <div className="mb-2 flex justify-between bg-primary-lightest px-3  py-2 text-xl font-bold">
+            <div className="mb-2 flex justify-between bg-primary dark:bg-primary-lightest dark:text-darkest px-3  py-2 text-xl font-bold text-light-text">
               <h1>Game Title</h1>
               <small>Completed</small>
             </div>
@@ -31,7 +31,7 @@ export default function GameCard() {
                 </span>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="hover:bg-blue-700 text-white rounded  bg-primary-lightest px-5 py-1 font-bold"
+                  className="hover:bg-blue-700 text-white rounded  bg-primary-lightest dark:bg-primary-lightest dark:text-darkest px-5 py-1 font-bold"
                 >
                   Join
                 </button>
@@ -41,7 +41,7 @@ export default function GameCard() {
         </div>
       </div>
       <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
-        <div className="bg-background-color p-6 ">
+        <div className="bg-background-color p-6 dark:bg-primary-lightest dark:text-darkest">
           <h3 className="text-center text-xl font-bold">
             Choose how you want to join the game
           </h3>
