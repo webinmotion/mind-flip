@@ -93,3 +93,95 @@ Each matcher is associated with exactly one choice only.
 
 ![Choice Matcher](./choice_matcher.png)
 
+
+### Navigation Paths when playing as a group
+
+- Created Game
+	- Cannot join game
+
+- Accepting Game
+	- join as Guest
+	- join as Registered
+
+- Playing Game
+	- join as Guest
+	- join as Registered
+	
+
+### Parent project directory layout
+
+It contains different projects and other non-project directories under one roof
+
+```title="mind-flip directory"
+.
+|-- Dockerfile
+|-- README.md
+|-- __tests__
+|-- api-docs    				--- swagger documentation
+|-- app.js *					--- server app file
+|-- babel.config.js *
+|-- bin							--- entry point for mind-flip application				
+|-- dev-notes 					--- collection of thoughts and discussions
+|-- environment.js *			--- injects secrets in dev environment				
+|-- expdemo						--- project used in a blog article
+|-- fly.toml					--- config file for deploying to the internet
+|-- frontend					--- blog project
+|-- handlers *					--- interface to business services
+|-- jest-setup.js *
+|-- jest.config.js *
+|-- middleware *				--- express functions shared amongst handlers
+|-- node_modules *
+|-- package-lock.json *
+|-- package.json *
+|-- repo *
+|-- requests.rest *				--- alternative for Postman - allows testing right inside vscode
+|-- routes *					--- entry point for all server routes
+|-- schema						--- backup for sql DDL/DML and Postman collections
+|-- service *					--- interfaces to external systems like databases
+|-- trivia	*					--- business logic for driving games and pushing events to the UI
+|-- web-client					--- mind-flip UI project
+`-- wssdemo						--- incubator project for web sockets - to replace SSE in mind-flip UI project
+```
+
+### Layout of server project
+
+The items with a __*__ suffix above are all related to the server
+
+```
+www
+ - app
+   - routes + global error-handler
+     - handlers + middleware
+	   - service (both internal and external interfaces)
+```	   
+
+### Layout of the web-client project
+
+This is everything inside the __web-client__ directory
+
+```title="web-client directory"
+.
+|-- __mocks__					--- still fluid
+|-- __tests__					--- still fluid
+|-- babel.config.js				--- config for jest testing
+|-- components
+|-- containers
+|-- context
+|-- dist						--- output folder for webpack bundler
+|-- hooks						--- custom application hooks
+|-- index.js					--- entry point for client app
+|-- jest-setup.js
+|-- jest.config.js
+|-- node_modules
+|-- package-lock.json
+|-- package.json
+|-- public						--- assets folder
+|-- services					--- all client requests to the server				
+|-- webpack.dev.js
+`-- webpack.prod.js
+
+index.js
+ - AppProvider
+   - App.js 
+   - container & components
+```

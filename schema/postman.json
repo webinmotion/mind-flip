@@ -143,7 +143,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/account/verify?verification_code=df7b2020-e306-4ccc-9e67-5b3697b2ef7d&email_address=mainas@gmail.com",
+							"raw": "http://localhost:5000/account/verify?verification_code=27a86401-f1a1-4845-a5a2-5c20e7e89369&email_address=omolloc@gmail.com",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -156,11 +156,11 @@
 							"query": [
 								{
 									"key": "verification_code",
-									"value": "df7b2020-e306-4ccc-9e67-5b3697b2ef7d"
+									"value": "27a86401-f1a1-4845-a5a2-5c20e7e89369"
 								},
 								{
 									"key": "email_address",
-									"value": "mainas@gmail.com"
+									"value": "omolloc@gmail.com"
 								}
 							]
 						}
@@ -172,15 +172,6 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"emp_id\": \"3\", \r\n    \"first_name\": \"mary\", \r\n    \"last_name\": \"jane\", \r\n    \"email_address\": \"mary.jana@email.com\", \r\n    \"company_name\": \"blues\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "http://localhost:5000/account/verify?email_address=mainas@gmail.com",
 							"protocol": "http",
@@ -239,7 +230,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"omolloc\",\r\n    \"password\": \"hiyokitu\"\r\n}",
+							"raw": "{\r\n    \"username\": \"omolloc\",\r\n    \"password\": \"wachana\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -316,6 +307,27 @@
 					"response": []
 				},
 				{
+					"name": "Fetch game layout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/trivia/layout/acb19356-1035-11ee-b339-0242ac110002",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"trivia",
+								"layout",
+								"acb19356-1035-11ee-b339-0242ac110002"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Fetch game info",
 					"request": {
 						"method": "GET",
@@ -333,6 +345,194 @@
 								"friendly numbers",
 								"organizer",
 								"jimmy@email.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch game info by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/trivia/info/acb19356-1035-11ee-b339-0242ac110002",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"trivia",
+								"info",
+								"acb19356-1035-11ee-b339-0242ac110002"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create game handle",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"organizer\": \"jimmy@email.com\",\r\n    \"title\": \"one upon a time\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/trivia/game",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"trivia",
+								"game"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add game participant",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/trivia/participant/5dc7deb6-1b5d-11ee-b971-0242ac110002/player/5dc015a0-1b5d-11ee-b971-0242ac110002",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"trivia",
+								"participant",
+								"5dc7deb6-1b5d-11ee-b971-0242ac110002",
+								"player",
+								"5dc015a0-1b5d-11ee-b971-0242ac110002"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "drop game participant",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/trivia/participant/5dc9e90e-1b5d-11ee-b971-0242ac110002",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"trivia",
+								"participant",
+								"5dc9e90e-1b5d-11ee-b971-0242ac110002"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update game status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/trivia/game/5dc7deb6-1b5d-11ee-b971-0242ac110002",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"trivia",
+								"game",
+								"5dc7deb6-1b5d-11ee-b971-0242ac110002"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Question",
+			"item": [
+				{
+					"name": "Fetch question by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/trivia/question/acaf2648-1035-11ee-b339-0242ac110002",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"trivia",
+								"question",
+								"acaf2648-1035-11ee-b339-0242ac110002"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch question choices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/trivia/question/acaf2648-1035-11ee-b339-0242ac110002/choices",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"trivia",
+								"question",
+								"acaf2648-1035-11ee-b339-0242ac110002",
+								"choices"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "refresh access token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/auth/refresh-token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"refresh-token"
 							]
 						}
 					},

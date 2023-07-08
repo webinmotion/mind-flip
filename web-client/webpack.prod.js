@@ -3,7 +3,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
-const Dotenv = require('dotenv-webpack');
 
 module.exports = (env) => {
     console.log("env -> ", env)
@@ -51,20 +50,17 @@ module.exports = (env) => {
             }),
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
-                title: "Minute Man",
+                title: "Mind Flip",
                 filename: 'index.html',
                 template: 'public/template.html',
                 chunks: ['index'],
-                description: "Meeting minutes manager"
+                description: "Meeting of the minds"
             }),
             new CopyPlugin({
                 patterns: [
                   { from: path.resolve(__dirname, "public", "favicon.ico"), to: path.resolve(__dirname, "dist") },
                   { from: path.resolve(__dirname, "public", "manifest.json"), to: path.resolve(__dirname, "dist") },
                 ]
-            }),
-            new Dotenv({
-                path: path.resolve(process.cwd(), ".env")
             }),
         ]
     }

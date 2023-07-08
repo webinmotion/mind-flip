@@ -145,7 +145,7 @@ const handleCreateGameHandle = async function (req, res, next) {
 }
 
 const handleUpdateGameStatus = async function (req, res, next) {
-    //curl -X PUT ${host}/trivia/game/:game_id -H "Authorization: Bearer ${token}" -H "Content-Type: application/json" -d '{"game_status": ${status}}'
+    //curl -X PUT ${host}/trivia/game/${game_id} -H "Authorization: Bearer ${token}" -H "Content-Type: application/json" -d "{\"game_status\": \"${status}\"}"
     try {
         const { game_id } = req.params;
         const { game_status } = req.body;

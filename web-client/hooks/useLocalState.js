@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 
-function useInitialState({trivia, account, alert}) {
+function useLocalState({trivia, account, alert}) {
 
     //initialize session storage with initial values (if no values currently exist)
     const storage = window.sessionStorage;
@@ -37,4 +37,4 @@ function useInitialState({trivia, account, alert}) {
     })
 }
 
-export default useInitialState;
+export default useLocalState;

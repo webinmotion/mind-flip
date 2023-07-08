@@ -1,7 +1,30 @@
 import axios from 'axios';
 
 const serverPort = process.env.REACT_APP_SERVER_PORT;
-const tokenKey = 'accessToken';
+const TOKEN_KEY = 'accessToken';
+class SessionToken {
+
+    constructor(token) {
+        if (token && typeof token === 'string') {
+            this.token(token);
+        }
+    }
+
+    token(token) {
+        if (!token) {
+            return sessionStorage.getItem(TOKEN_KEY);
+        }
+        else {
+            sessionStorage.setItem(TOKEN_KEY, token);
+        }
+    }
+
+    clear() {
+        sessionStorage.removeItem(TOKEN_KEY);
+    }
+}
+
+export const localToken = new SessionToken();
 export const serverUrl = () => window.location.origin.replace(/(:\d+)/, `:${serverPort}`)
 
 const refreshTokenEndpoint = `${serverUrl()}/auth/refresh-token`;
@@ -18,7 +41,7 @@ async function refreshAccessToken() {
 
 axios.interceptors.request.use(
     (config) => {
-        const accessToken = localStorage.getItem(tokenKey);
+        const accessToken = localToken.token();
         if (accessToken) {
             config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
@@ -45,10 +68,10 @@ axios.interceptors.response.use(
             originalRequest._retry = true;
             return refreshAccessToken()
                 .then((accessToken) => {
-                        localStorage.setItem(tokenKey, accessToken);
-                        const token = localStorage.getItem(tokenKey);
-                        originalRequest['Authorization'] = `Bearer ${token}`;
-                        return axios(originalRequest);
+                    localToken.token(accessToken);
+                    const token = localToken.token();
+                    originalRequest['Authorization'] = `Bearer ${token}`;
+                    return axios(originalRequest);
                 });
         }
         return Promise.reject(error);

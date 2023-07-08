@@ -16,7 +16,7 @@ import { showAlertAction, clearAlertAction } from "./alertActions";
 import { alertReducer, initialAlert } from './alertReducer';
 import GameClient, { initialGameState } from './GameClient';
 import useAppOptions from "./useAppOptions";
-import useInitialState from "../hooks/useInitialState";
+import useLocalState from "../hooks/useLocalState";
 
 const AppContext = createContext();
 
@@ -29,7 +29,7 @@ export const AppProvider = ({ children }) => {
     const { globals, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm, selectedGame,
         setAuth, setRoute, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
         setRecoveryForm, setSelectedGame } = useAppOptions();
-    const initialValues = useInitialState({trivia: initialGameState, account: initialAccount, alert: initialAlert});
+    const initialValues = useLocalState({trivia: initialGameState, account: initialAccount, alert: initialAlert});
 
     //initialize application state
     const [trivia, triviaDispatch] = useReducer(triviaReducer, initialValues.trivia);

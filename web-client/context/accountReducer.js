@@ -1,3 +1,4 @@
+import { localToken } from '../services/request';
 import {
     REGISTER_PLAYER,
     REGISTER_GUEST,
@@ -51,10 +52,12 @@ export const accountReducer = (account, action) => {
             return { ...account, message, token };
         }
         case ACCOUNT_SIGN_IN: {
-            const { message, userInfo } = action.account;
+            const { message, userInfo, accessToken } = action.account;
+            localToken.token(accessToken); //cache the access token for axios interceptor to use
             return { ...account, message, userInfo };
         }
         case ACCOUNT_SIGN_OUT: {
+            localToken.clear(); //clear the access token from local cache
             return { ...account, message: '', userInfo: null };
         }
         case RESET_VERIFICATION: {
