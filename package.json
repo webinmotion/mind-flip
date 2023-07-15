@@ -55,6 +55,7 @@
     "jest-css-modules-transform": "^4.4.2",
     "jest-environment-jsdom": "^29.5.0",
     "jest-environment-node": "^29.5.0",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
   }
 }

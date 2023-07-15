@@ -5,53 +5,47 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
-import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 
-export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSignUpForm, setSignInForm, setVerificationForm, recoverPassword }) {
+export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailForm, registerGuest }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const formData = {
-            email_address: data.get('email_address'),
+            email_address: data.get('email'),
         };
 
-        const { email_address } = formData;
+        const { email_address, } = formData;
 
-        setRecoveryForm(form => ({
+        setGuestEmailForm(form => ({
             ...form,
-            recovering: false,
+            verified: false,
             email_address: { ...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : '' },
         }));
 
-        setVerificationForm(form => ({
-            ...form,
-            verifying: true,
-        }))
-
-        //if all is good, register the details
+        //if all is good, register the guest
         if (email_address) {
-            recoverPassword(email_address);
-        }
-    };
+            registerGuest(email_address, function (error, data) {
+                if (!error) {
+                    showAlert({
+                        message: "Congratulations. You have been registered successfully",
+                        autoClose: true,
+                        severity: 'success',
+                    });
 
-    const showSignUp = (e) => {
-        e.preventDefault();
-        setRecoveryForm(form => ({
-            ...form,
-            recovering: false,
-            email_address: '',
-        }));
-        setSignInForm(form => ({
-            ...form,
-            account_exists: false,
-        }));
-        setSignUpForm(form => ({
-            ...form,
-            registering: true,
-            email_address: { ...form.email_address, value: '' },
-        }));
+                    //print out response data
+                    console.log('guest registration data', data);
+                }
+                else {
+                    showAlert({
+                        message: error,
+                        autoClose: true,
+                        severity: 'error',
+                    });
+                }
+            });
+        }
     };
 
     return (
@@ -67,7 +61,7 @@ export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSign
                 <LockIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-                Recover Password
+                Guest Player
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
@@ -75,12 +69,12 @@ export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSign
                         <TextField
                             required
                             fullWidth
-                            id="email_address"
+                            id="email"
                             label="Email Address"
-                            name="email_address"
+                            name="email"
                             autoComplete="email"
-                            error={recoveryForm.email_address.error}
-                            helperText={recoveryForm.email_address.message}
+                            error={guestEmailForm?.email_address.error}
+                            helperText={guestEmailForm?.email_address.message}
                         />
                     </Grid>
                 </Grid>
@@ -90,16 +84,8 @@ export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSign
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                 >
-                    Start Recovery
+                    Request to Join
                 </Button>
-
-                <Grid container>
-                    <Grid item>
-                        <Link href="#" variant="body2" onClick={showSignUp}>
-                            {"Don't have an account? Sign Up"}
-                        </Link>
-                    </Grid>
-                </Grid>
             </Box>
         </Box>
     );

@@ -5,48 +5,54 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import { ViewNames } from '../../../hooks/usePageForms';
 
-export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailForm, registerGuest }) {
+export default function RecoverPassword({ showAlert, recoveryForm, setRecoveryForm, setSignUpForm, recoverPassword, toggleCurrentView }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const formData = {
-            email_address: data.get('email'),
+            email_address: data.get('email_address'),
         };
 
-        const { email_address, } = formData;
+        const { email_address } = formData;
 
-        setGuestEmailForm(form => ({
+        setRecoveryForm(form => ({
             ...form,
-            verified: false,
             email_address: { ...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : '' },
         }));
 
-        //if all is good, register the guest
+        //if all is good, register the details
         if (email_address) {
-            registerGuest(email_address, function (error, data) {
-
-                if (!error) {
+            //send recovery code to the email
+            recoverPassword(email_address, function(error, data) {
+                if(!error){
                     showAlert({
-                        message: "Congratulations. You have been registered successfully",
+                        message: "Successfully submitted confirmation code",
                         autoClose: true,
                         severity: 'success',
                     });
 
-                    //save guest gredentials
-                    
-                }
-                else {
-                    showAlert({
-                        message: error,
-                        autoClose: true,
-                        severity: 'error',
-                    });
+                    toggleCurrentView(ViewNames.CONFIRMING_VIEW);
                 }
             });
         }
+    };
+
+    const showSignUp = (e) => {
+        e.preventDefault();
+        setRecoveryForm(form => ({
+            ...form,
+            email_address: '',
+        }));
+        setSignUpForm(form => ({
+            ...form,
+            email_address: { ...form.email_address, value: '' },
+        }));
+        toggleCurrentView(ViewNames.SIGNUP_VIEW);
     };
 
     return (
@@ -62,7 +68,7 @@ export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailFo
                 <LockIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-                Guest Player
+                Recover Password
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
@@ -70,12 +76,12 @@ export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailFo
                         <TextField
                             required
                             fullWidth
-                            id="email"
+                            id="email_address"
                             label="Email Address"
-                            name="email"
+                            name="email_address"
                             autoComplete="email"
-                            error={guestEmailForm?.email_address.error}
-                            helperText={guestEmailForm?.email_address.message}
+                            error={recoveryForm.email_address.error}
+                            helperText={recoveryForm.email_address.message}
                         />
                     </Grid>
                 </Grid>
@@ -85,8 +91,16 @@ export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailFo
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                 >
-                    Request to Join
+                    Start Recovery
                 </Button>
+
+                <Grid container>
+                    <Grid item>
+                        <Link href="#" variant="body2" onClick={showSignUp}>
+                            {"Don't have an account? Sign Up"}
+                        </Link>
+                    </Grid>
+                </Grid>
             </Box>
         </Box>
     );

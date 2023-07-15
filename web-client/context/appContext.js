@@ -6,17 +6,18 @@ import {
     updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, onGameStartingEventAction,
     fetchGameParticipantsAction, onNextQuestionEventAction
 } from './triviaActions';
-import { triviaReducer } from './triviaReducer';
+import { triviaReducer, initialTrivia } from './triviaReducer';
 import {
     accountSignUpAction, accountSignInAction, accountSignOutAction, resetPasswordAction, resetVerifictionAction,
     registerPlayerAction, registerGuestAction, verifyEmailAddressAction, dropGuestPlayerAction, recoverPasswordAction,
-} from './accountActions';
-import { accountReducer, initialAccount } from './accountReducer';
+    verifyRecoveryCodeAction,
+} from './prospectActions';
+import { prospectReducer, initialRegistration, initialAuthentication } from './prospectReducer';
 import { showAlertAction, clearAlertAction } from "./alertActions";
 import { alertReducer, initialAlert } from './alertReducer';
-import GameClient, { initialGameState } from './GameClient';
-import useAppOptions from "./useAppOptions";
-import useLocalState from "../hooks/useLocalState";
+import { usePageForms } from "../hooks/usePageForms";
+import { useLocalState } from "../hooks/useLocalState";
+import GameClient from './GameClient';
 
 const AppContext = createContext();
 
@@ -26,26 +27,44 @@ export const useAppContext = () => {
 
 export const AppProvider = ({ children }) => {
 
-    const { globals, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm, selectedGame,
-        setAuth, setRoute, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
-        setRecoveryForm, setSelectedGame } = useAppOptions();
-    const initialValues = useLocalState({trivia: initialGameState, account: initialAccount, alert: initialAlert});
+    // initialize applications forms (for holding and validating input data)
+    const { currentRoute, currentView, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm, selectedGame,
+        setCurrentRoute, toggleCurrentView, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
+        setRecoveryForm, setSelectedGame,  } = usePageForms();
+
+    //fetch cached state (if it exists)
+    const { player: cachedPlayer, registration: cachedRegistration, participant: cachedParticipant,
+        authentication: cachedAuthentication, cleanup } = useLocalState({});
 
     //initialize application state
-    const [trivia, triviaDispatch] = useReducer(triviaReducer, initialValues.trivia);
-    const [account, accountDispatch] = useReducer(accountReducer, initialValues.account);
-    const [alert, alertDispatch] = useReducer(alertReducer, initialValues.alert);
+    const [trivia, triviaDispatch] = useReducer(triviaReducer, {
+        ...initialTrivia,
+        player: cachedPlayer,
+        participant: cachedParticipant,
+    });
+    const [prospect, prospectDispatch] = useReducer(prospectReducer, {
+        registration: {
+            ...initialRegistration,
+            ...cachedRegistration
+        },
+        authentication: {
+            ...initialAuthentication,
+            ...cachedAuthentication
+        }
+    });
+    const [alert, alertDispatch] = useReducer(alertReducer, initialAlert);
 
     return (
         <AppContext.Provider value={{
             //domain entities
             trivia,
-            account,
+            prospect,
             alert,
             gameClient: new GameClient(trivia),
 
             //app forms and variables
-            globals,
+            currentView,
+            currentRoute,
             playerTypeForm,
             guestEmailForm,
             signUpForm,
@@ -77,24 +96,25 @@ export const AppProvider = ({ children }) => {
             onNextQuestionEvent: onNextQuestionEventAction(triviaDispatch),
 
             //account actions
-            registerPlayer: registerPlayerAction(accountDispatch),
-            registerGuest: registerGuestAction(accountDispatch),
-            verifyEmailAddress: verifyEmailAddressAction(accountDispatch),
-            dropGuestPlayer: dropGuestPlayerAction(accountDispatch),
-            accountSignUp: accountSignUpAction(accountDispatch),
-            accountSignIn: accountSignInAction(accountDispatch),
-            accountSignOut: accountSignOutAction(accountDispatch),
-            resetPassword: resetPasswordAction(accountDispatch),
-            resetVerification: resetVerifictionAction(accountDispatch),
-            recoverPassword: recoverPasswordAction(accountDispatch),
+            registerPlayer: registerPlayerAction(prospectDispatch),
+            registerGuest: registerGuestAction(prospectDispatch),
+            verifyEmailAddress: verifyEmailAddressAction(prospectDispatch),
+            dropGuestPlayer: dropGuestPlayerAction(prospectDispatch),
+            accountSignUp: accountSignUpAction(prospectDispatch),
+            accountSignIn: accountSignInAction(prospectDispatch),
+            accountSignOut: accountSignOutAction(prospectDispatch),
+            resetPassword: resetPasswordAction(prospectDispatch),
+            resetVerification: resetVerifictionAction(prospectDispatch),
+            recoverPassword: recoverPasswordAction(prospectDispatch),
+            verifyRecoveryCode: verifyRecoveryCodeAction(prospectDispatch),
 
             //alert actions
             showAlert: showAlertAction(alertDispatch),
             clearAlert: clearAlertAction(alertDispatch),
 
-            //app options functions
-            setAuth,
-            setRoute,
+            //app form functions
+            setCurrentRoute,
+            toggleCurrentView,
             setPlayerTypeForm,
             setGuestEmailForm,
             setSignUpForm,
@@ -102,7 +122,10 @@ export const AppProvider = ({ children }) => {
             setVerificationForm,
             setRecoveryForm,
             setSelectedGame,
-            cleanupOnSignOut: initialValues.cleanup,
+            cleanupOnSignOut: cleanup,
+
+            //auth functions
+            isAuthenticated: () => prospect?.authentication?.accessToken,
         }}>
             {children}
         </AppContext.Provider>

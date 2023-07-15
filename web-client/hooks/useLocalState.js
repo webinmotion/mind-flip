@@ -1,40 +1,130 @@
-import {useRef} from 'react';
+import { useRef } from 'react';
 
-function useLocalState({trivia, account, alert}) {
+const REGISTRATION_KEY = 'registration';
+const AUTHENTICATION_KEY = 'authentication';
+const PARTICIPANT_KEY = 'participant';
+const PLAYER_KEY = 'player';
+
+class LocalState {
+
+    constructor(storage) {
+        this._storage = storage;
+    }
+
+    save(key, data) {
+        if (typeof data === 'object') {
+            this._storage.setItem(key, JSON.stringify(data));
+        }
+    }
+
+    find(key) {
+        let data = this._storage.getItem(key);
+        if (data && typeof data === 'string') {
+            return JSON.parse(data);
+        }
+        return ({});
+    }
+
+    clear() {
+        for (let key of [REGISTRATION_KEY, AUTHENTICATION_KEY, PARTICIPANT_KEY, PLAYER_KEY]) {
+            this._storage.removeItem(key);
+        }
+    }
+
+    set authentication(json) {
+        if (json) {
+            this.save(AUTHENTICATION_KEY, json);
+        }
+    }
+
+    get authentication() {
+        return this.find(AUTHENTICATION_KEY);
+    }
+
+    set registration(json) {
+        if (json) {
+            this.save(REGISTRATION_KEY, json);
+        }
+    }
+
+    get registration() {
+        return this.find(REGISTRATION_KEY);
+    }
+
+    set participant(json) {
+        if (json) {
+            this.save(PARTICIPANT_KEY, json);
+        }
+    }
+
+    get participant() {
+        return this.find(PARTICIPANT_KEY);
+    }
+
+    set player(json) {
+        if (json) {
+            this.save(PLAYER_KEY, json);
+        }
+    }
+
+    get player() {
+        return this.find(PLAYER_KEY);
+    }
+
+    onSignIn({ authUser, accessToken }) {
+        this.authentication = ({authUser, accessToken});
+    }
+
+    onSignOut() {
+        this.clear();
+    }
+
+    onJoinGame(participant) {
+        this.participant = participant
+    }
+
+    onPlayerInfo(player) {
+        this.player = player;
+    }
+}
+
+export const localState = new LocalState(window.sessionStorage);
+
+export function useLocalState({ registration, authentication, participant, player }) {
 
     //initialize session storage with initial values (if no values currently exist)
-    const storage = window.sessionStorage;
-    if (!storage.getItem('trivia')) {
-        storage.setItem('trivia', JSON.stringify(trivia));
+    if (!localState.player && player) {
+        localState.player = player;
     }
-    if (!storage.getItem('account')) {
-        storage.setItem('account', JSON.stringify(account));
+    if (!localState.participant && participant) {
+        localState.participant = participant;
     }
-    if (!storage.getItem('alert')) {
-        storage.setItem('alert', JSON.stringify(alert));
+    if (!localState.registration && registration) {
+        localState.registration = registration;
+    }
+    if (!localState.authentication && authentication) {
+        localState.authentication = authentication;
     }
 
     //attach listener to update session storage values (clean up when signing out)
     const doc = useRef(document);
     doc.current.onvisibilitychange = function () {
         if (doc.current.visibilityState === 'hidden') {
-            storage.setItem('trivia', JSON.stringify(trivia));
-            storage.setItem('account', JSON.stringify(account));
-            storage.setItem('alert', JSON.stringify(alert));
+            localState.player = player;
+            localState.participant = participant;
+            localState.registration = registration;
+            localState.authentication = authentication;
         }
     };
 
     //return references to cached values
     return ({
-        trivia: JSON.parse(storage.getItem('trivia')),
-        account: JSON.parse(storage.getItem('account')),
-        alert: JSON.parse(storage.getItem('alert')),
+        player: localState.player,
+        participant: localState.participant,
+        registration: localState.registration,
+        authentication: localState.authentication,
         cleanup: () => {
-            storage.removeItem('trivia');
-            storage.removeItem('account');
-            storage.removeItem('alert');
+            localState.clear();
         }
     })
 }
-
-export default useLocalState;

@@ -1,12 +1,12 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors');
-var routes = require('./routes');
-var errors = require('./middleware/error-handler');
-var contentDir = process.env.CONTENT_DIR;
-var app = express();
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
+const routes = require('./routes');
+const errors = require('./middleware/error-handler');
+const contentDir = process.env.CONTENT_DIR;
+const app = express();
 
 app.use(errors);
 app.use(logger('dev'));

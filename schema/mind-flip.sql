@@ -106,6 +106,7 @@ create table if not exists tbl_Account (
     userpass varchar(256) not null,
     is_active boolean default true,
     account_role AccountRole default 'Basic',
+    recovery_code varchar(40) default null,
     player_fk UUID not null references tbl_Player(player_id) on delete cascade,
     constraint pk_account primary key(account_id)
 );
@@ -269,8 +270,10 @@ insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
 ((select que_id from question), false, 4, 'quad is an offroad vehicle');
 
 --create a game
-insert into tbl_game (organizer, title) values 
-((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'friendly numbers');
+insert into tbl_game (organizer, title, game_status) values 
+((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'friendly numbers', 'Playing');
+insert into tbl_game (organizer, title, game_status) values
+((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'around and about', 'Created');
 
 --create a game layout
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
@@ -376,6 +379,7 @@ select tg.*, tp.* from tbl_game tg
     
 select * from tbl_game_player gp inner join tbl_player p on p.player_id = gp.player_fk;
 
---delete from tbl_game_player where player_fk = (select player_id from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com'));
---delete from tbl_account where username in ('zumba');
---delete from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com');
+delete from tbl_game_player where player_fk = (select player_id from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com'));
+delete from tbl_account where username in ('zumba', 'one');
+delete from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com');
+

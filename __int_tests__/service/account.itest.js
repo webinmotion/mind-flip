@@ -5,8 +5,8 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 require('dotenv').config({ path: path.join(process.cwd(), '.env.test.local') });
-const { execute } = require('../../../repo');
-const { registerNewPlayer, verifyRegistrationEmail, resetVerificationCode, dropGuestPlayer, registerNewAccount } = require('../../../service/account');
+const { execute } = require('../../repo');
+const { registerNewPlayer, verifyRegistrationEmail, resetVerificationCode, dropGuestPlayer, registerNewAccount } = require('../../service/account');
 
 describe("Testing database queries against live database", () => {
 

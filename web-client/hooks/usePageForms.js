@@ -1,26 +1,30 @@
 import { useState } from "react";
 
-export const initialAuth = {
-    userInfo: {
-        username: null,
-        is_active: false,
-        player_id: null,
-        role: null
-    },
-    accessToken: null,
-    refreshToken: null
+export const ViewNames = {
+    RECOVERY_VIEW: "recovering",
+    VERIFYING_VIEW: "verifying",
+    CONFIRMING_VIEW: "confirming",
+    SIGNIN_VIEW: "authenticating",
+    SIGNUP_VIEW: "registering"
 };
 
-export const isAuthenticated = (entity) => {
-    return entity?.auth?.accessToken;
-}
+export function usePageForms() {
 
-export default () => {
+    const initialViews = Object.values(ViewNames).reduce((acc, curr) => {
+        acc[curr] = false;
+        return acc;
+    }, {});
 
-    const [globals, setGlobals] = useState({
-        auth: initialAuth,
-        route: '',
-    });
+    const [currentRoute, setCurrentRoute] = useState('');
+
+    const [currentView, setCurrentView] = useState(initialViews);
+
+    const toggleCurrentView = (view = '') => {
+        setCurrentView(Object.keys(currentView).reduce((acc, curr) => {
+            acc[curr] = (view === curr);
+            return acc;
+        }, {}));
+    }
 
     const [playerTypeForm, setPlayerTypeForm] = useState({
         value: 'registered', error: false, message: '',
@@ -36,40 +40,29 @@ export default () => {
         screen_name: { value: '', error: false, message: '' },
         username: { value: '', error: false, message: '' },
         password: { value: '', error: false, message: '' },
-        registering: true,
+        account_exists: false,
     });
 
     const [signInForm, setSignInForm] = useState({
         username: { value: '', error: false, message: '' },
         password: { value: '', error: false, message: '' },
         remember_me: false,
-        account_exists: false,
-        require_auth: false,
     });
 
     const [verificationForm, setVerificationForm] = useState({
-        verifying: false,
         code: { value: false, error: false, message: '' },
     });
 
     const [recoveryForm, setRecoveryForm] = useState({
-        recovering: false,
+        confirmed: false,
         email_address: { value: false, error: false, message: '' },
     });
 
     const [selectedGame, setSelectedGame] = useState(null);
 
-    function setAuth(auth) {
-        setGlobals(options => ({ ...options, auth, route: '' }))
-    }
-
-    function setRoute(route) {
-        setGlobals(options => ({ ...options, route }))
-    }
-
     return ({
-        globals, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm, selectedGame,
-        setAuth, setRoute, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
+        currentRoute, currentView, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm, selectedGame,
+        setCurrentRoute, toggleCurrentView, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
         setRecoveryForm, setSelectedGame,
     });
 }

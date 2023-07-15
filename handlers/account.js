@@ -117,11 +117,7 @@ const handleAccountLogout = async function (req, res, next) {
         console.log(refreshToken);
 
         //clear cookies
-        res.clearCookie('jwt', {
-            httpOnly: true,
-            sameSite: 'None',
-            secure: true
-        });
+        res.clearCookie('jwt');
         res.sendStatus(204);
     }
     catch (e) {

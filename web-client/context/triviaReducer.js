@@ -1,3 +1,4 @@
+import { localState } from '../hooks/useLocalState';
 import {
     FETCH_GAMES_LISTING,
     FETCH_GAME_INFO,
@@ -20,6 +21,24 @@ import {
     ON_PARTICIPANT_EXITED,
 }
     from './triviaActions';
+
+export const initialTrivia = {
+    info: null,
+    player: null,
+    completed: false,
+    title: null,
+    organizer: null,
+    participant: null,
+    layout: null,
+    engine: null,
+    driver: null,
+    ticker: null,
+    question: null,
+    queIndex: 0,
+    listing: [],
+    participants: [],
+    gameStatus: ['Created', 'Accepting', 'Playing']
+}
 
 export const triviaReducer = (game, action) => {
     console.log('state type', typeof game, 'state value', game);
@@ -49,6 +68,7 @@ export const triviaReducer = (game, action) => {
         }
         case FETCH_PLAYER_BY_EMAIL: {
             const { player } = action;
+            localState.onPlayerInfo(player);
             return ({ ...game, player });
         }
         case CREATE_GAME_ENGINE: {
@@ -63,6 +83,7 @@ export const triviaReducer = (game, action) => {
         }
         case ADD_GAME_PARTICIPANT: {
             const { participant } = action;
+            localState.onJoinGame(participant);
             return ({ ...game, participant });
         }
         case DROP_GAME_PARTICIPANT: {
@@ -92,16 +113,16 @@ export const triviaReducer = (game, action) => {
         case ON_PARTICIPANT_JOINED: {
             const { participant } = action;
             console.log('participant joining', participant);
-            if(!game.participants.some(p => p.participant_id === participant.participant_id)){
-                return ({...game, participants: [...game.participants, participant]});
+            if (!game.participants.some(p => p.participant_id === participant.participant_id)) {
+                return ({ ...game, participants: [...game.participants, participant] });
             }
             return game;
         }
         case ON_PARTICIPANT_EXITED: {
             const { participant_id } = action;
             console.log('participant exiting', participant_id);
-            if(game.participants.some(p => p.participant_id === participant_id)){
-                return ({...game, participants: [...game.participants.filter(p => p.participant_id !== participant_id)]});
+            if (game.participants.some(p => p.participant_id === participant_id)) {
+                return ({ ...game, participants: [...game.participants.filter(p => p.participant_id !== participant_id)] });
             }
             return game;
         }

@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import Typography from '@mui/material/Typography';
 
-export default function VerifyRegistered({ recoveryForm, verificationForm, setVerificationForm, verifyEmailAddress }) {
+export default function VerifyRegistered({ recoveryForm, verificationForm, setVerificationForm, verifyEmailAddress, }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();

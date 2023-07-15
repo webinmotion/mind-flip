@@ -14,7 +14,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { Divider } from '@mui/material';
 import { useAppContext } from '../../context/appContext';
-import { initialAuth, isAuthenticated } from '../../context/useAppOptions';
 
 function Copyright() {
     return (
@@ -29,25 +28,30 @@ function Copyright() {
     );
 }
 
-const defaultTheme = createTheme();
+const defaultTheme = createTheme({
+    palette: {
+      mode: 'light',
+    },
+  });
 
 function Layout({ children }) {
 
-    const {globals, setAuth, setRoute} = useAppContext();
+    const {prospect, setCurrentRoute, isAuthenticated, accountSignOut} = useAppContext();
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleSignOut = () => {
-        setAuth(initialAuth);
+        accountSignOut(prospect?.authentication?.userInfo?.username);
+        setCurrentRoute('')
         handleClose();
     };
 
     const handleOrganize = () => {
-        setRoute('organize')
+        setCurrentRoute('organize');
         handleClose();
     }
 
     const handleProfile = () => {
-        setRoute('profile')
+        setCurrentRoute('profile')
         handleClose();
     }
 
@@ -85,14 +89,14 @@ function Layout({ children }) {
                             color="inherit"
                             aria-label="menu"
                             sx={{ mr: 2 }}
-                            onClick={() => setRoute('')}
+                            onClick={() => setCurrentRoute('')}
                         >
                             <ExtensionIcon />
                         </IconButton>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             Mind Flip
                         </Typography>
-                        {isAuthenticated(globals) && (
+                        {isAuthenticated() && (
                             <div>
                                 <IconButton
                                     size="large"
