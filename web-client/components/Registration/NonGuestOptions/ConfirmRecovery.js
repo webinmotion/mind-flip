@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import Typography from '@mui/material/Typography';
 
-export default function ConfirmRecovery({ recoveryForm, verificationForm, setVerificationForm, verifyRecoveryCode }) {
+export default function ConfirmRecovery({ recoveryForm, setRecoveryForm, verificationForm, setVerificationForm, verifyRecoveryCode, }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -25,7 +25,20 @@ export default function ConfirmRecovery({ recoveryForm, verificationForm, setVer
 
         //if all is good, verify submitted code
         if (code && recoveryForm.email_address?.value) {
-            verifyRecoveryCode({ email_address: recoveryForm.email_address?.value, confirmation_code: code });
+            verifyRecoveryCode({ email_address: recoveryForm.email_address?.value, confirmation_code: code }, function(error, data) {
+                if(!error){
+                    setVerificationForm(form => ({
+                        ...form,
+                        code: { ...form.code, value: '', error: false, message: '' },
+                    }));
+
+                    setRecoveryForm(form => ({
+                        ...form,
+                        confirmed: true,
+                        email_address: { ...form.email_address, value: '', error: false, message: '' },
+                    }));
+                }
+            });
         }
     };
 

@@ -18,7 +18,7 @@ export default function NonGuestOptions({ userInfo, selectedGame, showAlert, sig
             return <VerifyRegistered recoveryForm={recoveryForm} verificationForm={verificationForm} setVerificationForm={setVerificationForm} verifyEmailAddress={verifyEmailAddress} />
         }
         if (currentView?.confirming) {
-            return <ConfirmRecovery recoveryForm={recoveryForm} verificationForm={verificationForm} setVerificationForm={setVerificationForm} verifyRecoveryCode={verifyRecoveryCode} />
+            return <ConfirmRecovery recoveryForm={recoveryForm} setRecoveryForm={setRecoveryForm} verificationForm={verificationForm} setVerificationForm={setVerificationForm} verifyRecoveryCode={verifyRecoveryCode} />
         }
         if (currentView?.authenticating) {
             return <SignInPlayer showAlert={showAlert} signInForm={signInForm} setSignInForm={setSignInForm} setSignUpForm={setSignUpForm} accountSignIn={accountSignIn} toggleCurrentView={toggleCurrentView} />

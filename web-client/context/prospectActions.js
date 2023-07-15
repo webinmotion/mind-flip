@@ -120,4 +120,6 @@ export const recoverPasswordAction = (dispatch) => (email_address, callback) => 
 
 export const verifyRecoveryCodeAction = (dispatch) => (({ email_address, confirmation_code }, callback) => {
     //TODO - complete this
+    console.log('recovery code sent - handling response');
+    if (callback) callback(null, true)
 });
