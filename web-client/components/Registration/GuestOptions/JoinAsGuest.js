@@ -27,7 +27,6 @@ export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailFo
         //if all is good, register the guest
         if (email_address) {
             registerGuest(email_address, function (error, data) {
-
                 if (!error) {
                     showAlert({
                         message: "Congratulations. You have been registered successfully",
@@ -35,8 +34,8 @@ export default function JoinAsGuest({ showAlert, guestEmailForm, setGuestEmailFo
                         severity: 'success',
                     });
 
-                    //save guest gredentials
-                    
+                    //print out response data
+                    console.log('guest registration data', data);
                 }
                 else {
                     showAlert({

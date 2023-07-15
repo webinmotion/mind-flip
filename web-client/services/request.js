@@ -1,33 +1,10 @@
 import axios from 'axios';
+import { localState } from '../hooks/useLocalState';
 
-const serverPort = process.env.REACT_APP_SERVER_PORT;
-const TOKEN_KEY = 'accessToken';
-class SessionToken {
-
-    constructor(token) {
-        if (token && typeof token === 'string') {
-            this.token(token);
-        }
-    }
-
-    token(token) {
-        if (!token) {
-            return sessionStorage.getItem(TOKEN_KEY);
-        }
-        else {
-            sessionStorage.setItem(TOKEN_KEY, token);
-        }
-    }
-
-    clear() {
-        sessionStorage.removeItem(TOKEN_KEY);
-    }
-}
-
-export const localToken = new SessionToken();
-export const serverUrl = () => window.location.origin.replace(/(:\d+)/, `:${serverPort}`)
+export const serverUrl = () => window.location.origin.replace(/(:\d+)/, `:${process.env.REACT_APP_SERVER_PORT}`)
 
 const refreshTokenEndpoint = `${serverUrl()}/auth/refresh-token`;
+
 // Function to refresh the access token using the refresh token
 async function refreshAccessToken() {
     try {
@@ -41,7 +18,7 @@ async function refreshAccessToken() {
 
 axios.interceptors.request.use(
     (config) => {
-        const accessToken = localToken.token();
+        const accessToken = localState.authentication?.accessToken;
         if (accessToken) {
             config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
@@ -64,12 +41,12 @@ axios.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response.status === 403 && !originalRequest._retry) {
             originalRequest._retry = true;
             return refreshAccessToken()
                 .then((accessToken) => {
-                    localToken.token(accessToken);
-                    const token = localToken.token();
+                    localState.accessToken = accessToken;
+                    const token = localState.accessToken;
                     originalRequest['Authorization'] = `Bearer ${token}`;
                     return axios(originalRequest);
                 });

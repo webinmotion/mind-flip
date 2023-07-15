@@ -8,7 +8,7 @@ const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 const cookieOptions = () => {
     return ({
         httpOnly: true,
-        sameSite: 'None',
+        sameSite: 'Lax',
         secure: process.env.NODE_ENV === 'production',
         maxAge: (60 * 60) * 1000, // 1hrs in ms
     })

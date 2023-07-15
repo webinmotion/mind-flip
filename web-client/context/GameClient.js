@@ -1,20 +1,3 @@
-export const initialGameState = {
-    info: null,
-    completed: false,
-    title: null,
-    organizer: null,
-    participant: null,
-    layout: null,
-    engine: null,
-    player: null,
-    ticker: null,
-    question: null,
-    queIndex: 0,
-    listing: [],
-    participants: [],
-    gameStatus: ['Created', 'Accepting', 'Playing']
-}
-
 export default class GameClient {
 
     constructor(state) {

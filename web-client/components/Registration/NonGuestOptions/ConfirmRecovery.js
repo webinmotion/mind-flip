@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import Typography from '@mui/material/Typography';
 
-export default function VerifyRegistered({ recoveryForm, verificationForm, setVerificationForm, verifyEmailAddress }) {
+export default function ConfirmRecovery({ recoveryForm, verificationForm, verifyRecoveryCode }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -18,14 +18,14 @@ export default function VerifyRegistered({ recoveryForm, verificationForm, setVe
 
         const { code } = formData;
 
-        setVerificationForm(form => ({
+        setConfirmationForm(form => ({
             ...form,
-            code: { ...form.code, value: code, error: !code, message: !code ? 'verification code is a required field' : '' },
+            code: { ...form.code, value: code, error: !code, message: !code ? 'confirmation code is a required field' : '' },
         }));
 
         //if all is good, register the details
         if (code && recoveryForm.email_address) {
-            verifyEmailAddress({ email_address: recoveryForm.email_address, verification_code: code });
+            verifyRecoveryCode({ email_address: recoveryForm.email_address, confirmation_code: code });
         }
     };
 
@@ -42,7 +42,7 @@ export default function VerifyRegistered({ recoveryForm, verificationForm, setVe
                 <LockPersonIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-                Registered Player
+                Confirm Recovery Code
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
@@ -51,9 +51,9 @@ export default function VerifyRegistered({ recoveryForm, verificationForm, setVe
                             required
                             fullWidth
                             name="code"
-                            label="verification Code"
+                            label="Confirmation Code"
                             id="code"
-                            autoComplete="verification code"
+                            autoComplete="confirmation code"
                             error={verificationForm.error}
                             helperText={verificationForm.message}
                         />
@@ -65,7 +65,7 @@ export default function VerifyRegistered({ recoveryForm, verificationForm, setVe
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                 >
-                    Verify
+                    Confirm
                 </Button>
             </Box>
         </Box>

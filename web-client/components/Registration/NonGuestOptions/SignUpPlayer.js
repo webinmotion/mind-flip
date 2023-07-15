@@ -7,8 +7,9 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
+import { ViewNames } from '../../../hooks/usePageForms';
 
-export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, setSignInForm, registerPlayer }) {
+export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, setSignInForm, registerPlayer, toggleCurrentView }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -39,14 +40,10 @@ export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, set
                 password
             }, function (error) {
                 if (!error) {
-                    setSignUpForm(form => ({
-                        ...form,
-                        registering: false,
-                    }));
                     setSignInForm(form => ({
                         ...form,
+                        account_exists: true,
                         username: { ...form.username, value: signUpForm.username.value },
-                        account_exists: true
                     }));
 
                     showAlert({
@@ -54,6 +51,8 @@ export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, set
                         autoClose: true,
                         severity: 'success',
                     });
+
+                    toggleCurrentView(ViewNames.SIGNIN_VIEW);
                 }
                 else {
                     showAlert({
@@ -68,14 +67,7 @@ export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, set
 
     const showSignIn = (e) => {
         e.preventDefault();
-        setSignInForm(form => ({
-            ...form,
-            account_exists: true
-        }));
-        setSignUpForm(form => ({
-            ...form,
-            registering: false,
-        }));
+        toggleCurrentView(ViewNames.SIGNIN_VIEW)
     };
 
     return (

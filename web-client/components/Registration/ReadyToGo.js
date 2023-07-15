@@ -5,17 +5,17 @@ import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
-export default function ReadyToGo({ selectedGame, userInfo, addGameParticipant }) {
+export default function ReadyToGo({ selectedGame, playerEmail, addGameParticipant }) {
 
     React.useEffect(() => {
         async function joinSelectedGame({ game, email }) {
             await addGameParticipant({ game, email })
         }
 
-        if (selectedGame && userInfo?.email_address) {
-            joinSelectedGame({ game: selectedGame, email: userInfo.email_address })
+        if (selectedGame && playerEmail) {
+            joinSelectedGame({ game: selectedGame, email: playerEmail })
         }
-    }, [selectedGame, userInfo?.email_address]);
+    }, [selectedGame, playerEmail]);
 
     return (
         <Box

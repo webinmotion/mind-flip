@@ -8,7 +8,19 @@ function AppContainer() {
 
     const history = useHistory();
     const context = useAppContext();
-    const { globals, onGameListingEvents, fetchGamesListing } = context;
+    const { toggleCurrentView, currentRoute, onGameListingEvents, fetchGamesListing } = context;
+
+    useEffect(() => {
+        toggleCurrentView(null);
+    }, []);
+
+    useEffect(() => {
+        async function initializeListing() {
+            await fetchGamesListing();
+        }
+
+        initializeListing();
+    }, []);
 
     useEffect(() => {
         const evtSource = new EventSource(`${serverUrl()}/play`)
@@ -20,20 +32,11 @@ function AppContainer() {
     }, []);
 
     useEffect(() => {
-        async function intitializeListing() {
-            await fetchGamesListing();
-        }
-
-        intitializeListing();
-    }, []);
-
-    useEffect(() => {
-        history.push(`/${globals.route}`)
-    }, [globals.route])
-
+        history.push(`/${currentRoute}`)
+    }, [currentRoute]);
 
     return (
-        <App {...context} ></App>
+        <App {...context}  ></App>
     )
 }
 

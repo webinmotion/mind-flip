@@ -10,7 +10,7 @@ import {
     remoteResetVerification,
     remoteFetchPlayerById,
 } from '../services/account';
-import { SHOW_ALERT_MESSAGE, extractErrorText } from './alertActions';
+import { extractErrorText } from './alertActions';
 
 export const REGISTER_PLAYER = "REGISTER_PLAYER";
 export const REGISTER_GUEST = "REGISTER_GUEST";
@@ -23,6 +23,7 @@ export const ACCOUNT_SIGN_OUT = "ACCOUNT_SIGN_OUT";
 export const RESET_PASSWORD = "RESET_PASSWORD";
 export const RESET_VERIFICATION = "RESET_VERIFICATION";
 export const RECOVER_PASSWORD = "RECOVER_PASSWORD";
+export const VERIFY_RECOVER_CODE = "VERIFY_RECOVER_CODE";
 
 export const registerPlayerAction = (dispatch) => ({ screen_name, email_address, username, password }, callback) => {
     remoteRegisterPlayer({ screen_name, email_address }).then(player => {
@@ -34,7 +35,7 @@ export const registerPlayerAction = (dispatch) => ({ screen_name, email_address,
     });
 }
 
-export const verifyEmailAddressAction = dispatch => ({ email_address, verification_code }, callback) => {
+export const verifyEmailAddressAction = (dispatch) => ({ email_address, verification_code }, callback) => {
     remoteVerifyEmailAddr({ email_address, verification_code }).then(verification => {
         if (verification.verified) {
             dispatch({ type: VERIFY_EMAIL_ADDRESS, verification });
@@ -58,7 +59,7 @@ export const registerGuestAction = (dispatch) => (email_address, callback) => {
     });
 }
 
-export const dropGuestPlayerAction = dispatch => ({ screen_name, email_address, username, password }) => {
+export const dropGuestPlayerAction = (dispatch) => ({ screen_name, email_address, username, password }) => {
     remoteDropGuestPlayer({ screen_name, email_address, username, password }).then(guest => {
         dispatch({ type: DROP_GUEST_PLAYER, guest });
     });
@@ -92,26 +93,30 @@ export const fetchPlayerByIdAction = (dispatch) => (player_id, callback) => {
     });
 }
 
-export const accountSignOutAction = dispatch => (username) => {
+export const accountSignOutAction = (dispatch) => (username) => {
     remoteAccountSignOut(username).then(() => {
         dispatch({ type: ACCOUNT_SIGN_OUT })
     });
 }
 
-export const resetPasswordAction = dispatch => ({ username, password }) => {
+export const resetPasswordAction = (dispatch) => ({ username, password }) => {
     remoteResetPassword({ username, password }).then(reset => {
         dispatch({ type: RESET_PASSWORD, reset })
     });
 }
 
-export const resetVerifictionAction = dispatch => (email_address) => {
+export const resetVerifictionAction = (dispatch) => (email_address) => {
     remoteResetVerification(email_address).then(verification => {
         dispatch({ type: RESET_VERIFICATION, verification })
     });
 }
 
-export const recoverPasswordAction = dispatch => (email_address) => {
+export const recoverPasswordAction = (dispatch) => (email_address) => {
     //TODO: send email and handle action in the reducer as necessary
     console.log('send email and handle action in the reducer as necessary');
     dispatch({ type: RECOVER_PASSWORD, email_address })
 }
+
+export const verifyRecoveryCodeAction = (dispatch) => (({ email_address, confirmation_code }, callback) => {
+    //TODO - complete this
+});

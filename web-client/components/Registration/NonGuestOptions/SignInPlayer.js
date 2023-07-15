@@ -9,8 +9,9 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
+import { ViewNames } from '../../../hooks/usePageForms';
 
-export default function SignInPlayer({ setAuth, showAlert, signInForm, setSignInForm, setSignUpForm, setRecoveryForm, accountSignIn }) {
+export default function SignInPlayer({ showAlert, signInForm, setSignInForm, setSignUpForm, accountSignIn, toggleCurrentView, }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -33,18 +34,12 @@ export default function SignInPlayer({ setAuth, showAlert, signInForm, setSignIn
       accountSignIn({
         username,
         password
-      }, function(error, data){
-        if(!error){
-          setSignInForm(form => ({
-            ...form,
-            account_exists: true,
-          }));
+      }, function (error, data) {
+        if (!error) {
           setSignUpForm(form => ({
             ...form,
             email_address: { ...form.email_address, value: '' },
-            registering: false,
           }));
-          setAuth(data);
 
           showAlert({
             message: "Congratulations. You have been signed in successfully",
@@ -52,12 +47,12 @@ export default function SignInPlayer({ setAuth, showAlert, signInForm, setSignIn
             severity: 'success',
           })
         }
-        else{
+        else {
           showAlert({
             message: error,
             autoClose: true,
             severity: 'error',
-        });
+          });
         }
       });
     }
@@ -67,21 +62,17 @@ export default function SignInPlayer({ setAuth, showAlert, signInForm, setSignIn
     e.preventDefault();
     setSignInForm(form => ({
       ...form,
-      account_exists: false,
     }));
     setSignUpForm(form => ({
       ...form,
       email_address: { ...form.email_address, value: '' },
-      registering: true,
-    }))
+    }));
+    toggleCurrentView(ViewNames.SIGNUP_VIEW);
   };
 
   const showRecover = (e) => {
     e.preventDefault();
-    setRecoveryForm(form => ({
-      ...form,
-      recovering: true
-    }))
+    toggleCurrentView(ViewNames.RECOVERY_VIEW);
   };
 
   return (

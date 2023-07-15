@@ -7,16 +7,14 @@ import OrganizeGame from '../Trivia/OrganizeGame';
 import PlayerProfile from '../NavMenu/PlayerProfile';
 import AlertMessage from '../Layout/AlertMessage';
 
-export default function App({...rest}) {
+export default function App({ ...rest }) {
 
-    const { profile, setProfile, alert, clearAlert } = rest
+    const { profile, setProfile, alert, clearAlert } = rest;
 
     return (
         <div className="app">
             <AlertMessage {...alert} clearAlert={clearAlert} />
             <Switch>
-                <Route exact path="/" render={(props) =>
-                    <Trivia {...props} {...rest} />} />
                 <Route path="/accepting/:gameId/player/:playerId" render={(props) =>
                     <GameAccepting {...props} {...rest} />} />
                 <Route path="/playing/:gameId/player/:playerId" render={(props) =>
@@ -25,6 +23,8 @@ export default function App({...rest}) {
                     <OrganizeGame {...props} />} />
                 <Route path="/profile" render={(props) =>
                     <PlayerProfile profile={profile} setProfile={setProfile} {...props} />} />
+                <Route exact path="/" render={(props) =>
+                    <Trivia {...props} {...rest} />} />
             </Switch>
         </div>
     )

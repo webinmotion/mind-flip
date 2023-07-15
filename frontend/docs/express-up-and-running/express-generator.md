@@ -36,7 +36,7 @@ The directory structure created looks like shown here
 │           style.css
 └───routes
 home.js
-users.js
+data.js
 ```
 
 In the **public** directory, feel free to delete everything except the **index.html** file. This will be the default 
@@ -96,7 +96,7 @@ module.exports = router;
 
 You can optionally update the **users** module
 
-```jsx title="routes/users.js"
+```jsx title="routes/data.js"
 var express = require('express');
 var router = express.Router();
 
@@ -156,5 +156,5 @@ structure now looks like this.
 └───routes
         home.js
         index.js
-        users.js
+        data.js
 ```

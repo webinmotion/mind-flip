@@ -7,8 +7,9 @@ import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import { ViewNames } from '../../../hooks/usePageForms';
 
-export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSignUpForm, setSignInForm, setVerificationForm, recoverPassword }) {
+export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSignUpForm, recoverPassword, toggleCurrentView }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -21,14 +22,10 @@ export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSign
 
         setRecoveryForm(form => ({
             ...form,
-            recovering: false,
             email_address: { ...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : '' },
         }));
 
-        setVerificationForm(form => ({
-            ...form,
-            verifying: true,
-        }))
+        toggleCurrentView(ViewNames.VERIFYING_VIEW);
 
         //if all is good, register the details
         if (email_address) {
@@ -40,18 +37,13 @@ export default function RecoverPassword({ recoveryForm, setRecoveryForm, setSign
         e.preventDefault();
         setRecoveryForm(form => ({
             ...form,
-            recovering: false,
             email_address: '',
-        }));
-        setSignInForm(form => ({
-            ...form,
-            account_exists: false,
         }));
         setSignUpForm(form => ({
             ...form,
-            registering: true,
             email_address: { ...form.email_address, value: '' },
         }));
+        toggleCurrentView(ViewNames.SIGNUP_VIEW);
     };
 
     return (

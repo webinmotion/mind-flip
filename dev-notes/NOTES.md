@@ -185,3 +185,43 @@ index.js
    - App.js 
    - container & components
 ```
+
+## Flow
+
+### Game Listing - Landing page
+- retrieve games listing
+	- update triviaReducer > listing
+- connect to '/play' SSE endpoint
+- select game
+	- update PageForms > selectedGame
+
+### Game Details - for selected game
+- join as -> select player type
+	- update PageForms > playerTypeForm
+
+### Registration
+- based on 'playerTypeForm' selection above (guest or registered)
+
+### Guest Options
+- submit guest email
+	- update PageForms > guestEmailForm > email_address
+
+- *TODO* if the email is already taken, the __verify__ button should not be revealed - the flow should stop here
+
+- submit verification code (expected to have been sent via email)
+	- code is not collected -> it's passed directly to request
+	- update PageForms > guestEmailForm > verified
+
+### Guest Ready To Go
+- submit game_id and email_address
+	- fetch player by email
+		- update triviaReducer > player
+	- add participant to game
+		- update triviaReducer > participant
+
+### Registered (Non-Guest) Options
+- update setSignInForm > registering to true
+	- this will toggle 'SignIn' component
+
+### Recover password
+- 
