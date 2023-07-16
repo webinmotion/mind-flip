@@ -171,6 +171,11 @@ const fetchPlayerById = async (player_id) => {
     return (result.length > 0 && result[0]) || null;
 }
 
+const updatePlayerInfo = async (player_id, {screen_name, phone_number, city, state, country}) => {
+    const result = await execute('update tbl_player set screen_name = $2, phone_number = $3, city = $4, state = $5, country = $6 where player_id = $1', [player_id, screen_name, phone_number, city, state, country]);
+    return result || 0;
+}
+
 module.exports = {
     registerNewPlayer,
     dropGuestPlayer,
@@ -180,4 +185,5 @@ module.exports = {
     verifyLoginAttempt,
     resetLoginPassword,
     fetchPlayerById,
+    updatePlayerInfo,
 }

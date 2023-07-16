@@ -12,6 +12,7 @@ const {
     fetchPlayerByEmail,
     createGameHandle,
     updateGameStatus,
+    deleteGameHandle,
     createGameEngine,
     updateGameEngine,
     addGameParticipant,
@@ -136,8 +137,13 @@ const handleFetchPlayerById = async function (req, res, next) {
 const handleCreateGameHandle = async function (req, res, next) {
     try {
         const { organizer, title } = req.body;
-        const result = await createGameHandle({ organizer, title });
+        const created = await createGameHandle({ organizer, title });
+        //fetch created game info
+        const result = await fetchGameInfoById(created.game_id);
         res.json(result);
+        //update clients
+        console.log(result);
+        studio.sendGameCreatedEvent(result);
     }
     catch (e) {
         next(e);
@@ -152,8 +158,23 @@ const handleUpdateGameStatus = async function (req, res, next) {
         const result = await updateGameStatus(game_id, game_status);
         res.json(result);
         //update clients
-        console.log(result)
+        console.log(result);
         studio.sendGameStatusEvent(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleDeleteGameHandle = async function (req, res, next) {
+    //curl -X DELETE ${host}/trivia/game/${game_id} -H "Authorization: Bearer ${token}" -H "Content-Type: application/json"
+    try {
+        const { game_id } = req.params;
+        const result = await deleteGameHandle(game_id);
+        res.json({ game_id, result });
+        //update clients
+        console.log(result);
+        studio.sendGameDeletedEvent({ game_id });
     }
     catch (e) {
         next(e);
@@ -184,7 +205,7 @@ const handleUpdateGameEngine = async function (req, res, next) {
     }
 }
 
-const handleFetchGameParticipants = async function(req, res, next){
+const handleFetchGameParticipants = async function (req, res, next) {
     try {
         const game_id = req.params.game;
         const result = await fetchGameParticipants(game_id);
@@ -195,7 +216,7 @@ const handleFetchGameParticipants = async function(req, res, next){
     }
 }
 
-const handleFetchParticipantById = async function(req, res, next){
+const handleFetchParticipantById = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
         const result = await fetchParticipantById(participant_id);
@@ -225,7 +246,7 @@ const handleDropGameParticipant = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
         const { game_fk, player_fk } = await dropGameParticipant(participant_id);
-        res.status(201).json({game_fk, player_fk});
+        res.status(201).json({ game_fk, player_fk });
         //update clients
         console.log('dropping participant', `game-${game_fk}`, `player-${player_fk}`)
         studio.sendDropParticipantEvent(game_fk, { participant_id });
@@ -285,6 +306,7 @@ module.exports = {
     fetchParticipantById: handleFetchParticipantById,
     createGameHandle: handleCreateGameHandle,
     updateGameStatus: handleUpdateGameStatus,
+    deleteGameHandle: handleDeleteGameHandle,
     createGameEngine: handleCreateGameEngine,
     fetchGameParticipants: handleFetchGameParticipants,
     addGameParticipant: handleAddGameParticipant,

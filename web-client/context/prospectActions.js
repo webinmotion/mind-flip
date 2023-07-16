@@ -78,7 +78,7 @@ export const accountSignInAction = (dispatch) => ({ username, password }, callba
     remoteAccountSignIn({ username, password }).then(account => {
         dispatch({ type: ACCOUNT_SIGN_IN, account });
         if (callback) callback(null, account);
-        fetchPlayerByIdAction(dispatch)(account.userInfo.player_id)
+        fetchPlayerByIdAction(dispatch)(account.authUser.player_id)
     }).catch(error => {
         if (callback) callback(extractErrorText(error));
     });

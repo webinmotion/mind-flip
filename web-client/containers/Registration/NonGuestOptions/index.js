@@ -5,7 +5,7 @@ import { ViewNames } from '../../../hooks/usePageForms';
 
 function NonGuestOptionsContainer() {
 
-  const { userInfo, selectedGame, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm,
+  const { prospect, selectedGame, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm,
     setRecoveryForm, setVerificationForm, registerPlayer, accountSignIn, recoverPassword, verifyEmailAddress, verifyRecoveryCode,
     addGameParticipant, isAuthenticated, currentView, toggleCurrentView, } = useAppContext();
 
@@ -14,7 +14,7 @@ function NonGuestOptionsContainer() {
   }, []);
 
   return <NonGuestOptions
-    userInfo={userInfo}
+    playerEmail={prospect?.registration?.email_address}
     showAlert={showAlert}
     signUpForm={signUpForm}
     signInForm={signInForm}

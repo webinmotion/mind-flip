@@ -2,7 +2,7 @@ const moment = require('moment');
 const GameDriver = require('../trivia/GameDriver');
 const ScoreKeeper = require("../trivia/ScoreKeeper");
 const studio = require("../trivia/GameStudio");
-const { ON_GAME_AWAITING_EVENT, ON_GAME_CREATED_EVENT, ON_GAME_PLAYING_EVENT, ON_SSE_TESTING_EVENT, ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED } = require('../trivia/Constants');
+const { ON_GAME_ACCEPTING_EVENT, ON_GAME_CREATED_EVENT, ON_GAME_PLAYING_EVENT, ON_GAME_DELETED_EVENT, ON_SSE_TESTING_EVENT, ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED } = require('../trivia/Constants');
 
 const scorer = new ScoreKeeper();
 
@@ -14,13 +14,13 @@ function handleGamesListing(req, resp, next) {
     };
     resp.writeHead(200, headers);
 
-    studio.subscribe(resp, [ON_GAME_CREATED_EVENT, ON_GAME_AWAITING_EVENT, ON_GAME_PLAYING_EVENT, ON_SSE_TESTING_EVENT]);
+    studio.subscribe(resp, [ON_GAME_CREATED_EVENT, ON_GAME_ACCEPTING_EVENT, ON_GAME_PLAYING_EVENT, ON_GAME_DELETED_EVENT, ON_SSE_TESTING_EVENT]);
 
     resp.write(`data: subscription to game listing accepted\n\n`);
 
     req.on('close', () => {
         console.log(`sse Connection closed`);
-        studio.unBroadcast([ON_GAME_CREATED_EVENT, ON_GAME_AWAITING_EVENT, ON_GAME_PLAYING_EVENT, ON_SSE_TESTING_EVENT], resp)
+        studio.unBroadcast([ON_GAME_CREATED_EVENT, ON_GAME_ACCEPTING_EVENT, ON_GAME_PLAYING_EVENT, ON_GAME_DELETED_EVENT, ON_SSE_TESTING_EVENT], resp)
     });
 }
 

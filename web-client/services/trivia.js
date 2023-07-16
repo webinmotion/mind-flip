@@ -40,6 +40,33 @@ export const remoteFetchPlayerByEmail = async (email) => {
         .then(resp => resp.data);
 }
 
+export const remoteCreateGameHandle = async ({title, organizer}) => {
+    return await axios.post(`${serverUrl()}/trivia/game`, {
+        title, organizer
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(resp => resp.data);
+}
+
+export const remoteUpdateGameStatus = async (game_id, game_status) => {
+    return await axios.put(`${serverUrl()}/trivia/game/${game_id}`, {
+        game_status
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(resp => resp.data);
+}
+
+export const remoteDeleteGameHandle = async (game_id) => {
+    return await axios.delete(`${serverUrl()}/trivia/game/${game_id}`)
+        .then(resp => resp.data);
+}
+
 export const remoteCreateGameEngine = async (game, { scheduled_start, progression, display_duration, time_ticker }) => {
     return await axios.post(`${serverUrl()}/trivia/engine/${game}`,
         {scheduled_start, progression, display_duration, time_ticker},

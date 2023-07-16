@@ -3,12 +3,14 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
 import FiberNewIcon from '@mui/icons-material/FiberNew';
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Forward10Icon from '@mui/icons-material/Forward10';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import FilledInput from '@mui/material/FilledInput';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -16,28 +18,66 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Typography from '@mui/material/Typography';
-import { games } from '../../__mocks__/mock-games-listing';
+import { orange, green, red } from '@mui/material/colors';
+
+const GameStatus = {
+  CREATED: "Created",
+  ACCEPTING: "Accepting",
+  PLAYING: "Playing",
+  ARCHIVED: "Archived",
+}
 
 function selectIcon(status) {
   switch (status) {
-    case 'Accepting':
-      return <AlarmOnIcon />
-    case 'Created':
+    case GameStatus.CREATED:
       return <FiberNewIcon />
-    default:
+    case GameStatus.ACCEPTING:
+      return <AlarmOnIcon />
+    case GameStatus.PLAYING:
       return <Forward10Icon />
+    default:
+      return <InventoryIcon />
   }
 }
 
-export default function Organizer({ player, initializeGame, createGame }) {
+function selectIconBg(status) {
+  switch (status) {
+    case GameStatus.CREATED:
+      return green[500]
+    case GameStatus.ACCEPTING:
+      return orange[500]
+    case GameStatus.PLAYING:
+      return red[500]
+    default:
+      return null
+  }
+}
+
+function nextStatus(status) {
+  const keys = Object.keys(GameStatus);
+  const idx = keys.indexOf(status.toUpperCase());
+  return (idx > -1 && idx < 2) ? GameStatus[keys[idx + 1]] : null;
+}
+
+function nextStatusIcon(status) {
+  const next = nextStatus(status);
+  if (next) {
+    return selectIcon(next);
+  }
+  return null;
+}
+
+export default function OrganizeGames({ games, player, createGame, updateGame, deleteGame, }) {
 
   const [{ title, organizer }, setForm] = useState({ title: '', organizer: player?.email_address });
 
   const handleChange = e => setForm(form => ({ ...form, [e.target.id]: e.target.value }));
 
   const onCreateGame = () => {
-    createGame(title, organizer);
-    setForm({ title: '', organizer: '' });
+    if (title && organizer) {
+      createGame({ title, organizer });
+      setForm({ title: '', organizer: '' });
+    }
   }
 
   return (
@@ -74,18 +114,27 @@ export default function Organizer({ player, initializeGame, createGame }) {
           </FormControl>
         </Grid>
 
-        <List>
+        <List sx={{ width: '100%', ml: 2 }}>
           {games.map(({ game_info }) => (
-            <ListItem key={game_info.game_id} sx={{ py: 1, px: 0 }}>
-              <ListItemButton
-                selected={false}
-                onClick={() => initializeGame(game_info.title, organizer)}
-              >
-                <ListItemIcon>
+            <ListItem key={game_info.game_id} secondaryAction={
+              <>
+                {nextStatus(game_info.game_status) ?
+                  <IconButton edge="end" aria-label="delete" onClick={() => updateGame(game_info.game_id, nextStatus(game_info.game_status))}>
+                    {nextStatusIcon(game_info.game_status)}
+                  </IconButton> : null
+                }
+                <IconButton edge="end" aria-label="delete" onClick={() => deleteGame(game_info.game_id)}>
+                  <DeleteIcon />
+                </IconButton>
+              </>
+            }>
+              <ListItemAvatar>
+                <Avatar sx={{ bgcolor: selectIconBg(game_info.game_status) }}>
                   {selectIcon(game_info.game_status)}
-                </ListItemIcon>
-                <ListItemText primary={game_info.title} secondary={game_info.game_status} />
-              </ListItemButton>
+                </Avatar>
+              </ListItemAvatar>
+
+              <ListItemText primary={game_info.title} secondary={game_info.game_status} />
             </ListItem>
           ))}
         </List>
@@ -93,14 +142,3 @@ export default function Organizer({ player, initializeGame, createGame }) {
     </Paper>
   )
 }
-// {/* <form className='form row'>
-//         <div className='col-5'>
-//           <input id='title' placeholder='Game title' value={title} onChange={onTrivia} />
-//         </div>
-//         <div className='col-5'>
-//           <input id='organizer' type='email' placeholder='Organizer email' value={organizer} onChange={onTrivia} />
-//         </div>
-//         <div className='col-2'>
-//           <a className='btn' href='#' onClick={onInitialize}>Retrieve</a>
-//         </div>
-//       </form> */}

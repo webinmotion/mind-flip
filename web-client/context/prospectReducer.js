@@ -25,7 +25,7 @@ export const initialRegistration = {
 }
 
 export const initialAuthentication = {
-    userInfo: {
+    authUser: {
         username: null,
         is_active: false,
         player_id: null,
@@ -66,13 +66,13 @@ export const prospectReducer = (prospect, action) => {
             return { ...prospect, registration: { ...prospect.registration, message, verification_token: token } };
         }
         case ACCOUNT_SIGN_IN: {
-            const { message, userInfo, accessToken } = action.account;
-            localState.onSignIn({ authUser: userInfo, accessToken }); //cache user info and the access token for axios interceptor to use
-            return { ...prospect, authentication: { ...prospect.authentication, message, userInfo, accessToken } };
+            const { message, authUser, accessToken } = action.account;
+            localState.onSignIn({ authUser: authUser, accessToken }); //cache user info and the access token for axios interceptor to use
+            return { ...prospect, authentication: { ...prospect.authentication, message, authUser, accessToken } };
         }
         case ACCOUNT_SIGN_OUT: {
             localState.onSignOut(); //clear the access token and user info from local cache
-            return { ...prospect, authentication: { ...prospect.authentication, message: '', userInfo: null } };
+            return { ...prospect, authentication: { ...prospect.authentication, message: '', authUser: null } };
         }
         case RESET_VERIFICATION: {
             const { email_address } = action.verification;

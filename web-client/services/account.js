@@ -89,3 +89,13 @@ export const remoteFetchPlayerById = async (player_id) => {
         .then(resp => resp.data);
     return result;
 }
+
+export const remoteUpdatePlayerInfo = async (player_id, { screen_name, phone_number, city, state, country }) => {
+    const result = await axios.put(`${serverUrl()}/account/player/${player_id}`, {
+        screen_name, phone_number, city, state, country
+    }, {
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then(resp => resp.data);
+    return result;
+}

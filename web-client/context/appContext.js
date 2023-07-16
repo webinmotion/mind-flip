@@ -4,7 +4,8 @@ import {
     fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction,
     updateGameEngineAction, addGameParticipantAction, respondToQuestionAction, fetchCumulativeTallyAction,
     updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, onGameStartingEventAction,
-    fetchGameParticipantsAction, onNextQuestionEventAction
+    fetchGameParticipantsAction, onNextQuestionEventAction, 
+    createGameHandleAction, updateGameStatusAction, deleteGameHandleAction, 
 } from './triviaActions';
 import { triviaReducer, initialTrivia } from './triviaReducer';
 import {
@@ -82,6 +83,9 @@ export const AppProvider = ({ children }) => {
             fetchGameEngine: fetchGameEngineAction(triviaDispatch),
             fetchGameParticipants: fetchGameParticipantsAction(triviaDispatch),
             fetchPlayerByEmail: fetchPlayerByEmailAction(triviaDispatch),
+            createGameHandle: createGameHandleAction(triviaDispatch),
+            updateGameStatus: updateGameStatusAction(triviaDispatch),
+            deleteGameHandle: deleteGameHandleAction(triviaDispatch),
             createGameEngine: createGameEngineAction(triviaDispatch),
             updateGameEngine: updateGameEngineAction(triviaDispatch),
             addGameParticipant: addGameParticipantAction(triviaDispatch),

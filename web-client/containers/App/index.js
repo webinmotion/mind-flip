@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from '../../context/appContext';
 import App from '../../components/App';
 import { serverUrl } from '../../services/request';
 
 function AppContainer() {
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const context = useAppContext();
     const { toggleCurrentView, currentRoute, onGameListingEvents, fetchGamesListing } = context;
 
@@ -32,7 +32,7 @@ function AppContainer() {
     }, []);
 
     useEffect(() => {
-        history.push(`/${currentRoute}`)
+        navigate(`/${currentRoute}`)
     }, [currentRoute]);
 
     return (

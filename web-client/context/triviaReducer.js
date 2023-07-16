@@ -14,9 +14,10 @@ import {
     DROP_GAME_PARTICIPANT,
     FETCH_CUMULATIVE_TALLY,
     UPDATE_HIGHEST_SCORE,
-    ON_GAME_AWAITING_EVENT,
+    ON_GAME_ACCEPTING_EVENT,
     ON_GAME_CREATED_EVENT,
     ON_GAME_PLAYING_EVENT,
+    ON_GAME_DELETED_EVENT,
     ON_PARTICIPANT_JOINED,
     ON_PARTICIPANT_EXITED,
 }
@@ -96,8 +97,13 @@ export const triviaReducer = (game, action) => {
         case UPDATE_HIGHEST_SCORE: {
             return game;
         }
-        case ON_GAME_CREATED_EVENT:
-        case ON_GAME_AWAITING_EVENT:
+        case ON_GAME_CREATED_EVENT: {
+            console.log('created game', action.data);
+            return ({
+                ...game, listing: [...game.listing, action.data]
+            });
+        }
+        case ON_GAME_ACCEPTING_EVENT:
         case ON_GAME_PLAYING_EVENT: {
             const { game_id, game_status } = action.data;
             console.log('game', game_id, 'status', game_status);
@@ -109,6 +115,13 @@ export const triviaReducer = (game, action) => {
                     return g;
                 })
             })
+        }
+        case ON_GAME_DELETED_EVENT: {
+            const { game_id } = action.data;
+            console.log('deleted game id', game_id);
+            return ({
+                ...game, listing: game.listing.filter(g => g.game_info.game_id !== game_id)
+            });
         }
         case ON_PARTICIPANT_JOINED: {
             const { participant } = action;

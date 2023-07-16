@@ -14,6 +14,7 @@ const {
     fetchPlayerByEmail,
     createGameHandle,
     updateGameStatus, 
+    deleteGameHandle,
     createGameEngine,
     updateGameEngine,
     addGameParticipant,
@@ -45,6 +46,8 @@ router.get('/player/:email', fetchPlayerByEmail);
 router.post('/game', validateAccessToken, createGameHandle);
 
 router.put('/game/:game_id', validateAccessToken, updateGameStatus);
+
+router.delete('/game/:game_id', validateAccessToken, deleteGameHandle);
 
 router.post('/engine/:game', validateAccessToken, createGameEngine);
 

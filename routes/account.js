@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { verifyLoginAttempt, registerNewPlayer, registerNewAccount, resetLoginPassword, 
     verifyRegistrationEmail, resetVerificationCode, dropGuestPlayer, accountLogout, accountRecover,
-    fetchPlayerById, } = require('../handlers/account');
+    fetchPlayerById, updatePlayerInfo, } = require('../handlers/account');
 const { password_encrypt } = require('../middleware/encrypt');
 const { validateAccessToken } = require('../middleware/authorize');
 
@@ -25,5 +25,7 @@ router.put('/reset', password_encrypt, resetLoginPassword);
 router.get('/:email_address/recover', accountRecover);
 
 router.get('/player/:player_id', fetchPlayerById);
+
+router.put('/player/:player_id', validateAccessToken, updatePlayerInfo);
 
 module.exports = router;

@@ -10,6 +10,7 @@ import GamesListing from './GamesListing';
 import GameDetails from './GameDetails';
 import Registration from '../Registration';
 import { ViewNames } from '../../hooks/usePageForms';
+import { useNavigate } from 'react-router-dom';
 
 const steps = ['Games Listing', 'Game Details', 'Registration'];
 
@@ -36,10 +37,11 @@ function getStepContent({ games, gameStatus, step, selectedGame, setSelectedGame
   }
 }
 
-export default function Trivia({ trivia, history, playerTypeForm, selectedGame, signInForm, signUpForm, recoveryForm, setSelectedGame, setPlayerTypeForm, currentView, guestEmailForm, showAlert, }) {
+export default function Trivia({ trivia, playerTypeForm, selectedGame, signInForm, signUpForm, recoveryForm, setSelectedGame, setPlayerTypeForm, currentView, guestEmailForm, showAlert, }) {
 
   const { listing: games, gameStatus } = trivia;
   const [activeStep, setActiveStep] = useState(0);
+  const navigate = useNavigate();
 
   const handleNext = () => {
     if (steps.length > activeStep + 1) {
@@ -73,10 +75,10 @@ export default function Trivia({ trivia, history, playerTypeForm, selectedGame, 
       const { game_info } = games.find(game => game.game_info.game_id === selectedGame);
       const { participant } = trivia;
       if (game_info.game_status === 'Playing') {
-        history.push(`/playing/${game_info.game_id}/player/${participant.player_id}`)
+        navigate(`/playing/${game_info.game_id}/player/${participant.player_id}`)
       }
       else if (game_info.game_status === 'Accepting') {
-        history.push(`/accepting/${game_info.game_id}/player/${participant.player_id}`)
+        navigate(`/accepting/${game_info.game_id}/player/${participant.player_id}`)
       }
       else {
         showAlert({ message: 'Game is not accepting participants or currently playing', severity: 'warning', autoClose: true });

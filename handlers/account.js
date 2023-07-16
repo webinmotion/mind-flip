@@ -1,6 +1,19 @@
-const { registerNewAccount, verifyLoginAttempt, resetLoginPassword, dropGuestPlayer, registerNewPlayer,
-    verifyRegistrationEmail, resetVerificationCode, fetchPlayerById, } = require('../service/account');
-const { signAccessToken, signRefreshToken, cookieOptions, } = require('../middleware/jwt-tokens');
+const { 
+    registerNewAccount, 
+    verifyLoginAttempt, 
+    resetLoginPassword, 
+    dropGuestPlayer, 
+    registerNewPlayer,
+    verifyRegistrationEmail, 
+    resetVerificationCode, 
+    fetchPlayerById, 
+    updatePlayerInfo, 
+} = require('../service/account');
+const { 
+    signAccessToken, 
+    signRefreshToken, 
+    cookieOptions, 
+} = require('../middleware/jwt-tokens');
 
 const handleRegisterNewPlayer = async function (req, res, next) {
     try {
@@ -29,10 +42,10 @@ const handleVerifyLoginAttempt = async function (req, res, next) {
     try {
         const { username, password } = req.body;
         const { account_id, is_active, player_fk, account_role } = await verifyLoginAttempt({ username, password });
-        const userInfo = { username, is_active, player_id: player_fk, role: account_role };
+        const authUser = { username, is_active, player_id: player_fk, role: account_role };
 
-        const accessToken = signAccessToken(userInfo, account_id);
-        const refreshToken = signRefreshToken(userInfo, account_id);
+        const accessToken = signAccessToken(authUser, account_id);
+        const refreshToken = signRefreshToken(authUser, account_id);
 
         //TODO: consider saving refresh token in a database or cache for invalidation purposes
         console.log(refreshToken);
@@ -42,7 +55,7 @@ const handleVerifyLoginAttempt = async function (req, res, next) {
 
         res.json({
             message: "User successfully logged in",
-            userInfo,
+            authUser,
             accessToken,
         });
     }
@@ -136,6 +149,18 @@ const handleAccountRecover = async function (req, res, next) {
     }
 }
 
+const handleUpdatePlayerInfo = async function(req, res, next) {
+    try{
+        const player_id = req.params.player_id;
+        const player_info = req.body;
+        const result = await updatePlayerInfo(player_id, player_info);
+        res.json(result);
+    }
+    catch(e){
+        next(e);
+    }
+}
+
 module.exports = {
     registerNewPlayer: handleRegisterNewPlayer,
     registerNewAccount: handleRegisterNewAccount,
@@ -147,4 +172,5 @@ module.exports = {
     resetVerificationCode: handleResetVerificationCode,
     accountLogout: handleAccountLogout,
     accountRecover: handleAccountRecover,
+    updatePlayerInfo: handleUpdatePlayerInfo,
 }

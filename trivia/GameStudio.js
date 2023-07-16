@@ -1,9 +1,13 @@
 const {
-    ON_GAME_AWAITING_EVENT,
+    ON_GAME_ACCEPTING_EVENT,
     ON_GAME_CREATED_EVENT,
     ON_GAME_PLAYING_EVENT,
+    ON_GAME_DELETED_EVENT,
     ON_PARTICIPANT_JOINED,
-    ON_PARTICIPANT_EXITED
+    ON_PARTICIPANT_EXITED,
+    GAME_STATUS_CREATED,
+    GAME_STATUS_ACCEPTING,
+    GAME_STATUS_PLAYING,
 } = require('./Constants');
 
 class GameStudio {
@@ -62,13 +66,13 @@ class GameStudio {
                 if (!this.participants[eventName]) {
                     this.participants[eventName] = {};
                 }
-                if(!this.participants[eventName][channel]){
+                if (!this.participants[eventName][channel]) {
                     this.participants[eventName][channel] = [];
                 }
                 response.recipient = recipient;
                 this.participants[eventName][channel].push(response);
             }
-            if(eventName && !(channel && recipient)) {
+            if (eventName && !(channel && recipient)) {
                 if (!this.broadcast[eventName]) {
                     this.broadcast[eventName] = [];
                 }
@@ -110,7 +114,7 @@ class GameStudio {
     }
 
     publishMessage(event, channel, payload) {
-        if(this.participants[event]) {
+        if (this.participants[event]) {
             this.participants[event][channel]?.forEach(client => client.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`))
         }
     }
@@ -135,17 +139,17 @@ class GameStudio {
         console.log(`Que ${index} : ${question.que_value}`);
     }
 
+    sendGameCreatedEvent({ game, organizer }) {
+        this.broadcastMessage(ON_GAME_CREATED_EVENT, { game_info: game, organizer });
+    }
+
     sendGameStatusEvent({ game_id, game_status }) {
         switch (game_status) {
-            case "Accepting": {
-                this.broadcastMessage(ON_GAME_AWAITING_EVENT, { game_id, game_status });
+            case GAME_STATUS_ACCEPTING: {
+                this.broadcastMessage(ON_GAME_ACCEPTING_EVENT, { game_id, game_status });
                 break;
             }
-            case "Created": {
-                this.broadcastMessage(ON_GAME_CREATED_EVENT, { game_id, game_status });
-                break;
-            }
-            case "Playing": {
+            case GAME_STATUS_PLAYING: {
                 this.broadcastMessage(ON_GAME_PLAYING_EVENT, { game_id, game_status });
                 break;
             }
@@ -153,6 +157,10 @@ class GameStudio {
                 console.log(game_status, 'this is currently not handled');
             }
         }
+    }
+
+    sendGameDeletedEvent({ game_id }) {
+        this.broadcastMessage(ON_GAME_DELETED_EVENT, { game_id });
     }
 
     sendAddParticipantEvent(game_id, participant) {

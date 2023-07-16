@@ -40,7 +40,7 @@ function Layout({ children }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleSignOut = () => {
-        accountSignOut(prospect?.authentication?.userInfo?.username);
+        accountSignOut(prospect?.authentication?.authUser?.username);
         setCurrentRoute('')
         handleClose();
     };

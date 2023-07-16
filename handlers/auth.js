@@ -21,13 +21,13 @@ const refreshAccessToken = async function (req, res, next) {
                 return res.status(403).json({ message: "Token is not valid. User not authorized" })
             } else {
                 const { username, is_active, player_id, role, aud } = decodedToken;
-                const userInfo = { username, is_active, player_id, role };
-                const accessToken = signAccessToken(userInfo, aud);
-                const newRefreshToken = signRefreshToken(userInfo, aud);
+                const authUser = { username, is_active, player_id, role };
+                const accessToken = signAccessToken(authUser, aud);
+                const newRefreshToken = signRefreshToken(authUser, aud);
 
                 res.cookie("jwt", { refreshToken: newRefreshToken }, cookieOptions());
 
-                res.json({ userInfo, accessToken });
+                res.json({ authUser, accessToken });
             }
         })
     }

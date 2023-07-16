@@ -6,7 +6,7 @@ import RecoverPassword from './RecoverPassword';
 import ConfirmRecovery from './ConfirmRecovery';
 import ReadyToGo from '../ReadyToGo';
 
-export default function NonGuestOptions({ userInfo, selectedGame, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm,
+export default function NonGuestOptions({ playerEmail, selectedGame, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm,
     setRecoveryForm, setVerificationForm, registerPlayer, accountSignIn, recoverPassword, verifyEmailAddress, verifyRecoveryCode,
     addGameParticipant, isAuthenticated, currentView, toggleCurrentView, }) {
 
@@ -29,6 +29,6 @@ export default function NonGuestOptions({ userInfo, selectedGame, showAlert, sig
         return null;
     }
     else {
-        return <ReadyToGo playerEmail={userInfo} selectedGame={selectedGame} addGameParticipant={addGameParticipant} />
+        return <ReadyToGo playerEmail={playerEmail} selectedGame={selectedGame} addGameParticipant={addGameParticipant} />
     }
 }
