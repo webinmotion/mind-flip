@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stepper from '@mui/material/Stepper';
@@ -10,31 +10,29 @@ import GamesListing from './GamesListing';
 import GameDetails from './GameDetails';
 import Registration from '../Registration';
 import { ViewNames } from '../../hooks/usePageForms';
-import { useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 const steps = ['Games Listing', 'Game Details', 'Registration'];
 
-function getStepContent({ games, gameStatus, step, selectedGame, setSelectedGame, playerTypeForm, setPlayerTypeForm, }) {
-  switch (step) {
-    case 0:
-      return <GamesListing
+function getStepContent({ games, gameStatus, selectedGame, setSelectedGame, playerTypeForm, setPlayerTypeForm, }) {
+  return (
+    <Routes>
+      <Route path="/" element={<GamesListing
         games={games}
         gameStatus={gameStatus}
         selectedGame={selectedGame}
-        setSelectedGame={setSelectedGame} />;
-    case 1:
-      const selectedGameInfo = games.find(game => game.game_info.game_id === selectedGame);
-      return <GameDetails
-        {...selectedGameInfo}
+        setSelectedGame={setSelectedGame} />} />
+
+      <Route path="/details" element={<GameDetails
+        {...games.find(game => game.game_info.game_id === selectedGame)}
         playerType={playerTypeForm.value}
         setPlayerType={value => {
           setPlayerTypeForm(type => ({ ...type, value }));
-        }} />;
-    case 2:
-      return <Registration playerType={playerTypeForm.value} />;
-    default:
-      throw new Error('Unknown step');
-  }
+        }} />} />
+
+      <Route path="/registration" element={<Registration playerType={playerTypeForm.value} />} />
+    </Routes>
+  )
 }
 
 export default function Trivia({ trivia, playerTypeForm, selectedGame, signInForm, signUpForm, recoveryForm, setSelectedGame, setPlayerTypeForm, currentView, guestEmailForm, showAlert, }) {
@@ -42,6 +40,23 @@ export default function Trivia({ trivia, playerTypeForm, selectedGame, signInFor
   const { listing: games, gameStatus } = trivia;
   const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    switch (activeStep) {
+      case 0:
+        navigate("/")
+        break;
+      case 1:
+        navigate("/details");
+        break;
+      case 2:
+        navigate("/registration");
+        break;
+      default:
+        showAlert({ message: "Unknown route requested", autoClose: true, severity: "warning" })
+        break;
+    }
+  }, [activeStep])
 
   const handleNext = () => {
     if (steps.length > activeStep + 1) {
@@ -51,23 +66,23 @@ export default function Trivia({ trivia, playerTypeForm, selectedGame, signInFor
       }
       setActiveStep(activeStep + 1);
     }
-    else if(playerTypeForm.value === 'guest' && guestEmailForm?.email_address.value && !guestEmailForm?.verified){
+    else if (playerTypeForm.value === 'guest' && guestEmailForm?.email_address.value && !guestEmailForm?.verified) {
       showAlert({ message: 'You should verify the guest email before proceeding', severity: 'error', autoClose: true });
       return;
     }
-    else if(playerTypeForm.value === 'registered' && currentView[ViewNames.SIGNIN_VIEW] && (!signInForm?.username.value && !signInForm?.password.value)){
+    else if (playerTypeForm.value === 'registered' && currentView[ViewNames.SIGNIN_VIEW] && (!signInForm?.username.value && !signInForm?.password.value)) {
       showAlert({ message: 'You should sign in before proceeding', severity: 'error', autoClose: true });
       return;
     }
-    else if(playerTypeForm.value === 'registered' && currentView[ViewNames.SIGNUP_VIEW] && (!signUpForm?.email_address.value && !signUpForm?.screen_name.value && !signUpForm?.username.value && !signUpForm?.password.value)){
+    else if (playerTypeForm.value === 'registered' && currentView[ViewNames.SIGNUP_VIEW] && (!signUpForm?.email_address.value && !signUpForm?.screen_name.value && !signUpForm?.username.value && !signUpForm?.password.value)) {
       showAlert({ message: 'You should sign up before proceeding', severity: 'error', autoClose: true });
       return;
     }
-    else if(playerTypeForm.value === 'registered' && currentView[ViewNames.RECOVERY_VIEW] && !recoveryForm?.email_address.value){
+    else if (playerTypeForm.value === 'registered' && currentView[ViewNames.RECOVERY_VIEW] && !recoveryForm?.email_address.value) {
       showAlert({ message: 'You should submit a recovery email before proceeding', severity: 'error', autoClose: true });
       return;
     }
-    else if(playerTypeForm.value === 'registered' && recoveryForm?.email_address.value && !recoveryForm?.confirmed){
+    else if (playerTypeForm.value === 'registered' && recoveryForm?.email_address.value && !recoveryForm?.confirmed) {
       showAlert({ message: 'You should confirm the recovery code before proceeding', severity: 'error', autoClose: true });
       return;
     }
@@ -105,7 +120,7 @@ export default function Trivia({ trivia, playerTypeForm, selectedGame, signInFor
       {
         <React.Fragment>
           {getStepContent({
-            games, gameStatus, step: activeStep, selectedGame, setSelectedGame, playerTypeForm, setPlayerTypeForm,
+            games, gameStatus, selectedGame, setSelectedGame, playerTypeForm, setPlayerTypeForm,
           })}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             {activeStep !== 0 && (
