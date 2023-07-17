@@ -33,8 +33,12 @@ axios.interceptors.response.use(
     (response) => {
         return response;
     },
-    (error) => {
+    async (error) => {
         const originalRequest = error.config;
+
+        if(!error?.response){
+            return Promise.reject("No server response available");
+        }
 
         //prevent infinite loop in-case the refresh error is expired
         if (error.response.status === 401 && originalRequest.url === refreshTokenEndpoint) {
@@ -43,7 +47,7 @@ axios.interceptors.response.use(
 
         if (error.response.status === 403 && !originalRequest._retry) {
             originalRequest._retry = true;
-            return refreshAccessToken()
+            return await refreshAccessToken()
                 .then((accessToken) => {
                     localState.accessToken = accessToken;
                     const token = localState.accessToken;

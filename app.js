@@ -16,5 +16,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, contentDir.trim())));
 app.use(cors());
 app.use('/', routes);
+// handle all the requests that are not handled by any other route handler.
+app.all('*', (req, res) => res.redirect(301, "/"));
 
 module.exports = app;

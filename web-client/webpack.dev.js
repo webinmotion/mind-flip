@@ -24,7 +24,12 @@ module.exports = (env) => {
             devMiddleware: {
                 index: 'index.html',
                 writeToDisk: true
-            }
+            },
+            historyApiFallback: {
+                rewrites: [
+                    {from: /^\/.+$/, to: "/"}
+                ]
+            },
         },
         module: {
             rules: [
