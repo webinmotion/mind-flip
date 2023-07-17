@@ -6,11 +6,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
-import FiberNewIcon from '@mui/icons-material/FiberNew';
-import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Forward10Icon from '@mui/icons-material/Forward10';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import FilledInput from '@mui/material/FilledInput';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -18,16 +14,20 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Typography from '@mui/material/Typography';
+import FiberNewIcon from '@mui/icons-material/FiberNew';
+import AlarmOnIcon from '@mui/icons-material/AlarmOn';
+import Forward10Icon from '@mui/icons-material/Forward10';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { orange, green, red } from '@mui/material/colors';
 
-const GameStatus = {
+export const GameStatus = {
   CREATED: "Created",
   ACCEPTING: "Accepting",
   PLAYING: "Playing",
   ARCHIVED: "Archived",
 }
 
-function selectIcon(status) {
+export function selectIcon(status) {
   switch (status) {
     case GameStatus.CREATED:
       return <FiberNewIcon />
@@ -40,7 +40,7 @@ function selectIcon(status) {
   }
 }
 
-function selectIconBg(status) {
+export function iconBgColor(status) {
   switch (status) {
     case GameStatus.CREATED:
       return green[500]
@@ -53,13 +53,13 @@ function selectIconBg(status) {
   }
 }
 
-function nextStatus(status) {
+export function nextStatus(status) {
   const keys = Object.keys(GameStatus);
   const idx = keys.indexOf(status.toUpperCase());
   return (idx > -1 && idx < 2) ? GameStatus[keys[idx + 1]] : null;
 }
 
-function nextStatusIcon(status) {
+export function nextStatusIcon(status) {
   const next = nextStatus(status);
   if (next) {
     return selectIcon(next);
@@ -67,18 +67,7 @@ function nextStatusIcon(status) {
   return null;
 }
 
-export default function OrganizeGames({ games, player, createGame, updateGame, deleteGame, }) {
-
-  const [{ title, organizer }, setForm] = useState({ title: '', organizer: player?.email_address });
-
-  const handleChange = e => setForm(form => ({ ...form, [e.target.id]: e.target.value }));
-
-  const onCreateGame = () => {
-    if (title && organizer) {
-      createGame({ title, organizer });
-      setForm({ title: '', organizer: '' });
-    }
-  }
+export default function OrganizeGames({ games, form, handleChange, onCreateGame, updateGame, deleteGame, }) {
 
   return (
     <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -91,7 +80,7 @@ export default function OrganizeGames({ games, player, createGame, updateGame, d
           <FormControl sx={{ m: 1, width: "100%" }} variant="filled">
             <FilledInput
               id="title"
-              value={title}
+              value={form.title}
               onChange={handleChange}
               placeholder='game title'
               endAdornment={
@@ -129,7 +118,7 @@ export default function OrganizeGames({ games, player, createGame, updateGame, d
               </>
             }>
               <ListItemAvatar>
-                <Avatar sx={{ bgcolor: selectIconBg(game_info.game_status) }}>
+                <Avatar sx={{ bgcolor: iconBgColor(game_info.game_status) }}>
                   {selectIcon(game_info.game_status)}
                 </Avatar>
               </ListItemAvatar>

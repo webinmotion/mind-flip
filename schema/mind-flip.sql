@@ -173,7 +173,8 @@ create table if not exists tbl_Game_Engine (
 	progression GameProgression default 'manual',
 	initial_delay int default 5000,
 	display_duration int default 10000,
-	time_ticker varchar(64) references tbl_Ticker(ticker_id) default '2 seconds cushion',
+	allow_backpedal boolean default false,
+	time_ticker varchar(64) references tbl_Ticker(ticker_id) default 'no time ticker',
 	constraint pk_game_weaver primary key(game_fk)
 );
 
@@ -225,6 +226,7 @@ insert into tbl_Playbook (title, best_fit, description) values
 );
 
 --create default ticker
+insert into tbl_Ticker (ticker_id, duration, delay, "period") values ('no time ticker', -1, -1, -1);
 insert into tbl_Ticker (ticker_id, delay) values ('aggresive ticker', 0);
 insert into tbl_Ticker (ticker_id, delay) values ('2 seconds cushion', 2000);
 
@@ -308,7 +310,7 @@ select * from tbl_game where title = 'friendly numbers' and organizer = (
         where p.email_address = 'jimmy@email.com');
         
 --fetch ticker info
-select * from tbl_ticker tk where tk.ticker_id = '2 seconds cushion';
+select * from tbl_ticker tk where tk.ticker_id = 'no time ticker';
 
 --fetch game info
 select * from tbl_game where title = 'friendly numbers';

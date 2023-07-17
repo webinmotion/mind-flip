@@ -25,6 +25,11 @@ export const remoteFetchGameQuestion = async (question) => {
         .then(resp => resp.data);
 }
 
+export const remoteFetchQuestionChoices = async (question) => {
+    return await axios.get(`${serverUrl()}/trivia/question/${question}/choices`)
+        .then(resp => resp.data);
+}
+
 export const remoteFetchGameEngine = async (game) => {
     return await axios.get(`${serverUrl()}/trivia/engine/${game}`)
         .then(resp => resp.data);

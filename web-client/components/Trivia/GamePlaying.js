@@ -7,15 +7,6 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import { gameEngine, gameLayout } from '../../__mocks__/mock-game-layout';
-
-function nextQuestion(idx) {
-    const limit = gameLayout.length;
-    if (limit > idx) {
-        const { current_section, section_index, question, choices } = gameLayout[idx];
-        return { round: current_section, number: section_index, ...question, choices };
-    }
-}
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -25,23 +16,11 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-export default function GamesPlaying({ match }) {
+export default function GamesPlaying({ engine, current, onNext, hasMore, handleSubmit }) {
 
-    const [{ idx, current }, setCurrent] = React.useState({ idx: 0, current: nextQuestion(0) });
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // submitAnswer(data.get('answer'));
-    };
-
-    function onHandleNext(e){
+    function onHandleNext(e) {
         e.preventDefault();
-        setCurrent(curr => {
-            let idx = curr.idx + 1
-            let current = nextQuestion(idx);
-            return ({ idx, current });
-        });
+        onNext();
     }
 
     return (
@@ -86,7 +65,7 @@ export default function GamesPlaying({ match }) {
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         {current?.choices.map(choice => (
                             <Grid key={choice.choice_id} item xs={6}>
-                                <Item>{choice.choice_value}</Item>
+                                <Button fullWidth sx={{padding: 2, fontSize: '1.2em'}} variant="outlined">{choice.choice_value}</Button>
                             </Grid>
                         ))}
                     </Grid>
@@ -118,7 +97,7 @@ export default function GamesPlaying({ match }) {
                 </Box>
             }
 
-            {gameLayout.length > idx + 1 && gameEngine.progression === 'manual' &&
+            {onNext && hasMore && engine.progression === 'manual' &&
                 <Box component="form" noValidate onSubmit={onHandleNext} sx={{ mt: 3 }}>
                     <Button
                         type="submit"

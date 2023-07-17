@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import GamesAccepting from "../../components/Trivia/GamesAccepting";
 import { serverUrl } from "../../services/request";
+import { useParams } from "react-router-dom";
 
 export default function GameAcceptingContainer(props) {
 
-    const { match, trivia, fetchGameParticipants, onParticipantEvents, onGameStartingEvent } = props;
+    let { gameId, playerId } = useParams();
+    const {trivia, fetchGameParticipants, onParticipantEvents, onGameStartingEvent} = props;
 
     useEffect(() => {
-        const gameId = match.params.gameId;
         async function participantsListing() {
             if (gameId) {
                 await fetchGameParticipants(gameId);
@@ -15,13 +16,11 @@ export default function GameAcceptingContainer(props) {
         }
 
         participantsListing();
-    }, [match.params.gameId]);
+    }, [gameId]);
 
     useEffect(() => {
-        const channel = match.params.gameId;
-        const player = match.params.playerId;
-        const evtSource = new EventSource(`${serverUrl()}/play/game/${channel}/player/${player}`)
-        if (channel && player) {
+        const evtSource = new EventSource(`${serverUrl()}/play/game/${gameId}/player/${playerId}`)
+        if (gameId && playerId) {
             onParticipantEvents(evtSource);
             onGameStartingEvent(evtSource);
         }
@@ -29,9 +28,9 @@ export default function GameAcceptingContainer(props) {
         return () => {
             evtSource.close();
         }
-    }, [match.params.gameId, match.params.playerId]);
+    }, [gameId, playerId]);
 
-    const game = trivia?.listing.find(g => g.game_info.game_id === match.params.gameId);
+    const game = trivia?.listing?.find(g => g.game_info.game_id === gameId);
 
     return <GamesAccepting game={game} {...props} />
 }
