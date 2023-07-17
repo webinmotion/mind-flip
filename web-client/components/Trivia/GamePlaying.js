@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
+import ProgressBar from '../Layout/ProgressBar';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -20,7 +21,9 @@ export default function GamesPlaying({ engine, current, onNext, hasMore, handleS
 
     function onHandleNext(e) {
         e.preventDefault();
-        onNext();
+        if (typeof onNext === 'function') {
+            onNext();
+        }
     }
 
     return (
@@ -65,7 +68,7 @@ export default function GamesPlaying({ engine, current, onNext, hasMore, handleS
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         {current?.choices.map(choice => (
                             <Grid key={choice.choice_id} item xs={6}>
-                                <Button fullWidth sx={{padding: 2, fontSize: '1.2em'}} variant="outlined">{choice.choice_value}</Button>
+                                <Button fullWidth sx={{ padding: 2, fontSize: '1.2em' }} variant="outlined">{choice.choice_value}</Button>
                             </Grid>
                         ))}
                     </Grid>
@@ -97,7 +100,7 @@ export default function GamesPlaying({ engine, current, onNext, hasMore, handleS
                 </Box>
             }
 
-            {onNext && hasMore && engine.progression === 'manual' &&
+            {onNext && hasMore && engine?.progression === 'manual' &&
                 <Box component="form" noValidate onSubmit={onHandleNext} sx={{ mt: 3 }}>
                     <Button
                         type="submit"

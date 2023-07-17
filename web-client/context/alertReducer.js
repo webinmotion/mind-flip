@@ -1,6 +1,8 @@
 import {
     SHOW_ALERT_MESSAGE,
-    CLEAR_ALERT_MESSAGE
+    CLEAR_ALERT_MESSAGE,
+    SHOW_PROGRESS_BAR,
+    CLEAR_PROGRESS_BAR,
 }
     from './alertActions';
 
@@ -14,6 +16,14 @@ export const initialAlert = {
     onClose: () => { }
 };
 
+export const initialProgress = {
+    show: true,
+    delay: 5000, 
+    interval: 100, 
+    duration: 10000,
+    points: 1000,
+};
+
 export const alertReducer = (alert, action) => {
     console.log('state type', typeof alert, 'state value', alert);
     switch (action.type) {
@@ -24,7 +34,22 @@ export const alertReducer = (alert, action) => {
             return ({ ...alert, ...action.alert });
         }
         default: {
-            return game;
+            return alert;
+        }
+    }
+}
+
+export const progressReducer = (progress, action) => {
+    console.log('state type', typeof progress, 'state value', progress);
+    switch (action.type) {
+        case SHOW_PROGRESS_BAR: {
+            return ({ ...progress, ...action.progress });
+        }
+        case CLEAR_PROGRESS_BAR: {
+            return ({ ...progress, ...action.progress });
+        }
+        default: {
+            return progress;
         }
     }
 }

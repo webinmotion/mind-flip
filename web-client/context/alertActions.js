@@ -1,5 +1,7 @@
 export const SHOW_ALERT_MESSAGE = "SHOW_ALERT_MESSAGE";
 export const CLEAR_ALERT_MESSAGE = "CLEAR_ALERT_MESSAGE";
+export const SHOW_PROGRESS_BAR = "SHOW_PROGRESS_BAR";
+export const CLEAR_PROGRESS_BAR = "CLEAR_PROGRESS_BAR";
 
 function defaultCloseOptions(autoClose = false, closeDelay, onClose) {
     return ({
@@ -36,6 +38,26 @@ export const clearAlertAction = dispatch => () => {
             message: '',
             severity: 'info',
             ...defaultCloseOptions(),
+        }
+    });
+};
+
+export const showProgressAction = dispatch => ({ delay, interval, duration, points, show }) => {
+    dispatch({
+        type: SHOW_PROGRESS_BAR, alert: {
+            show: true,
+            delay,
+            interval,
+            duration,
+            points,
+        }
+    });
+};
+
+export const clearProgressAction = dispatch => () => {
+    dispatch({
+        type: CLEAR_PROGRESS_BAR, alert: {
+            show: false,
         }
     });
 };

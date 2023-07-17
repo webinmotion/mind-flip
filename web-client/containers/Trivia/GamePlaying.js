@@ -3,11 +3,11 @@ import GamePlaying from "../../components/Trivia/GamePlaying";
 import { useParams } from "react-router-dom";
 import { remoteFetchGameEngine, remoteFetchGameLayout, remoteFetchGameQuestion, remoteFetchQuestionChoices } from "../../services/trivia";
 
-export default function ClientManualPull(props) {
+export default function GamePlayingContainer(props) {
 
     let { gameId } = useParams();
     const [counter, setCounter] = useState(0);
-    const [layout, setLayout] = useState(null);
+    const [ready, setReady] = useState(false);
     const [gameQue, setGameQue] = useState(null);
     const [gameEngine, setGameEngine] = useState(null);
     const [gameLayout, setGameLayout] = useState([]);
@@ -21,19 +21,19 @@ export default function ClientManualPull(props) {
             remoteFetchGameLayout(gameId).then(layout => {
                 setGameLayout(layout);
 
-                //set current layout idx
-                setLayout(layout[counter]);
+                //set ready
+                setReady(true);
             });
         });
     }, [gameId]);
 
     useEffect(() => {
-        if (layout) {
-            nextQuestion();
+        if (ready) {
+            nextQuestion(gameEngine?.progression === 'auto' ? setCounterOnTimeout : null);
         }
-    }, [layout]);
+    }, [ready, counter]);
 
-    function nextQuestion() {
+    function nextQuestion(updateCounter) {
         const limit = gameLayout.length;
         if (limit > counter) {
 
@@ -47,17 +47,34 @@ export default function ClientManualPull(props) {
                         setGameQue({ round: current_section, number: section_index, ...question, choices });
 
                         //update current counter
-                        setCounter(counter + 1);
+                        if (typeof updateCounter === 'function') {
+                            updateCounter();
+                        }
                     });
                 }
                 else {
                     setGameQue({ round: current_section, number: section_index, ...question, choices: [] });
 
                     //update current counter
-                    setCounter(counter + 1);
+                    if (typeof updateCounter === 'function') {
+                        updateCounter();
+                    }
                 }
             });
         }
+    }
+
+    function setCounterOnTimeout() {
+        const { initial_delay, display_duration } = gameEngine;
+        let duration = initial_delay + display_duration;
+        let handle = setTimeout(() => {
+            setCounter(counter + 1);
+            clearTimeout(handle);
+        }, duration);
+    }
+
+    function setCounterOnDemand() {
+        setCounter(counter + 1);
     }
 
     const handleSubmit = (event) => {
@@ -66,12 +83,13 @@ export default function ClientManualPull(props) {
         // submitAnswer(data.get('answer'));
     };
 
-    return <GamePlaying
-        engine={gameEngine}
-        current={gameQue}
-        onNext={nextQuestion}
-        hasMore={gameLayout.length > counter}
-        handleSubmit={handleSubmit}
-        {...props}
-    />
+    return (
+        <GamePlaying
+            engine={gameEngine}
+            current={gameQue}
+            onNext={gameEngine?.progression === 'manual' ? setCounterOnDemand : null}
+            hasMore={gameLayout.length > counter + 1}
+            handleSubmit={handleSubmit}
+            {...props}
+        />)
 }

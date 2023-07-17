@@ -4,8 +4,8 @@ import {
     fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction,
     updateGameEngineAction, addGameParticipantAction, respondToQuestionAction, fetchCumulativeTallyAction,
     updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, onGameStartingEventAction,
-    fetchGameParticipantsAction, onNextQuestionEventAction, 
-    createGameHandleAction, updateGameStatusAction, deleteGameHandleAction, 
+    fetchGameParticipantsAction, onNextQuestionEventAction,
+    createGameHandleAction, updateGameStatusAction, deleteGameHandleAction,
 } from './triviaActions';
 import { triviaReducer, initialTrivia } from './triviaReducer';
 import {
@@ -14,8 +14,8 @@ import {
     verifyRecoveryCodeAction,
 } from './prospectActions';
 import { prospectReducer, initialRegistration, initialAuthentication } from './prospectReducer';
-import { showAlertAction, clearAlertAction } from "./alertActions";
-import { alertReducer, initialAlert } from './alertReducer';
+import { showAlertAction, clearAlertAction, showProgressAction, clearProgressAction } from "./alertActions";
+import { alertReducer, initialAlert, progressReducer, initialProgress, } from './alertReducer';
 import { usePageForms } from "../hooks/usePageForms";
 import { useLocalState } from "../hooks/useLocalState";
 import GameClient from './GameClient';
@@ -31,18 +31,20 @@ export const AppProvider = ({ children }) => {
     // initialize applications forms (for holding and validating input data)
     const { currentRoute, currentView, playerTypeForm, guestEmailForm, signUpForm, signInForm, verificationForm, recoveryForm, selectedGame,
         setCurrentRoute, toggleCurrentView, setPlayerTypeForm, setGuestEmailForm, setSignUpForm, setSignInForm, setVerificationForm,
-        setRecoveryForm, setSelectedGame,  } = usePageForms();
+        setRecoveryForm, setSelectedGame, } = usePageForms();
 
     //fetch cached state (if it exists)
     const { player: cachedPlayer, registration: cachedRegistration, participant: cachedParticipant,
         authentication: cachedAuthentication, cleanup } = useLocalState({});
 
-    //initialize application state
+    //initialize player state
     const [trivia, triviaDispatch] = useReducer(triviaReducer, {
         ...initialTrivia,
         player: cachedPlayer,
         participant: cachedParticipant,
     });
+
+    //initialize auth state
     const [prospect, prospectDispatch] = useReducer(prospectReducer, {
         registration: {
             ...initialRegistration,
@@ -53,7 +55,12 @@ export const AppProvider = ({ children }) => {
             ...cachedAuthentication
         }
     });
+
+    //initialize alert state
     const [alert, alertDispatch] = useReducer(alertReducer, initialAlert);
+
+    //initialize progress indicator state
+    const [progress, progressDispatch] = useReducer(progressReducer, initialProgress);
 
     return (
         <AppContext.Provider value={{
@@ -61,6 +68,7 @@ export const AppProvider = ({ children }) => {
             trivia,
             prospect,
             alert,
+            progress,
             gameClient: new GameClient(trivia),
 
             //app forms and variables
@@ -115,6 +123,10 @@ export const AppProvider = ({ children }) => {
             //alert actions
             showAlert: showAlertAction(alertDispatch),
             clearAlert: clearAlertAction(alertDispatch),
+
+            //progress actions
+            showProgress: showProgressAction(progressDispatch),
+            clearProgress: clearProgressAction(progressDispatch),
 
             //app form functions
             setCurrentRoute,
