@@ -10,7 +10,7 @@ import ProgressBar from '../Layout/ProgressBar';
 
 export default function App({ ...rest }) {
 
-    const { alert, clearAlert, progress, clearProgress, prospect, trivia, createGameHandle, updateGameStatus, deleteGameHandle, } = rest;
+    const { alert, clearAlert, progress, showProgress, clearProgress, prospect, trivia, createGameHandle, updateGameStatus, deleteGameHandle, } = rest;
 
     const { auth } = prospect?.authentication;
 
@@ -19,7 +19,7 @@ export default function App({ ...rest }) {
             <AlertMessage {...alert} clearAlert={clearAlert} />
             <Routes>
                 <Route path="/accepting/:gameId/player/:playerId" element={<GameAccepting {...rest} />} />
-                <Route path="/playing/:gameId/player/:playerId" element={<GamePlaying participant={trivia?.participant} />} />
+                <Route path="/playing/:gameId/player/:playerId" element={<GamePlaying participant={trivia?.participant} showProgress={showProgress} />} />
                 <Route path="/organize" element={<OrganizeGames games={trivia.listing} player={trivia.player} createGame={createGameHandle} updateGame={updateGameStatus} deleteGame={deleteGameHandle} />} />
                 <Route path="/profile" element={<PlayerProfile player={trivia.player} accessToken={auth?.accessToken} />} />
                 <Route path="/*" element={<Trivia {...rest} />} />

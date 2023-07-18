@@ -30,6 +30,14 @@ export default function GamePlayingContainer(props) {
     useEffect(() => {
         if (ready) {
             nextQuestion(gameEngine?.progression === 'auto' ? setCounterOnTimeout : null);
+            //fire up progress indicator
+            props.showProgress({
+                delay: gameEngine?.initial_delay,
+                interval: 100,
+                duration: gameEngine?.display_duration,
+                points: 1000,
+                number: counter + 1
+            });
         }
     }, [ready, counter]);
 
@@ -69,6 +77,7 @@ export default function GamePlayingContainer(props) {
         let duration = initial_delay + display_duration;
         let handle = setTimeout(() => {
             setCounter(counter + 1);
+            props.showProgress({ number: counter + 1 });
             clearTimeout(handle);
         }, duration);
     }

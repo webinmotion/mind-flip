@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -16,12 +16,14 @@ function LinearProgressWithLabel(props) {
     );
 }
 
-export default function ProgressBar({ delay, interval, duration, points, show }) {
+export default function ProgressBar({ progress: { delay, interval, duration, points, show, number } }) {
+    // console.log('delay, interval, duration, points, show, number', delay, interval, duration, points, show, number);
     const [progress, setProgress] = React.useState(0);
     const [countDown, setCountdown] = React.useState(points);
 
-    React.useEffect(() => {
-        if (show) {
+    useEffect(() => {
+        console.log('progress bar show?', show);
+        if (number > 0) {
             let timer;
             const ticks = duration / interval;
             const delta = points / ticks;
@@ -43,6 +45,8 @@ export default function ProgressBar({ delay, interval, duration, points, show })
                     }
                 }, interval);
 
+                setProgress(0);
+                setCountdown(points);
                 clearTimeout(timeout);
             }, delay);
 
@@ -52,7 +56,7 @@ export default function ProgressBar({ delay, interval, duration, points, show })
                 }
             };
         }
-    }, [show]);
+    }, [number]);
 
     return show ?
         (<Box sx={{ width: '100%' }}>
@@ -60,5 +64,4 @@ export default function ProgressBar({ delay, interval, duration, points, show })
             <Typography mt={2} variant="h2" component="h2">Countdown: {countDown}</Typography >
         </Box>)
         : null
-
 }

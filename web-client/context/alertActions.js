@@ -42,21 +42,22 @@ export const clearAlertAction = dispatch => () => {
     });
 };
 
-export const showProgressAction = dispatch => ({ delay, interval, duration, points, show }) => {
+export const showProgressAction = dispatch => ({ delay, interval, duration, points, number, }) => {
     dispatch({
-        type: SHOW_PROGRESS_BAR, alert: {
+        type: SHOW_PROGRESS_BAR, progress: {
             show: true,
             delay,
             interval,
             duration,
             points,
+            number,
         }
     });
 };
 
 export const clearProgressAction = dispatch => () => {
     dispatch({
-        type: CLEAR_PROGRESS_BAR, alert: {
+        type: CLEAR_PROGRESS_BAR, progress: {
             show: false,
         }
     });
