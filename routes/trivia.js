@@ -20,7 +20,8 @@ const {
     addGameParticipant,
     dropGameParticipant,
     respondToQuestion,
-    fetchCumulativeTally,
+    fetchParticipantTally,
+    fetchGameTallies,
     updateHighestScore,
 } = require('../handlers/trivia');
 const { validateAccessToken } = require('../middleware/authorize');
@@ -63,7 +64,9 @@ router.delete('/participant/:participant', dropGameParticipant);
 
 router.put('/participant/:participant/question/:question', respondToQuestion);
 
-router.get('/participant/:participant/score', fetchCumulativeTally);
+router.get('/participant/:participant/score', fetchParticipantTally);
+
+router.get('/game/:game/scores', fetchGameTallies);
 
 router.put('/participant/:participant/highscore/:score', updateHighestScore);
 

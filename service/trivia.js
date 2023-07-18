@@ -139,7 +139,8 @@ const deleteGameHandle = async (game_id) => {
 const createGameEngine = async (game_id, { scheduled_start, progression, display_duration, time_ticker }) => {
     let result = await execute(`
     insert into tbl_game_engine (game_fk, scheduled_start, progression, display_duration, time_ticker) values 
-    ($1::uuid, $2, $3, $4, $5) on conflict (game_fk) do update set scheduled_start = $2, progression = $3, display_duration = $4, time_ticker = $5 returning *`, [game_id, scheduled_start, progression, display_duration, time_ticker]);
+    ($1::uuid, $2, $3, $4, $5) on conflict (game_fk) do update set scheduled_start = $2, progression = $3, display_duration = $4, time_ticker = $5 returning *`,
+        [game_id, scheduled_start, progression, display_duration, time_ticker]);
     const { game_fk, current_section, section_index } = result[0];
     return { game_fk, scheduled_start, current_section, section_index, progression, display_duration, time_ticker };
 }
@@ -160,12 +161,25 @@ const fetchGameParticipants = async (game_id) => {
     return result;
 }
 
+const fetchGameTallies = async (game_id) => {
+    let result = await execute(`select gt.participant_fk, sum(gt.tally_points) from tbl_game_tally gt
+    inner join tbl_game_player gp on gp.participant_id = gt.participant_fk 
+    where gp.game_fk = $1
+    group by gt.participant_fk`, [game_id]);
+    return result[0];
+}
+
 const fetchParticipantById = async (participant_id) => {
     let result = await execute(`
     select * from tbl_game_player gp inner join tbl_player p on gp.player_fk = p.player_id where gp.participant_id = $1`,
         [participant_id]);
     // const { participant_id, player_id, screen_name, city, state, country } = result;
     return result;
+}
+
+const fetchParticipantTally = async (participant_id) => {
+    let result = await execute("select sum(tally_points) from tbl_game_tally where participant_fk = $1", [participant_id]);
+    return result[0];
 }
 
 const addGameParticipant = async (game_id, player_id) => {
@@ -182,15 +196,11 @@ const dropGameParticipant = async (participant_id) => {
 }
 
 const respondToQuestion = async (participant_fk, question_fk, { answer_submitted, clock_remaining, tally_points }) => {
+    console.log("submitting response", answer_submitted, clock_remaining, tally_points);
     let insert_query = `insert into tbl_game_tally (participant_fk, question_fk, answer_submitted, clock_remaining, tally_points) 
-values ($1, $2, $3, $4, $5) on conflict (participant_fk, question_fk) update set tally_points = $5`;
+values ($1, $2, $3, $4, $5) on conflict (participant_fk, question_fk) do update set tally_points = $5`;
     let result = await execute(insert_query,
         [participant_fk, question_fk, answer_submitted, clock_remaining, tally_points]);
-    return result[0];
-}
-
-const fetchCumulativeTally = async (participant_id) => {
-    let result = await execute("select sum(tally_points) from tbl_game_tally where participant_fk = $1", [participant_id]);
     return result[0];
 }
 
@@ -220,6 +230,7 @@ module.exports = {
     fetchProgression,
     fetchGameLayout,
     fetchGameQuestion,
+    fetchGameTallies,
     fetchQuestionChoices,
     fetchGameEngine,
     fetchPlayerById,
@@ -231,9 +242,9 @@ module.exports = {
     updateGameEngine,
     fetchGameParticipants,
     fetchParticipantById,
+    fetchParticipantTally,
     addGameParticipant,
     dropGameParticipant,
     respondToQuestion,
-    fetchCumulativeTally,
     updateHighestScore,
 }

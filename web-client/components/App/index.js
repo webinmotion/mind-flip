@@ -25,6 +25,13 @@ export default function App({ ...rest }) {
                 <Route path="/*" element={<Trivia {...rest} />} />
             </Routes>
             <ProgressBar progress={progress} clearProgress={clearProgress} />
+            {/* <button onClick={() => showProgress({
+                ...progress,
+                number: 1,
+                oncountdown: (data) => console.log(data),
+                precountdown: () => console.log('pre-countdown'),
+                postcountdown: () => console.log('post-countdown'),
+            })}>Show Progress Bar</button> */}
         </div>
     )
 }

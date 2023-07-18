@@ -4,10 +4,12 @@ import {
     remoteFetchGameLayout, remoteFetchGameQuestion,
     remoteFetchGameEngine, remoteCreateGameEngine,
     remoteUpdateGameEngine, remoteRespondToQuestion,
-    remoteFetchCumulativeTally, remoteUpdateHighestScore,
+    remoteFetchPartipantTally, remoteUpdateHighestScore,
     remoteAddGameParticipant, remoteDropGameParticipant,
     remoteFetchPlayerByEmail, remoteFetchGameParticipants,
-    remoteFetchGameParticipant, remoteCreateGameHandle, remoteUpdateGameStatus, remoteDeleteGameHandle,
+    remoteFetchGameParticipant, remoteCreateGameHandle, 
+    remoteUpdateGameStatus, remoteDeleteGameHandle,
+    remoteFetchGameTallies,
 } from '../services/trivia';
 
 export const FETCH_GAMES_LISTING = "FETCH_GAMES_LISTING";
@@ -26,7 +28,8 @@ export const CREATE_GAME_ENGINE = "CREATE_GAME_ENGINE";
 export const UPDATE_GAME_ENGINE = "UPDATE_GAME_ENGINE";
 export const ADD_GAME_PARTICIPANT = "ADD_GAME_PARTICIPANT";
 export const DROP_GAME_PARTICIPANT = "DROP_GAME_PARTICIPANT";
-export const FETCH_CUMULATIVE_TALLY = "FETCH_CUMULATIVE_TALLY";
+export const FETCH_PARTICIPANT_TALLY = "FETCH_PARTICIPANT_TALLY";
+export const FETCH_GAME_TALLIES = "FETCH_GAME_TALLIES";
 export const UPDATE_HIGHEST_SCORE = "UPDATE_HIGHEST_SCORE";
 export const ON_SSE_TESTING_EVENT = "ON_SSE_TESTING_EVENT";
 export const ON_GAME_CREATED_EVENT = "ON_GAME_CREATED_EVENT";
@@ -143,9 +146,14 @@ export const respondToQuestionAction = dispatch => (participant, question, { ans
         .then(result => console.log(`submission result - ${result}`));
 }
 
-export const fetchCumulativeTallyAction = dispatch => id => {
-    remoteFetchCumulativeTally(id).then(ok =>
-        dispatch({ type: FETCH_CUMULATIVE_TALLY, ok, id }));
+export const fetchPartipantTallyAction = dispatch => score => {
+    remoteFetchPartipantTally(id).then(ok =>
+        dispatch({ type: FETCH_PARTICIPANT_TALLY, ok, score }));
+}
+
+export const fetchGameTalliesAction = dispatch => scores => {
+    remoteFetchGameTallies(id).then(ok =>
+        dispatch({ type: FETCH_GAME_TALLIES, ok, scores }));
 }
 
 export const updateHighestScoreAction = dispatch => id => {

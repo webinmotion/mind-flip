@@ -120,12 +120,17 @@ export const remoteRespondToQuestion = async (participant, question, { answer_su
         .then(resp => resp.data);
 }
 
-export const remoteFetchCumulativeTally = async (participant) => {
+export const removeFetchPartipantTally = async (participant) => {
     return await axios.get(`${serverUrl()}/trivia/participant/${participant}/score`)
         .then(resp => resp.data);
 }
 
 export const remoteUpdateHighestScore = async (participant, score) => {
     return await axios.put(`${serverUrl()}/trivia/participant/${participant}/highscore/${score}`)
+        .then(resp => resp.data);
+}
+
+export const remoteFetchGameTallies = async (game) => {
+    return await axios.put(`${serverUrl()}/trivia/game/${game}/score`)
         .then(resp => resp.data);
 }

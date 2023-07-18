@@ -3,7 +3,6 @@ import {
     CLEAR_ALERT_MESSAGE,
     SHOW_PROGRESS_BAR,
     CLEAR_PROGRESS_BAR,
-    RESET_PROGRESS_BAR,
 }
     from './alertActions';
 
@@ -19,11 +18,14 @@ export const initialAlert = {
 
 export const initialProgress = {
     show: false,
-    delay: 5000,
-    interval: 100,
-    duration: 10000,
-    points: 1000,
-    number: 0
+    delay: 0,
+    interval: 0,
+    duration: 0,
+    points: 0,
+    number: 0,
+    oncountdown: null,
+    precountdown: null,
+    postcountdown: null,
 };
 
 export const alertReducer = (alert, action) => {

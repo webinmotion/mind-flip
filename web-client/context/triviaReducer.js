@@ -7,12 +7,13 @@ import {
     FETCH_GAME_QUESTION,
     FETCH_GAME_ENGINE,
     FETCH_PLAYER_BY_EMAIL,
+    FETCH_GAME_TALLIES,
+    FETCH_PARTICIPANT_TALLY,
+    FETCH_GAME_PARTICIPANTS,
     CREATE_GAME_ENGINE,
     UPDATE_GAME_ENGINE,
-    FETCH_GAME_PARTICIPANTS,
     ADD_GAME_PARTICIPANT,
     DROP_GAME_PARTICIPANT,
-    FETCH_CUMULATIVE_TALLY,
     UPDATE_HIGHEST_SCORE,
     ON_GAME_ACCEPTING_EVENT,
     ON_GAME_CREATED_EVENT,
@@ -30,6 +31,7 @@ export const initialTrivia = {
     title: null,
     organizer: null,
     participant: null,
+    score: null,
     layout: null,
     engine: null,
     driver: null,
@@ -38,6 +40,7 @@ export const initialTrivia = {
     queIndex: 0,
     listing: [],
     participants: [],
+    scores: [],
     gameStatus: ['Created', 'Accepting', 'Playing']
 }
 
@@ -82,6 +85,14 @@ export const triviaReducer = (game, action) => {
             const { participants } = action;
             return ({ ...game, participants });
         }
+        case FETCH_GAME_TALLIES: {
+            const { scores } = action;
+            return ({ ...game, scores });
+        }
+        case FETCH_PARTICIPANT_TALLY: {
+            const { score } = action;
+            return ({ ...game, score });
+        }
         case ADD_GAME_PARTICIPANT: {
             const { participant } = action;
             localState.onJoinGame(participant);
@@ -91,7 +102,7 @@ export const triviaReducer = (game, action) => {
             const participant = null;
             return ({ ...game, participant });
         }
-        case FETCH_CUMULATIVE_TALLY: {
+        case FETCH_PARTICIPANT_TALLY: {
             return game;
         }
         case UPDATE_HIGHEST_SCORE: {

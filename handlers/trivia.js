@@ -5,11 +5,13 @@ const {
     fetchProgression,
     fetchGameLayout,
     fetchGameQuestion,
-    fetchQuestionChoices,
+    fetchGameTallies,
     fetchGameEngine,
     fetchGameParticipants,
     fetchParticipantById,
+    fetchParticipantTally,
     fetchPlayerByEmail,
+    fetchQuestionChoices,
     createGameHandle,
     updateGameStatus,
     deleteGameHandle,
@@ -18,7 +20,6 @@ const {
     addGameParticipant,
     dropGameParticipant,
     respondToQuestion,
-    fetchCumulativeTally,
     updateHighestScore,
 } = require('../service/trivia');
 
@@ -216,11 +217,33 @@ const handleFetchGameParticipants = async function (req, res, next) {
     }
 }
 
+const handleFetchGameTallies = async function (req, res, next) {
+    try {
+        const game_id = req.params.game;
+        const result = await fetchGameTallies(game_id);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 const handleFetchParticipantById = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
         const result = await fetchParticipantById(participant_id);
         res.json(result[0]); //expecting single result
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleFetchParticipantTally = async function (req, res, next) {
+    try {
+        const participant_id = req.params.participant;
+        const result = await fetchParticipantTally(participant_id);
+        res.json(result);
     }
     catch (e) {
         next(e);
@@ -269,17 +292,6 @@ const handleRespondToQuestion = async function (req, res, next) {
     }
 }
 
-const handleFetchCumulativeTally = async function (req, res, next) {
-    try {
-        const participant_id = req.params.participant;
-        const result = await fetchCumulativeTally(participant_id);
-        res.json(result);
-    }
-    catch (e) {
-        next(e);
-    }
-}
-
 const handleUpdateHighestScore = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
@@ -313,6 +325,7 @@ module.exports = {
     dropGameParticipant: handleDropGameParticipant,
     updateGameEngine: handleUpdateGameEngine,
     respondToQuestion: handleRespondToQuestion,
-    fetchCumulativeTally: handleFetchCumulativeTally,
+    fetchParticipantTally: handleFetchParticipantTally,
+    fetchGameTallies: handleFetchGameTallies,
     updateHighestScore: handleUpdateHighestScore,
 }

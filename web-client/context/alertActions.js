@@ -42,7 +42,7 @@ export const clearAlertAction = dispatch => () => {
     });
 };
 
-export const showProgressAction = dispatch => ({ delay, interval, duration, points, number, }) => {
+export const showProgressAction = dispatch => ({ delay, interval, duration, points, number, oncountdown, precountdown, postcountdown, }) => {
     dispatch({
         type: SHOW_PROGRESS_BAR, progress: {
             show: true,
@@ -51,6 +51,9 @@ export const showProgressAction = dispatch => ({ delay, interval, duration, poin
             duration,
             points,
             number,
+            oncountdown,
+            precountdown, 
+            postcountdown,
         }
     });
 };

@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer } from "react";
 import {
     fetchGamesListingAction, fetchGameInfoAction, fetchProgressionAction, fetchGameLayoutAction,
     fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction,
-    updateGameEngineAction, addGameParticipantAction, respondToQuestionAction, fetchCumulativeTallyAction,
+    updateGameEngineAction, addGameParticipantAction, respondToQuestionAction, fetchPartipantTallyAction,
     updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, onGameStartingEventAction,
     fetchGameParticipantsAction, onNextQuestionEventAction,
     createGameHandleAction, updateGameStatusAction, deleteGameHandleAction,
@@ -98,7 +98,7 @@ export const AppProvider = ({ children }) => {
             updateGameEngine: updateGameEngineAction(triviaDispatch),
             addGameParticipant: addGameParticipantAction(triviaDispatch),
             respondToQuestion: respondToQuestionAction(triviaDispatch),
-            fetchCumulativeTally: fetchCumulativeTallyAction(triviaDispatch),
+            fetchPartipantTally: fetchPartipantTallyAction(triviaDispatch),
             updateHighestScore: updateHighestScoreAction(triviaDispatch),
 
             //trivia events actions

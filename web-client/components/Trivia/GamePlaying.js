@@ -1,29 +1,22 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import ProgressBar from '../Layout/ProgressBar';
 
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.h5,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-}));
-
-export default function GamesPlaying({ engine, current, onNext, hasMore, handleSubmit }) {
+export default function GamesPlaying({ navigate, engine, current, onNext, hasMore, submitAnswer, submitChoice }) {
 
     function onHandleNext(e) {
         e.preventDefault();
         if (typeof onNext === 'function') {
             onNext();
         }
+    }
+
+    function onHandleCompleted(){
+        navigate("/");
     }
 
     return (
@@ -68,7 +61,9 @@ export default function GamesPlaying({ engine, current, onNext, hasMore, handleS
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         {current?.choices.map(choice => (
                             <Grid key={choice.choice_id} item xs={6}>
-                                <Button fullWidth sx={{ padding: 2, fontSize: '1.2em' }} variant="outlined">{choice.choice_value}</Button>
+                                <Button fullWidth sx={{ padding: 2, fontSize: '1.2em' }} variant="outlined" onClick={() => submitChoice(choice.choice_value)}>
+                                    {choice.choice_value}
+                                </Button>
                             </Grid>
                         ))}
                     </Grid>
@@ -76,7 +71,7 @@ export default function GamesPlaying({ engine, current, onNext, hasMore, handleS
             }
 
             {!current?.has_choices &&
-                <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                <Box component="form" noValidate onSubmit={submitAnswer} sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
@@ -100,7 +95,7 @@ export default function GamesPlaying({ engine, current, onNext, hasMore, handleS
                 </Box>
             }
 
-            {onNext && hasMore && engine?.progression === 'manual' &&
+            {onNext && hasMore && engine?.progression === 'manual' ?
                 <Box component="form" noValidate onSubmit={onHandleNext} sx={{ mt: 3 }}>
                     <Button
                         type="submit"
@@ -109,6 +104,17 @@ export default function GamesPlaying({ engine, current, onNext, hasMore, handleS
                         sx={{ mt: 3, mb: 2 }}
                     >
                         Next
+                    </Button>
+                </Box>
+                :
+                <Box component="form" noValidate onSubmit={onHandleCompleted} sx={{ mt: 3 }}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Completed Challenge!
                     </Button>
                 </Box>
             }
