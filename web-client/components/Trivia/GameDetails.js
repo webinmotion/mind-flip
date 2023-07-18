@@ -17,13 +17,13 @@ export default function GameDetails({ game_info, organizer, playerType, setPlaye
             <Card variant="outlined">
                 <CardContent>
                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        {game_info.game_status}
+                        {game_info?.game_status}
                     </Typography>
                     <Typography variant="h5" component="div">
-                        {game_info.title}
+                        {game_info?.title}
                     </Typography>
                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        created by {organizer.email_address}
+                        created by {organizer?.email_address}
                     </Typography>
                 </CardContent>
 

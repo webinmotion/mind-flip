@@ -10,7 +10,9 @@ function NonGuestOptionsContainer() {
     addGameParticipant, isAuthenticated, currentView, toggleCurrentView, } = useAppContext();
 
   useEffect(() => {
-    toggleCurrentView(ViewNames.SIGNIN_VIEW);
+    if (!prospect?.authentication?.accessToken) {
+      toggleCurrentView(ViewNames.SIGNIN_VIEW);
+    }
   }, []);
 
   return <NonGuestOptions
