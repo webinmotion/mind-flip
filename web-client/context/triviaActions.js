@@ -4,7 +4,7 @@ import {
     remoteFetchGameLayout, remoteFetchGameQuestion,
     remoteFetchGameEngine, remoteCreateGameEngine,
     remoteUpdateGameEngine, remoteRespondToQuestion,
-    remoteFetchPartipantTally, remoteUpdateHighestScore,
+    remoteFetchParticipantTally, remoteUpdateHighestScore,
     remoteAddGameParticipant, remoteDropGameParticipant,
     remoteFetchPlayerByEmail, remoteFetchGameParticipants,
     remoteFetchGameParticipant, remoteCreateGameHandle, 
@@ -146,8 +146,8 @@ export const respondToQuestionAction = dispatch => (participant, question, { ans
         .then(result => console.log(`submission result - ${result}`));
 }
 
-export const fetchPartipantTallyAction = dispatch => score => {
-    remoteFetchPartipantTally(id).then(ok =>
+export const fetchParticipantTallyAction = dispatch => score => {
+    remoteFetchParticipantTally(id).then(ok =>
         dispatch({ type: FETCH_PARTICIPANT_TALLY, ok, score }));
 }
 

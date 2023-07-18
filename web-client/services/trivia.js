@@ -120,7 +120,7 @@ export const remoteRespondToQuestion = async (participant, question, { answer_su
         .then(resp => resp.data);
 }
 
-export const removeFetchPartipantTally = async (participant) => {
+export const remoteFetchParticipantTally = async (participant) => {
     return await axios.get(`${serverUrl()}/trivia/participant/${participant}/score`)
         .then(resp => resp.data);
 }
