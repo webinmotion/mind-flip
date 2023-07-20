@@ -21,6 +21,14 @@ import {
     ON_GAME_DELETED_EVENT,
     ON_PARTICIPANT_JOINED,
     ON_PARTICIPANT_EXITED,
+    ON_GAME_STARTING_EVENT,
+    ON_GAME_ENDING_EVENT,
+    ON_BEFORE_QUESTION_EVENT,
+    ON_QUESTION_POSTED_EVENT,
+    ON_AFTER_QUESTION_EVENT,
+    ON_BREAK_STARTING_EVENT,
+    ON_SNACK_BREAK_EVENT,
+    ON_BREAK_ENDING_EVENT,
 }
     from './triviaActions';
 
@@ -41,6 +49,7 @@ export const initialTrivia = {
     listing: [],
     participants: [],
     scores: [],
+    progression: {},
     gameStatus: ['Created', 'Accepting', 'Playing']
 }
 
@@ -102,9 +111,6 @@ export const triviaReducer = (game, action) => {
             const participant = null;
             return ({ ...game, participant });
         }
-        case FETCH_PARTICIPANT_TALLY: {
-            return game;
-        }
         case UPDATE_HIGHEST_SCORE: {
             return game;
         }
@@ -150,8 +156,48 @@ export const triviaReducer = (game, action) => {
             }
             return game;
         }
+        case ON_GAME_STARTING_EVENT: {
+            const {post_start_delay} = action;
+            console.log('post_start_delay', post_start_delay);
+            return ({...game, progression: {...game.progression, post_start_delay}});
+        }
+        case ON_GAME_ENDING_EVENT: {
+            const ending_message = action.data;
+            console.log('post_end_delay', ending_message);
+            return ({...game, progression: {...game.progression, ending_message}});
+        }
+        case ON_BEFORE_QUESTION_EVENT: {
+            const {pre_countdown_delay} = action;
+            console.log('pre_countdown_delay', pre_countdown_delay);
+            return ({...game, progression: {...game.progression, pre_countdown_delay}});
+        }
+        case ON_QUESTION_POSTED_EVENT: {
+            const question = action.data;
+            console.log('question', question);
+            return ({...game, progression: {...game.progression, question}});
+        }
+        case ON_AFTER_QUESTION_EVENT: {
+            const {post_countdown_delay} = action;
+            console.log('post_countdown_delay', post_countdown_delay);
+            return ({...game, progression: {...game.progression, post_countdown_delay}});
+        }
+        case ON_BREAK_STARTING_EVENT: {
+            const {pre_break_delay} = action;
+            console.log('pre_break_delay', pre_break_delay);
+            return ({...game, progression: {...game.progression, pre_break_delay}});
+        }
+        case ON_SNACK_BREAK_EVENT: {
+            const {snack_break_duration} = action;
+            console.log('snack_break_duration', snack_break_duration);
+            return ({...game, progression: {...game.progression, snack_break_duration}});
+        }
+        case ON_BREAK_ENDING_EVENT: {
+            const {post_break_delay} = action;
+            console.log('post_break_delay', post_break_delay);
+            return ({...game, progression: {...game.progression, post_break_delay}});
+        }
         default: {
             return game;
         }
     }
-}
+}//"data: {\"question\":{\"que_value\":\"1 + 1\",\"que_answer\":\"2\",\"category\":\"general\",\"asked_by\":\"7223e9e6-2633-11ee-acdd-0242ac110002\",\"has_choices\":true,\"max_points\":5000,\"round\":1,\"number\":1,\"choices\":[{\"choice_id\":\"7229665a-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":true,\"choice_value\":\"2\",\"clue\":\"double double it is\"},{\"choice_id\":\"72296df8-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":false,\"choice_value\":\"1\",\"clue\":\"single is not right\"},{\"choice_id\":\"72296e7a-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":false,\"choice_value\":\"0\",\"clue\":\"nothingness is not an option\"},{\"choice_id\":\"72296eca-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":false,\"choice_value\":\"3\",\"clue\":\"triple sec is a drink\"},{\"choice_id\":\"72296f06-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":false,\"choice_value\":\"4\",\"clue\":\"quad is an offroad vehicle\"}],\"progression\":\"manual\",\"delay\":2000,\"duration\":10000,\"interval\":100}}\n\n"

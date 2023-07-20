@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 export default function GameAcceptingContainer(props) {
 
     let { gameId, playerId } = useParams();
-    const {trivia, fetchGameParticipants, onParticipantEvents, onGameStartingEvent} = props;
+    const {trivia, fetchGameParticipants, onParticipantEvents} = props;
 
     useEffect(() => {
         async function participantsListing() {
@@ -22,7 +22,6 @@ export default function GameAcceptingContainer(props) {
         const evtSource = new EventSource(`${serverUrl()}/play/game/${gameId}/player/${playerId}`)
         if (gameId && playerId) {
             onParticipantEvents(evtSource);
-            onGameStartingEvent(evtSource);
         }
 
         return () => {

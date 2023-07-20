@@ -7,7 +7,7 @@ import {
     remoteFetchParticipantTally, remoteUpdateHighestScore,
     remoteAddGameParticipant, remoteDropGameParticipant,
     remoteFetchPlayerByEmail, remoteFetchGameParticipants,
-    remoteFetchGameParticipant, remoteCreateGameHandle, 
+    remoteFetchGameParticipant, remoteCreateGameHandle,
     remoteUpdateGameStatus, remoteDeleteGameHandle,
     remoteFetchGameTallies,
 } from '../services/trivia';
@@ -31,14 +31,26 @@ export const DROP_GAME_PARTICIPANT = "DROP_GAME_PARTICIPANT";
 export const FETCH_PARTICIPANT_TALLY = "FETCH_PARTICIPANT_TALLY";
 export const FETCH_GAME_TALLIES = "FETCH_GAME_TALLIES";
 export const UPDATE_HIGHEST_SCORE = "UPDATE_HIGHEST_SCORE";
+//testing events
 export const ON_SSE_TESTING_EVENT = "ON_SSE_TESTING_EVENT";
+//game status changing events
 export const ON_GAME_CREATED_EVENT = "ON_GAME_CREATED_EVENT";
 export const ON_GAME_ACCEPTING_EVENT = "ON_GAME_ACCEPTING_EVENT";
 export const ON_GAME_PLAYING_EVENT = "ON_GAME_PLAYING_EVENT";
-export const ON_GAME_STARTING_EVENT = "ON_GAME_STARTING_EVENT";
 export const ON_GAME_DELETED_EVENT = "ON_GAME_DELETED_EVENT";
+//players joining and leaving
 export const ON_PARTICIPANT_JOINED = "ON_PARTICIPANT_JOINED";
 export const ON_PARTICIPANT_EXITED = "ON_PARTICIPANT_EXITED";
+//game progression events
+export const ON_GAME_STARTING_EVENT = "ON_GAME_STARTING_EVENT";
+export const ON_GAME_ENDING_EVENT = "ON_GAME_ENDING_EVENT";
+export const ON_BEFORE_QUESTION_EVENT = "ON_BEFORE_QUESTION_EVENT";
+export const ON_QUESTION_POSTED_EVENT = "ON_QUESTION_POSTED_EVENT";
+export const ON_AFTER_QUESTION_EVENT = "ON_AFTER_QUESTION_EVENT";
+export const ON_BREAK_STARTING_EVENT = "ON_BREAK_STARTING_EVENT";
+export const ON_SNACK_BREAK_EVENT = "ON_SNACK_BREAK_EVENT";
+export const ON_BREAK_ENDING_EVENT = "ON_BREAK_ENDING_EVENT";
+//other events
 export const ON_NEXT_QUESTION_EVENT = "ON_NEXT_QUESTION_EVENT";
 export const ON_POINTS_SCORED_EVENT = "ON_POINTS_SCORED_EVENT";
 export const ON_CURRENT_TALLY_EVENT = "ON_CURRENT_TALLY_EVENT";
@@ -213,21 +225,45 @@ export const onParticipantEventsAction = dispatch => (evtSource) => {
     });
 }
 
-export const onGameStartingEventAction = dispatch => (evtSource) => {
-    //TODO: transition from awaiting page to playing page
+export const onProgressionEventsAction = dispatch => (evtSource) => {
+
     evtSource.addEventListener(ON_GAME_STARTING_EVENT, (event) => {
         const { data } = event;
-        if (data) {
-            console.log('Game is now starting', data)
-        }
+        dispatch({ type: ON_GAME_STARTING_EVENT, data: JSON.parse(data) });
     });
-}
 
-export const onNextQuestionEventAction = dispatch => (evtSource) => {
-    evtSource.addEventListener(ON_NEXT_QUESTION_EVENT, (event) => {
+    evtSource.addEventListener(ON_GAME_ENDING_EVENT, (event) => {
         const { data } = event;
-        if (data) {
-            console.log('Next question coming in hot', data)
-        }
+        dispatch({ type: ON_GAME_ENDING_EVENT, data: JSON.parse(data) });
+    });
+
+    evtSource.addEventListener(ON_BEFORE_QUESTION_EVENT, (event) => {
+        const { data } = event;
+        dispatch({ type: ON_BEFORE_QUESTION_EVENT, data: JSON.parse(data) });
+    });
+
+    evtSource.addEventListener(ON_QUESTION_POSTED_EVENT, (event) => {
+        const { data } = event;
+        dispatch({ type: ON_QUESTION_POSTED_EVENT, data: JSON.parse(data) });
+    });
+
+    evtSource.addEventListener(ON_AFTER_QUESTION_EVENT, (event) => {
+        const { data } = event;
+        dispatch({ type: ON_AFTER_QUESTION_EVENT, data: JSON.parse(data) });
+    });
+
+    evtSource.addEventListener(ON_BREAK_STARTING_EVENT, (event) => {
+        const { data } = event;
+        dispatch({ type: ON_BREAK_STARTING_EVENT, data: JSON.parse(data) });
+    });
+
+    evtSource.addEventListener(ON_SNACK_BREAK_EVENT, (event) => {
+        const { data } = event;
+        dispatch({ type: ON_SNACK_BREAK_EVENT, data: JSON.parse(data) });
+    });
+
+    evtSource.addEventListener(ON_BREAK_ENDING_EVENT, (event) => {
+        const { data } = event;
+        dispatch({ type: ON_BREAK_ENDING_EVENT, data: JSON.parse(data) });
     });
 }

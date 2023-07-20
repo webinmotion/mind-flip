@@ -54,9 +54,24 @@ const fetchGameInfoById = async (gameid) => {
 }
 
 const fetchProgression = async (ticker_id) => {
-    let result = await execute("select * from tbl_Ticker where ticker_id = $1", [ticker_id]);
-    const { duration, delay, period } = result[0];
-    return { duration, delay, period };
+    let result = await execute("select * from tbl_ticker where ticker_id = $1", [ticker_id]);
+    const {
+        ticker_title,
+        pre_countdown_delay,
+        post_countdown_delay,
+        snack_break_duration,
+        countdown_duration,
+        countdown_interval,
+    } = result[0];
+    return {
+        ticker_id,
+        ticker_title,
+        pre_countdown_delay,
+        post_countdown_delay,
+        snack_break_duration,
+        countdown_duration,
+        countdown_interval,
+    };
 }
 
 const fetchGameLayout = async (game_id) => {
@@ -78,25 +93,35 @@ const fetchQuestionChoices = async (que_id) => {
 }
 
 const fetchGameEngine = async (game_fk) => {
-    let results = await execute("select * from tbl_game_engine te where te.game_fk = $1::uuid", [game_fk]);
+    let results = await execute(`select * from tbl_game_engine te 
+    inner join tbl_ticker tt on tt.ticker_id = te.game_ticker 
+    where te.game_fk = $1::uuid`, [game_fk]);
     const {
         scheduled_start,
         current_section,
         section_index,
         progression,
-        initial_delay,
-        display_duration,
-        time_ticker
+        allow_nav_back,
+        ticker_title,
+        pre_countdown_delay,
+        post_countdown_delay,
+        snack_break_duration,
+        countdown_duration,
+        countdown_interval,
     } = results[0];
     return {
-        game_fk,
+        game_id: game_fk,
         scheduled_start,
         current_section,
         section_index,
         progression,
-        initial_delay,
-        display_duration,
-        time_ticker
+        allow_nav_back,
+        ticker_title,
+        pre_countdown_delay,
+        post_countdown_delay,
+        snack_break_duration,
+        countdown_duration,
+        countdown_interval,
     };
 }
 

@@ -3,9 +3,9 @@ import {
     fetchGamesListingAction, fetchGameInfoAction, fetchProgressionAction, fetchGameLayoutAction,
     fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction,
     updateGameEngineAction, addGameParticipantAction, respondToQuestionAction, fetchParticipantTallyAction,
-    updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, onGameStartingEventAction,
-    fetchGameParticipantsAction, onNextQuestionEventAction,
-    createGameHandleAction, updateGameStatusAction, deleteGameHandleAction,
+    updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, onProgressionEventsAction,
+    fetchGameParticipantsAction, createGameHandleAction, updateGameStatusAction, deleteGameHandleAction, 
+    fetchGameTalliesAction, 
 } from './triviaActions';
 import { triviaReducer, initialTrivia } from './triviaReducer';
 import {
@@ -18,7 +18,6 @@ import { showAlertAction, clearAlertAction, showProgressAction, clearProgressAct
 import { alertReducer, initialAlert, progressReducer, initialProgress, } from './alertReducer';
 import { usePageForms } from "../hooks/usePageForms";
 import { useLocalState } from "../hooks/useLocalState";
-import GameClient from './GameClient';
 
 const AppContext = createContext();
 
@@ -69,7 +68,6 @@ export const AppProvider = ({ children }) => {
             prospect,
             alert,
             progress,
-            gameClient: new GameClient(trivia),
 
             //app forms and variables
             currentView,
@@ -89,6 +87,7 @@ export const AppProvider = ({ children }) => {
             fetchGameLayout: fetchGameLayoutAction(triviaDispatch),
             fetchGameQuestion: fetchGameQuestionAction(triviaDispatch),
             fetchGameEngine: fetchGameEngineAction(triviaDispatch),
+            fetchGameTallies: fetchGameTalliesAction(triviaDispatch),
             fetchGameParticipants: fetchGameParticipantsAction(triviaDispatch),
             fetchPlayerByEmail: fetchPlayerByEmailAction(triviaDispatch),
             createGameHandle: createGameHandleAction(triviaDispatch),
@@ -104,8 +103,7 @@ export const AppProvider = ({ children }) => {
             //trivia events actions
             onGameListingEvents: onGameListingEventsAction(triviaDispatch),
             onParticipantEvents: onParticipantEventsAction(triviaDispatch),
-            onGameStartingEvent: onGameStartingEventAction(triviaDispatch),
-            onNextQuestionEvent: onNextQuestionEventAction(triviaDispatch),
+            onProgressionEvents: onProgressionEventsAction(triviaDispatch),
 
             //account actions
             registerPlayer: registerPlayerAction(prospectDispatch),
@@ -124,7 +122,7 @@ export const AppProvider = ({ children }) => {
             showAlert: showAlertAction(alertDispatch),
             clearAlert: clearAlertAction(alertDispatch),
 
-            //progress actions
+            //progress bar actions
             showProgress: showProgressAction(progressDispatch),
             clearProgress: clearProgressAction(progressDispatch),
 

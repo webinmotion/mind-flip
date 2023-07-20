@@ -29,7 +29,7 @@ module.exports = class ScoreKeeper {
                         score: highest
                     })
                 }
-            }).filter(o => o !== undefined || o !== null)
+            }).filter(o => o !== undefined || true)
         }
         return [];
     }

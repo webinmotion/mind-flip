@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { enrollDriver, enrollPlayer, sendTestMessage, 
-    handleGamesListing, handleParticipantEvents, handlePushGameQuestion, } = require('../handlers/playtime');
+    handleGamesListing, handleParticipantEvents, handleProgressionEvents, handleNextQuestionEvent, } = require('../handlers/playtime');
 const { validateOrganizerAuth } = require('../middleware/authorize');
 
 /* GET listen for game listing events */
@@ -14,12 +14,15 @@ router.post('/test/:event', sendTestMessage);
 router.post('/game/:game/player/:player', enrollPlayer);
 
 /* POST enroll new game */
-router.post('/title/:title/organizer/:organizer', validateOrganizerAuth, enrollDriver);
+router.post('/game/:game', /*validateOrganizerAuth,*/ enrollDriver);
 
 /* GET listen for participant joining and exiting events */
 router.get('/game/:game/player/:player', handleParticipantEvents);
 
-/** GET push game question for broadcasting to game participants */
-router.get('/push/:game/question/:question', handlePushGameQuestion)
+/** GET listen for game progression events */
+router.get('/client/:game/player/:player', handleProgressionEvents);
+
+/** POST push next question event */
+router.post('/client/:game/question', /*validateOrganizerAuth,*/ handleNextQuestionEvent);
 
 module.exports = router;

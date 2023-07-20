@@ -1,55 +1,35 @@
-const { fetchGameInfo, fetchGameLayout, fetchGameQuestion, fetchProgression, createGameEngine, updateGameEngine,
-    respondToQuestion, updateHighestScore, addGameParticipant, fetchPlayerById } = require('../service/trivia');
+const { fetchGameInfoById, fetchGameLayout, fetchGameQuestion, updateGameEngine,
+    respondToQuestion, updateHighestScore, addGameParticipant, fetchPlayerById, fetchGameEngine, fetchQuestionChoices, updateGameStatus } = require('../service/trivia');
 
 module.exports = class GameDriver {
 
-    constructor(studio, subscriber, scorer, start_time = new Date(), progression = 'manual', time_ticker = '2 seconds delay', ticker_delay = 5000, display_duration = 5000) {
+    constructor(studio, scorer, game_id, start_time = new Date()) {
         this.gameInfo = null;
         this.gameLayout = null;
         this.gameEngine = null;
         this.gameQuestion = null;
+        this.questionChoices = [];
         this.currentCursor = 0;
         this.studio = studio;
         this.scorer = scorer;
-        this.subscriber = subscriber;
+        this.game_id = game_id;
         this.start_time = start_time;
-        this.progression = progression;
-        this.time_ticker = time_ticker;
-        this.ticker_delay = ticker_delay;
-        this.display_duration = display_duration;
     }
 
-    async initialize(title, organizer) {
-        //find game info
-        this.gameInfo = await fetchGameInfo(title, organizer);
-        //find game layout
-        this.gameLayout = await fetchGameLayout(this.gameInfo.game_id);
-        //create game engine
-        this.gameEngine = await createGameEngine(this.gameInfo.game_id,
-            {
-                scheduled_start: this.start_time,
-                progression: this.progression,
-                display_duration: this.display_duration,
-                time_ticker: this.time_ticker
-            });
+    async initialize() {
+        //fetch game info
+        this.gameInfo = await fetchGameInfoById(this.game_id);
+        //fetch game layout
+        this.gameLayout = await fetchGameLayout(this.game_id);
+        //fetch game engine
+        this.gameEngine = await fetchGameEngine(this.game_id);
         //register
         this.studio.register(this);
     }
 
-    async onRegister() {
-        if (this.progression === 'auto') {
-            //handle auto-progression
-            let handle = setTimeout(async function () {
-                const { duration, delay, period } = await fetchProgression(this.gameEngine.time_ticker);
-                this.subscriber.timeTicker(this.gameInfo.game_id, { duration, delay, period });
-                await this.onNext();
-                clearTimeout(handle);
-            }.bind(this), this.ticker_delay);
-        }
-        else{
-            //handle manual progression
-            
-        }
+    async onRegistered() {
+        console.log(`game driver for "${this.gameInfo.game.title}" has been registered`);
+        await updateGameStatus(this.game_id, "Accepting");
     }
 
     async onNext() {
@@ -58,35 +38,46 @@ module.exports = class GameDriver {
         if (current != null) {
             this.gameQuestion = await fetchGameQuestion(current.question_fk);
 
-            //update engine table with new status
+            //fetch choices is they are required
+            if (this.gameQuestion.has_choices) {
+                this.questionChoices = await fetchQuestionChoices(current.question_fk);
+            }
+
+            //update engine table with new cursor
             if (this.currentCursor < this.gameLayout.length - 1) {
                 const { current_section, section_index } = this.gameLayout[this.currentCursor + 1];
                 await updateGameEngine(current.game_fk, { current_section, section_index })
             }
 
-            //notify subscriber of new question
-            this.subscriber.onChange(this.gameInfo.game_id, this.gameQuestion, {
+            //notify subscribers of new question
+            this.studio.nextQuestion(this.game_id, {
+                ...this.gameQuestion, 
+                round: this.gameLayout[this.currentCursor].current_section, 
+                number: this.gameLayout[this.currentCursor].section_index, 
+                choices: this.questionChoices,
                 progression: this.gameEngine.progression,
-                duration: this.gameEngine.display_duration,
-                index: this.currentCursor
+                delay: this.gameEngine.pre_countdown_delay,
+                duration: this.gameEngine.countdown_duration,
+                interval: 100,
             });
 
             //increment cursor
             this.currentCursor += 1;
         }
         else {
-            this.studio.complete(this, "There are no more questions left to continue playing the game");
-            this.subscriber.onComplete();
+            this.studio.complete(this, "There are no questions available to continue playing the game");
         }
     }
 
-    async onCompletion() {
+    async onCompleted() {
         //update high scores
-        const highest = this.scorer.highestScore(this.gameInfo.game_id);
-        for (high of highest) {
+        const highest = this.scorer.highestScore(this.game_id);
+        for (let high of highest) {
             let { participant_id, score } = high;
-            await updateHighestScore(this.gameInfo.game_id, participant_id, score);
+            // await updateHighestScore(this.game_id, participant_id, score);
+            console.log(participant_id, score);
         }
+        console.log("sample game completed");
     }
 
     async onEnroll(game_id, player_id) {
@@ -101,6 +92,6 @@ module.exports = class GameDriver {
             question_fk: this.currentQuestion.que_id, answer_submitted, clock_remaining, tally_points
         });
         //update local score tally
-        this.scorer.updateScore(this.gameInfo.game_id, participant_id, tally_points);
+        this.scorer.updateScore(this.game_id, participant_id, tally_points);
     }
 }

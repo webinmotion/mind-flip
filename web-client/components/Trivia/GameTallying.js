@@ -22,7 +22,7 @@ function selectIcon(status) {
     }
 }
 
-export default function GamesScoring({games, gameStatus, selectedGame, setSelectedGame}) {
+export default function GamesTallying({games, gameStatus, selectedGame, setSelectedGame}) {
 
     return (
         <React.Fragment>

@@ -10,6 +10,11 @@ export const remoteFetchGameInfo = async (title, organizer) => {
         .then(resp => resp.data);
 }
 
+export const remoteFetchGameInfoById = async (game_id) => {
+    return await axios.get(`${serverUrl()}/trivia/info/${game_id}`)
+        .then(resp => resp.data);
+}
+
 export const remoteFetchProgression = async (ticker) => {
     return await axios.get(`${serverUrl()}/trivia/ticker/${ticker}`)
         .then(resp => resp.data);
