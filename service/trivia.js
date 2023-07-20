@@ -7,7 +7,7 @@ const fetchGamesListing = async () => {
     where A.is_active = true
         and P.player_type != 'guest'
         and G.game_status in ('Created', 'Accepting', 'Playing')`, [])
-    return results?.length == 0 ? [] : results.map(record => {
+    return results?.length === 0 ? [] : results.map(record => {
         const {
             game_id, title, description, game_status,
             player_id, organizer, email_address, screen_name, player_type, city, state, country
@@ -41,11 +41,11 @@ const fetchGameInfo = async (title, organizer) => {
     });
 }
 
-const fetchGameInfoById = async (gameid) => {
+const fetchGameInfoById = async (game) => {
     let result = await execute(`select tg.*, tp.* from tbl_game tg 
     inner join tbl_account ta on tg.organizer = ta.account_id 
     inner join tbl_player tp on ta.player_fk = tp.player_id 
-    where tg.game_id = $1::uuid`, [gameid]);
+    where tg.game_id = $1::uuid`, [game]);
     const { game_id, title, description, game_status, player_id, screen_name, email_address, city, state, country } = result[0];
     return ({
         game: { game_id, title, description, game_status },
@@ -75,21 +75,34 @@ const fetchProgression = async (ticker_id) => {
 }
 
 const fetchGameLayout = async (game_id) => {
-    let results = await execute("select * from tbl_game_layout where game_fk = $1::uuid order by current_section asc, section_index asc", [game_id]);
     // [{ game_fk, question_fk, current_section, section_index }];
-    return results;
+    return await execute("select * from tbl_game_layout where game_fk = $1::uuid order by current_section asc, section_index asc", [game_id]);
 }
 
 const fetchGameQuestion = async (que_id) => {
     let results = await execute("select * from tbl_question tq where que_id = $1::uuid", [que_id]);
     const { que_value, que_answer, category, asked_by, numeric_answer, has_choices, has_clues, max_points } = results[0];
-    return { que_value, que_answer, category, asked_by, numeric_answer, has_choices, has_clues, max_points };
+    return { que_id, que_value, que_answer, category, asked_by, numeric_answer, has_choices, has_clues, max_points };
 }
 
 const fetchQuestionChoices = async (que_id) => {
-    let results = await execute("select * from tbl_choice tc where question_fk = $1::uuid", [que_id]);
     // const { is_correct, choice_value, clue } = results[0];
-    return results;
+    return await execute("select * from tbl_choice tc where question_fk = $1::uuid", [que_id]);
+}
+
+const fetchGamePlacards = async (parent_id) => {
+    return await execute(`
+    with recursive game_extras as (
+        select parent.*, 1 as "order"
+        from tbl_game_placard parent
+        where parent.placard_id = $1::uuid
+
+        union all
+
+        select child.*, (p."order" + 1)
+        from tbl_game_placard child, game_extras p
+        where child.placard_id = p.followed_by
+    ) select * from game_extras;`, [parent_id])
 }
 
 const fetchGameEngine = async (game_fk) => {
@@ -133,7 +146,7 @@ const fetchPlayerByEmail = async (email_address) => {
 
 const fetchPlayerById = async (player_id) => {
     let results = await execute("select * from tbl_player where player_id = $1::uuid", [player_id]);
-    const { screen_name, player_type, city, state, country } = results[0];
+    const { screen_name, email_address, player_type, city, state, country } = results[0];
     return { player_id, email_address, screen_name, player_type, city, state, country };
 }
 
@@ -179,11 +192,10 @@ const updateGameEngine = async (game_id, { current_section, section_index }) => 
 }
 
 const fetchGameParticipants = async (game_id) => {
-    let result = await execute(`
+    // const { participant_id, player_id, screen_name, city, state, country } = result;
+    return await execute(`
     select * from tbl_game_player gp inner join tbl_player p on gp.player_fk = p.player_id where gp.game_fk = $1`,
         [game_id]);
-    // const { participant_id, player_id, screen_name, city, state, country } = result;
-    return result;
 }
 
 const fetchGameTallies = async (game_id) => {
@@ -195,11 +207,10 @@ const fetchGameTallies = async (game_id) => {
 }
 
 const fetchParticipantById = async (participant_id) => {
-    let result = await execute(`
+    // const { participant_id, player_id, screen_name, city, state, country } = result;
+    return await execute(`
     select * from tbl_game_player gp inner join tbl_player p on gp.player_fk = p.player_id where gp.participant_id = $1`,
         [participant_id]);
-    // const { participant_id, player_id, screen_name, city, state, country } = result;
-    return result;
 }
 
 const fetchParticipantTally = async (participant_id) => {
@@ -239,10 +250,9 @@ const updateHighestScore = async (participant_id, score) => {
         let account_id = account?.account_id;
         let [current_high] = await execute("select high_score from tbl_high_scores where account_fk = $1 order by high_score desc", [account_id]);
         if (!current_high || current_high?.high_score < score) {
-            let result = await execute(`insert into tbl_high_scores (account_fk, high_score) values ($1, $2) 
+            return await execute(`insert into tbl_high_scores (account_fk, high_score) values ($1, $2) 
             on conflict (account_fk, high_score) do update set high_score = $2`,
                 [account_id, score]);
-            return result;
         }
     }
     return 0;
@@ -260,6 +270,7 @@ module.exports = {
     fetchGameEngine,
     fetchPlayerById,
     fetchPlayerByEmail,
+    fetchGamePlacards,
     createGameHandle,
     updateGameStatus,
     deleteGameHandle,

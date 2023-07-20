@@ -9,6 +9,7 @@ const {
     GAME_STATUS_PLAYING,
     ON_QUESTION_POSTED_EVENT,
     ON_GAME_ENDING_EVENT,
+    ON_ANSWER_POSTED_EVENT
 } = require('./Constants');
 
 /**
@@ -126,6 +127,14 @@ class GameStudio {
 
         //log current question
         console.log(`Que ${question.number} : ${question.que_value}`);
+    }
+
+    answerAccepted(game_id, score,) {
+        //send data to all participants
+        this.publishMessage(ON_ANSWER_POSTED_EVENT, game_id, score);
+
+        //log current question
+        console.log(`Score ${score.value}`);
     }
 
     sendGameCreatedEvent({ game, organizer }) {
