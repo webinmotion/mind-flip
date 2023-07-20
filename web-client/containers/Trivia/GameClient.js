@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import GameClient from "../../components/Trivia/GameClient";
-import { serverUrl } from "../../services/request";
-import { useNavigate, useParams } from "react-router-dom";
+import {serverUrl} from "../../services/request";
+import {useNavigate, useParams} from "react-router-dom";
 import {remoteSendResponseToQuestion} from "../../services/playtime";
+import GamePlacard from "../../components/Trivia/GamePlacard";
 
 export default function GameClientContainer(props) {
 
     let navigate = useNavigate();
-    let { gameId, playerId } = useParams();
-    const { trivia, onProgressionEvents, } = props;
+    let {gameId, playerId} = useParams();
+    const {trivia, onProgressionEvents,} = props;
 
     useEffect(() => {
         const evtSource = new EventSource(`${serverUrl()}/play/client/${gameId}/player/${playerId}`)
@@ -23,22 +24,25 @@ export default function GameClientContainer(props) {
 
     const submitAnswer = (event) => {
         event.preventDefault();
-        const { que_id } = trivia.progression.question;
+        const {que_id} = trivia.progression.question;
         const data = new FormData(event.currentTarget);
         //participant, question, { answer_submitted, clock_remaining, tally_points }
         remoteSendResponseToQuestion(gameId, playerId, que_id, data.get('answer'));
     };
 
     const submitChoice = (value) => {
-        const { que_id } = trivia.progression.question;
+        const {que_id} = trivia.progression.question;
         //participant, question, { answer_submitted, clock_remaining, tally_points }
         remoteSendResponseToQuestion(gameId, playerId, que_id, value);
     }
 
-    return <GameClient
-        progression={trivia.progression}
-        navigate={navigate}
-        submitAnswer={submitAnswer}
-        submitChoice={submitChoice}
-        {...props} />
+    return trivia.progression?.type !== "question" ?
+        <GameClient
+            progression={trivia.progression}
+            navigate={navigate}
+            submitAnswer={submitAnswer}
+            submitChoice={submitChoice}
+            {...props} />
+        :
+        <GamePlacard progression={trivia.progression}/>
 }

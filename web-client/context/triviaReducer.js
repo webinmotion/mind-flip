@@ -28,7 +28,9 @@ import {
     ON_AFTER_QUESTION_EVENT,
     ON_BREAK_STARTING_EVENT,
     ON_SNACK_BREAK_EVENT,
-    ON_BREAK_ENDING_EVENT, ON_ANSWER_POSTED_EVENT,
+    ON_BREAK_ENDING_EVENT,
+    ON_ANSWER_POSTED_EVENT,
+    ON_PLACARD_POSTED_EVENT,
 }
     from './triviaActions';
 
@@ -180,6 +182,11 @@ export const triviaReducer = (game, action) => {
             const score = action.data;
             console.log('score', score);
             return ({...game, progression: {...game.progression, score}});
+        }
+        case ON_PLACARD_POSTED_EVENT: {
+            const placard = action.data;
+            console.log('placard', placard);
+            return ({...game, progression: {...game.progression, placard}});
         }
         case ON_AFTER_QUESTION_EVENT: {
             const {post_countdown_delay} = action;

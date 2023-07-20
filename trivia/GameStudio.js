@@ -9,7 +9,8 @@ const {
     GAME_STATUS_PLAYING,
     ON_QUESTION_POSTED_EVENT,
     ON_GAME_ENDING_EVENT,
-    ON_ANSWER_POSTED_EVENT
+    ON_ANSWER_POSTED_EVENT,
+    ON_PLACARD_POSTED_EVENT,
 } = require('./Constants');
 
 /**
@@ -135,6 +136,14 @@ class GameStudio {
 
         //log current question
         console.log(`Score ${score.value}`);
+    }
+
+    nextPlacard(game_id, placard,){
+        //send placard to all participants
+        this.publishMessage(ON_PLACARD_POSTED_EVENT, game_id, placard);
+
+        //log current placard
+        console.log(`Placard ${placard.placard_content}`);
     }
 
     sendGameCreatedEvent({ game, organizer }) {

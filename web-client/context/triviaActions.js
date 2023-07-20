@@ -56,6 +56,7 @@ export const ON_GAME_ENDING_EVENT = "ON_GAME_ENDING_EVENT";
 export const ON_BEFORE_QUESTION_EVENT = "ON_BEFORE_QUESTION_EVENT";
 export const ON_QUESTION_POSTED_EVENT = "ON_QUESTION_POSTED_EVENT";
 export const ON_ANSWER_POSTED_EVENT = "ON_ANSWER_POSTED_EVENT";
+export const ON_PLACARD_POSTED_EVENT = "ON_PLACARD_POSTED_EVENT";
 export const ON_AFTER_QUESTION_EVENT = "ON_AFTER_QUESTION_EVENT";
 export const ON_BREAK_STARTING_EVENT = "ON_BREAK_STARTING_EVENT";
 export const ON_SNACK_BREAK_EVENT = "ON_SNACK_BREAK_EVENT";
@@ -268,6 +269,11 @@ export const onProgressionEventsAction = dispatch => (evtSource) => {
     evtSource.addEventListener(ON_AFTER_QUESTION_EVENT, (event) => {
         const {data} = event;
         dispatch({type: ON_AFTER_QUESTION_EVENT, data: JSON.parse(data)});
+    });
+
+    evtSource.addEventListener(ON_PLACARD_POSTED_EVENT, (event) => {
+        const {data} = event;
+        dispatch({type: ON_PLACARD_POSTED_EVENT, data: JSON.parse(data)});
     });
 
     evtSource.addEventListener(ON_BREAK_STARTING_EVENT, (event) => {

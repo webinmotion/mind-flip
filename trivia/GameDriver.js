@@ -54,7 +54,10 @@ module.exports = class GameDriver {
             //check if placards are coming up
             if (this.gamePlacards) {
                 const placard = this.gamePlacards[this.placardCursor];
-                console.log('placard content', placard);
+                this.studio.nextPlacard(this.game_id, {
+                    type: 'placard',
+                    ...placard
+                });
 
                 //increment cursor
                 this.placardCursor += 1;
@@ -81,6 +84,7 @@ module.exports = class GameDriver {
                 //notify subscribers of new question
                 this.studio.nextQuestion(this.game_id, {
                     ...this.gameQuestion,
+                    type: 'question',
                     round: this.gameLayout[this.currentCursor].current_section,
                     number: this.gameLayout[this.currentCursor].content_label,
                     choices: this.questionChoices,
