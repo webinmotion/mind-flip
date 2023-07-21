@@ -63,10 +63,9 @@ create table if not exists tbl_Ticker (
 	ticker_id int primary key not null,
 	ticker_title varchar(64) unique not null,
 	pre_countdown_delay int default 5000,
-	post_countdown_delay int default 5000,
-	snack_break_duration int default 60000,
 	countdown_duration int default 10000,
-	countdown_interval int default 100
+	countdown_interval int default 100,
+	post_countdown_delay int default 5000
 );
 
 create table if not exists tbl_Playbook (
@@ -318,6 +317,24 @@ insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
 ((select que_id from question), false, 1, 'single is not right'),
 ((select que_id from question), false, 0, 'nothingness is not an option'),
 ((select que_id from question), true, 3, 'third time is a charm'),
+((select que_id from question), false, 4, 'quad is an offroad vehicle');
+
+--(optional) insert multiple choice options for the answers
+with question as (select que_id from tbl_question where que_value = '6 + 1')
+insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
+((select que_id from question), false, 3, 'double the trouble ain''t it'),
+((select que_id from question), false, 5, 'single is not right'),
+((select que_id from question), false, 0, 'nothingness is not an option'),
+((select que_id from question), true, 7, 'third time is a charm'),
+((select que_id from question), false, 9, 'quad is an offroad vehicle');
+
+--(optional) insert multiple choice options for the answers
+with question as (select que_id from tbl_question where que_value = '7 + 1')
+insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
+((select que_id from question), false, 8, 'double the trouble ain''t it'),
+((select que_id from question), false, 6, 'single is not right'),
+((select que_id from question), false, 2, 'nothingness is not an option'),
+((select que_id from question), true, 0, 'third time is a charm'),
 ((select que_id from question), false, 4, 'quad is an offroad vehicle');
 
 --create a game

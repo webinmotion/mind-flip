@@ -176,7 +176,7 @@ export const triviaReducer = (game, action) => {
         case ON_QUESTION_POSTED_EVENT: {
             const question = action.data;
             console.log('question', question);
-            return ({...game, progression: {...game.progression, question}});
+            return ({...game, progression: {...game.progression, type: 'question', question}});
         }
         case ON_ANSWER_POSTED_EVENT: {
             const score = action.data;
@@ -186,7 +186,7 @@ export const triviaReducer = (game, action) => {
         case ON_PLACARD_POSTED_EVENT: {
             const placard = action.data;
             console.log('placard', placard);
-            return ({...game, progression: {...game.progression, placard}});
+            return ({...game, progression: {...game.progression, type: 'placard', placard}});
         }
         case ON_AFTER_QUESTION_EVENT: {
             const {post_countdown_delay} = action;

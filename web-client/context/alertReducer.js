@@ -18,11 +18,13 @@ export const initialAlert = {
 
 export const initialProgress = {
     show: false,
-    delay: 0,
+    pre_delay: 0,
+    post_delay: 0,
     interval: 0,
     duration: 0,
     points: 0,
-    number: 0,
+    number: 'label',
+    count: 0,
     oncountdown: null,
     precountdown: null,
     postcountdown: null,

@@ -259,6 +259,7 @@ export const onProgressionEventsAction = dispatch => (evtSource) => {
     evtSource.addEventListener(ON_QUESTION_POSTED_EVENT, (event) => {
         const {data} = event;
         dispatch({type: ON_QUESTION_POSTED_EVENT, data: JSON.parse(data)});
+        onProgressionEventsAction()
     });
 
     evtSource.addEventListener(ON_ANSWER_POSTED_EVENT, (event) => {

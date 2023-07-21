@@ -115,12 +115,12 @@ const fetchGameEngine = async (game_fk) => {
         section_index,
         progression,
         allow_nav_back,
+        server_push_mode,
         ticker_title,
         pre_countdown_delay,
-        post_countdown_delay,
-        snack_break_duration,
         countdown_duration,
         countdown_interval,
+        post_countdown_delay,
     } = results[0];
     return {
         game_id: game_fk,
@@ -129,12 +129,12 @@ const fetchGameEngine = async (game_fk) => {
         section_index,
         progression,
         allow_nav_back,
+        server_push_mode,
         ticker_title,
         pre_countdown_delay,
-        post_countdown_delay,
-        snack_break_duration,
         countdown_duration,
         countdown_interval,
+        post_countdown_delay,
     };
 }
 

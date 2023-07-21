@@ -77,9 +77,9 @@ export const remoteDeleteGameHandle = async (game_id) => {
         .then(resp => resp.data);
 }
 
-export const remoteCreateGameEngine = async (game, { scheduled_start, progression, display_duration, time_ticker }) => {
+export const remoteCreateGameEngine = async (game, { scheduled_start, progression, display_duration, server_push_mode, time_ticker }) => {
     return await axios.post(`${serverUrl()}/trivia/engine/${game}`,
-        {scheduled_start, progression, display_duration, time_ticker},
+        {scheduled_start, progression, display_duration, server_push_mode, time_ticker},
         {
             headers: {
                 'Content-Type': 'application/json'

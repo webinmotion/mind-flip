@@ -23,15 +23,6 @@ class GameStudio {
         this.participants = {};
         this.broadcast = {}
     }
-
-    formatOutput(data, event) {
-        const output = JSON.stringify(data);
-        if (event) {
-            return (`event: ${event}\ndata: ${output}\n\n`)
-        }
-        return (`data: ${output}\n\n`);
-    }
-
     register(driver) {
         console.log(`registering new game ${driver.game_id}`);
         this.running[driver.game_id] = driver;

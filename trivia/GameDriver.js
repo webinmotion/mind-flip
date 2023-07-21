@@ -12,22 +12,30 @@ const {
     fetchQuestionChoices,
     updateGameStatus
 } = require('../service/trivia');
+const GameClock = require('./GameClock');
 
 module.exports = class GameDriver {
 
-    constructor(studio, scorer, game_id, start_time = new Date()) {
+    constructor(game_id, studio, scorer) {
         this.gameInfo = null;
         this.gameLayout = null;
         this.gameEngine = null;
-        this.gameQuestion = null;
-        this.questionChoices = [];
-        this.currentCursor = 0;
         this.gamePlacards = null;
+        this.currentCursor = 0;
         this.placardCursor = 0;
         this.studio = studio;
         this.scorer = scorer;
         this.game_id = game_id;
-        this.start_time = start_time;
+        this.clockRunning = false;
+        this.gameClock = new GameClock({
+            delay: 3000,
+            points: 1000,
+            period: 500,
+            duration: 5000,
+            precountdown: (number) => console.log('pre-countdown', number),
+            oncountdown: (data) => console.log('on-countdown', data),
+            postcountdown: () => console.log('post-countdown'),
+        });
     }
 
     async initialize() {
@@ -39,6 +47,19 @@ module.exports = class GameDriver {
         this.gameEngine = await fetchGameEngine(this.game_id);
         //register
         this.studio.register(this);
+        //start the clock on this game if server_push_mode is true
+        if(this.gameEngine?.server_push_mode) {
+            this.clockRunning = true;
+            await this.startTheClock();
+        }
+    }
+
+    async startTheClock(){
+        while(this.clockRunning){
+            await this.gameClock.pause();
+            this.onNext();
+        }
+        console.log('exiting clock');
     }
 
     async onRegistered() {
@@ -54,9 +75,16 @@ module.exports = class GameDriver {
             //check if placards are coming up
             if (this.gamePlacards) {
                 const placard = this.gamePlacards[this.placardCursor];
+                //set delay in game clock
+                this.gameClock.delay = placard.display_duration;
                 this.studio.nextPlacard(this.game_id, {
-                    type: 'placard',
-                    ...placard
+                    ...placard,
+                    points: 0,
+                    number: this.placardCursor,
+                    pre_delay: 1000,
+                    duration: placard.display_duration,
+                    interval: 1000,
+                    post_delay: 1000,
                 });
 
                 //increment cursor
@@ -68,12 +96,11 @@ module.exports = class GameDriver {
                     this.placardCursor = 0;
                 }
             } else {
-                this.gameQuestion = await fetchGameQuestion(current.question_fk);
+                const gameQuestion = await fetchGameQuestion(current.question_fk);
 
                 //fetch choices is they are required
-                if (this.gameQuestion.has_choices) {
-                    this.questionChoices = await fetchQuestionChoices(current.question_fk);
-                }
+                const questionChoices = gameQuestion.has_choices ?
+                    await fetchQuestionChoices(current.question_fk) : [];
 
                 //update engine table with new cursor
                 if (this.currentCursor < this.gameLayout.length - 1) {
@@ -81,17 +108,23 @@ module.exports = class GameDriver {
                     await updateGameEngine(current.game_fk, {current_section, section_index})
                 }
 
+                //set delay in game clock
+                const {pre_countdown_delay, countdown_duration, countdown_interval, post_countdown_delay} = this.gameEngine;
+                this.gameClock.delay = (pre_countdown_delay + countdown_duration + post_countdown_delay);
+
                 //notify subscribers of new question
                 this.studio.nextQuestion(this.game_id, {
-                    ...this.gameQuestion,
-                    type: 'question',
+                    ...gameQuestion,
                     round: this.gameLayout[this.currentCursor].current_section,
-                    number: this.gameLayout[this.currentCursor].content_label,
-                    choices: this.questionChoices,
+                    count: this.gameLayout[this.currentCursor].content_label,
+                    choices: questionChoices,
                     progression: this.gameEngine.progression,
-                    delay: this.gameEngine.pre_countdown_delay,
-                    duration: this.gameEngine.countdown_duration,
-                    interval: 100,
+                    points: gameQuestion.max_points,
+                    number: this.currentCursor,
+                    pre_delay: pre_countdown_delay,
+                    duration: countdown_duration,
+                    interval: countdown_interval,
+                    post_delay: post_countdown_delay,
                 });
 
                 //increment cursor
@@ -118,6 +151,7 @@ module.exports = class GameDriver {
     }
 
     async onCompleted() {
+        this.clockRunning = false;
         //update high scores
         const highest = this.scorer.highestScore(this.game_id);
         for (let high of highest) {
@@ -125,7 +159,7 @@ module.exports = class GameDriver {
             // await updateHighestScore(this.game_id, participant_id, score);
             console.log(participant_id, score);
         }
-        console.log("sample game completed");
+        console.log("Driver completed running game layout");
     }
 
     async onEnroll(game_id, player_id) {
