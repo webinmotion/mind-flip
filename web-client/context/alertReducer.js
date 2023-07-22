@@ -2,7 +2,6 @@ import {
     SHOW_ALERT_MESSAGE,
     CLEAR_ALERT_MESSAGE,
     SHOW_PROGRESS_BAR,
-    CLEAR_PROGRESS_BAR,
     ON_PROGRESS_BAR_EVENT,
 }
     from './alertActions';
@@ -48,7 +47,6 @@ export const progressReducer = (progress, action) => {
     console.log('state type', typeof progress, 'state value', progress);
     switch (action.type) {
         case SHOW_PROGRESS_BAR:
-        case CLEAR_PROGRESS_BAR:
         case ON_PROGRESS_BAR_EVENT: {
             return ({ ...progress, ...action.progress });
         }

@@ -2,18 +2,18 @@ import React, {useState} from 'react';
 
 export default function useProgression({duration, points, }) {
 
-    const [progress, setProgress] = useState(0);
+    const [percent, setPercent] = useState(0);
     const [countDown, setCountdown] = useState(points);
     const [timeRemaining, setTimeRemaining] = useState(duration);
 
     async function pause({delay, points, duration}) {
         return new Promise((resolve,) => {
             let timeout = setTimeout(function () {
-                //reset state
-                setProgress(0);
+                //reset progress bar state
+                setPercent(0);
                 setCountdown(points);
                 setTimeRemaining(duration);
-                //all done
+                //clean up - all done
                 clearTimeout(timeout);
                 resolve();
             }, delay);
@@ -28,16 +28,22 @@ export default function useProgression({duration, points, }) {
         return new Promise((resolve,) => {
             let count = ticks;
 
+            //reset progress bar state
+            setPercent(0);
+            setCountdown(points);
+            setTimeRemaining(duration);
+
+            //count down progress bar
             let interval = setInterval(() => {
                 if (count <= 0) {
-                    //all done
+                    //clean up - all done
                     clearInterval(interval);
                     resolve();
                 } else {
-                    let nextProgress, nextCountdown, nextTimeRemaining;
-                    setProgress(prevProgress => {
-                        nextProgress = prevProgress + clock;
-                        return nextProgress
+                    let nextPercent, nextCountdown, nextTimeRemaining;
+                    setPercent(prevPercent => {
+                        nextPercent = prevPercent + clock;
+                        return nextPercent
                     });
                     setCountdown(prevCountdown => {
                         nextCountdown = prevCountdown - delta;
@@ -57,5 +63,5 @@ export default function useProgression({duration, points, }) {
         })
     }
 
-    return {state: {progress, countDown, timeRemaining}, pause, countdown}
+    return {state: {percent, countDown, timeRemaining}, pause, countdown}
 }

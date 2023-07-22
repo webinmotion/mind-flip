@@ -37,6 +37,7 @@ class GameClock {
                 //all done
                 clearTimeout(timeout);
                 resolve();
+                console.log('paused game clock for', this.delay, 'milliseconds');
             }, this.delay);
         });
     }

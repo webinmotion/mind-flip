@@ -25,39 +25,44 @@ export default function ProgressBar({progress}) {
     });
 
     useEffect(() => {
-        if (progress.number > 0) {
+        if (progress.number > 0 || progress.points > 0) {
             const {
-                pre_delay,
-                post_delay,
-                interval,
-                duration,
                 points,
                 number,
+                pre_delay,
+                duration,
+                interval,
+                post_delay,
                 oncountdown,
                 precountdown,
                 postcountdown
             } = progress;
 
             async function runProgress() {
+                console.log('before precountdown()...');
                 //before countdown
                 if (typeof precountdown === 'function') precountdown(number);
                 //warm up
+                console.log('pre-delay', pre_delay);
                 await pause({delay: pre_delay, duration, points});
                 //countdown
+                console.log('counting down', interval);
                 await countdown({period: interval, duration, points, oncountdown,});
                 //cool down
+                console.log('post-delay', post_delay);
                 await pause({delay: post_delay, duration, points});
                 //after countdown
                 if (typeof postcountdown === 'function') postcountdown();
+                console.log('after postcountdown()...');
             }
 
             runProgress().then(() => console.log(`Completed running progress for item #${number}`));
         }
-    }, [progress.number]);
+    }, [progress.number, progress.points]);
 
     return progress.show && progress.points > 0 ?
         (<Box sx={{width: '100%'}}>
-            <LinearProgressWithLabel value={state.progress}/>
+            <LinearProgressWithLabel value={state.percent}/>
             <Typography mt={2} variant="h2" component="h2">Points available: {state.countDown} </Typography>
             <Typography mt={2} variant="subtitle" component="h4">Time remaining: {state.timeRemaining} </Typography>
         </Box>)

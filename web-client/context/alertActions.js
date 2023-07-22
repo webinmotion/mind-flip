@@ -1,7 +1,6 @@
 export const SHOW_ALERT_MESSAGE = "SHOW_ALERT_MESSAGE";
 export const CLEAR_ALERT_MESSAGE = "CLEAR_ALERT_MESSAGE";
 export const SHOW_PROGRESS_BAR = "SHOW_PROGRESS_BAR";
-export const CLEAR_PROGRESS_BAR = "CLEAR_PROGRESS_BAR";
 export const ON_PROGRESS_BAR_EVENT = "ON_PROGRESS_BAR_EVENT";
 
 function defaultCloseOptions(autoClose = false, closeDelay, onClose) {
@@ -14,8 +13,8 @@ function defaultCloseOptions(autoClose = false, closeDelay, onClose) {
 
 export const extractErrorText = error => {
     return error.request?.responseText
-        .replaceAll(/\<.*?\>/g, '')
-        .replaceAll(/\&.*?;/g, '')
+        .replaceAll(/<.*?>/g, '')
+        .replaceAll(/&.*?;/g, '')
         .replaceAll('Error\n', '')
         .replaceAll('\n', '')
         .replaceAll('  ', ' ') || error.message
@@ -58,15 +57,6 @@ export const showProgressAction = dispatch => ({ delay, interval, duration, poin
         }
     });
 };
-
-export const clearProgressAction = dispatch => () => {
-    dispatch({
-        type: CLEAR_PROGRESS_BAR, progress: {
-            show: false,
-        }
-    });
-};
-
 export const onProgressBarEventsAction = dispatch => (evtSource) => {
 
     evtSource.addEventListener(ON_PROGRESS_BAR_EVENT, (event) => {

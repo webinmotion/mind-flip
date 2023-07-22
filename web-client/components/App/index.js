@@ -11,7 +11,7 @@ import ProgressBar from '../Layout/ProgressBar';
 
 export default function App({ ...rest }) {
 
-    const { alert, clearAlert, progress, showProgress, clearProgress, visitor, trivia, createGameHandle, updateGameStatus, deleteGameHandle, } = rest;
+    const { alert, clearAlert, progress, showProgress, visitor, trivia, createGameHandle, updateGameStatus, deleteGameHandle, } = rest;
 
     const { auth } = visitor?.authentication;
 
@@ -26,7 +26,7 @@ export default function App({ ...rest }) {
                 <Route path="/profile" element={<PlayerProfile player={trivia.player} accessToken={auth?.accessToken} />} />
                 <Route path="/*" element={<Trivia {...rest} />} />
             </Routes>
-            <ProgressBar progress={progress} clearProgress={clearProgress} />
+            <ProgressBar progress={progress} />
         </div>
     )
 }

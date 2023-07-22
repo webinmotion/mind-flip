@@ -53,7 +53,7 @@ export default function GamePlayingContainer(props) {
 
                         //update current counter
                         if (typeof updateCounter === 'function') {
-                            updateCounter(engine, layout, section_index, question?.max_points);
+                            updateCounter(engine, layout, index + 1, question?.max_points);
                         }
                     });
                 }
@@ -62,7 +62,7 @@ export default function GamePlayingContainer(props) {
 
                     //update current counter
                     if (typeof updateCounter === 'function') {
-                        updateCounter(engine, layout, section_index, question?.max_points);
+                        updateCounter(engine, layout, index + 1, question?.max_points);
                     }
                 }
             });

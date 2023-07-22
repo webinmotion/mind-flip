@@ -18,7 +18,6 @@ import {
     showAlertAction,
     clearAlertAction,
     showProgressAction,
-    clearProgressAction,
     onProgressBarEventsAction
 } from "./alertActions";
 import { alertReducer, initialAlert, progressReducer, initialProgress, } from './alertReducer';
@@ -130,7 +129,6 @@ export const AppProvider = ({ children }) => {
 
             //progress bar actions
             showProgress: showProgressAction(progressDispatch),
-            clearProgress: clearProgressAction(progressDispatch),
 
             //progress bar events
             onProgressBarEvents: onProgressBarEventsAction(progressDispatch),
