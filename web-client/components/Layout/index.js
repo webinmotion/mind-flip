@@ -36,11 +36,11 @@ const defaultTheme = createTheme({
 
 function Layout({ children }) {
 
-    const {prospect, setCurrentRoute, isAuthenticated, accountSignOut} = useAppContext();
+    const {visitor, setCurrentRoute, isAuthenticated, accountSignOut} = useAppContext();
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleSignOut = () => {
-        accountSignOut(prospect?.authentication?.authUser?.username);
+        accountSignOut(visitor?.authentication?.authUser?.username);
         setCurrentRoute('')
         handleClose();
     };

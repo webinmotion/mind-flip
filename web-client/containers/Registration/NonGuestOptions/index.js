@@ -5,18 +5,18 @@ import { ViewNames } from '../../../hooks/usePageForms';
 
 function NonGuestOptionsContainer() {
 
-  const { prospect, selectedGame, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm,
+  const { visitor, selectedGame, showAlert, signUpForm, signInForm, recoveryForm, verificationForm, setSignUpForm, setSignInForm,
     setRecoveryForm, setVerificationForm, registerPlayer, accountSignIn, recoverPassword, verifyEmailAddress, verifyRecoveryCode,
     addGameParticipant, isAuthenticated, currentView, toggleCurrentView, } = useAppContext();
 
   useEffect(() => {
-    if (!prospect?.authentication?.accessToken) {
+    if (!visitor?.authentication?.accessToken) {
       toggleCurrentView(ViewNames.SIGNIN_VIEW);
     }
   }, []);
 
   return <NonGuestOptions
-    playerEmail={prospect?.registration?.email_address}
+    playerEmail={visitor?.registration?.email_address}
     showAlert={showAlert}
     signUpForm={signUpForm}
     signInForm={signInForm}

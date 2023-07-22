@@ -11,9 +11,9 @@ import ProgressBar from '../Layout/ProgressBar';
 
 export default function App({ ...rest }) {
 
-    const { alert, clearAlert, progress, showProgress, clearProgress, prospect, trivia, createGameHandle, updateGameStatus, deleteGameHandle, } = rest;
+    const { alert, clearAlert, progress, showProgress, clearProgress, visitor, trivia, createGameHandle, updateGameStatus, deleteGameHandle, } = rest;
 
-    const { auth } = prospect?.authentication;
+    const { auth } = visitor?.authentication;
 
     return (
         <div className="app">

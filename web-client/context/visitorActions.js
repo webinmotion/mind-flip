@@ -18,7 +18,6 @@ export const VERIFY_EMAIL_ADDRESS = "VERIFY_EMAIL_ADDRESS";
 export const DROP_GUEST_PLAYER = "DROP_GUEST_PLAYER";
 export const ACCOUNT_SIGN_UP = "ACCOUNT_SIGN_UP";
 export const ACCOUNT_SIGN_IN = "ACCOUNT_SIGN_IN";
-export const ACCOUNT_SIGN_IN_ERROR = "ACCOUNT_SIGN_IN_ERROR";
 export const ACCOUNT_SIGN_OUT = "ACCOUNT_SIGN_OUT";
 export const RESET_PASSWORD = "RESET_PASSWORD";
 export const RESET_VERIFICATION = "RESET_VERIFICATION";
@@ -105,7 +104,7 @@ export const resetPasswordAction = (dispatch) => ({ username, password }) => {
     });
 }
 
-export const resetVerifictionAction = (dispatch) => (email_address) => {
+export const resetVerificationAction = (dispatch) => (email_address) => {
     remoteResetVerification(email_address).then(verification => {
         dispatch({ type: RESET_VERIFICATION, verification })
     });

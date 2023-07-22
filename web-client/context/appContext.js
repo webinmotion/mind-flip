@@ -9,11 +9,11 @@ import {
 } from './triviaActions';
 import { triviaReducer, initialTrivia } from './triviaReducer';
 import {
-    accountSignUpAction, accountSignInAction, accountSignOutAction, resetPasswordAction, resetVerifictionAction,
+    accountSignUpAction, accountSignInAction, accountSignOutAction, resetPasswordAction, resetVerificationAction,
     registerPlayerAction, registerGuestAction, verifyEmailAddressAction, dropGuestPlayerAction, recoverPasswordAction,
     verifyRecoveryCodeAction,
-} from './prospectActions';
-import { prospectReducer, initialRegistration, initialAuthentication } from './prospectReducer';
+} from './visitorActions';
+import { visitorReducer, initialRegistration, initialAuthentication } from './visitorReducer';
 import { showAlertAction, clearAlertAction, showProgressAction, clearProgressAction } from "./alertActions";
 import { alertReducer, initialAlert, progressReducer, initialProgress, } from './alertReducer';
 import { usePageForms } from "../hooks/usePageForms";
@@ -44,7 +44,7 @@ export const AppProvider = ({ children }) => {
     });
 
     //initialize auth state
-    const [prospect, prospectDispatch] = useReducer(prospectReducer, {
+    const [visitor, visitorDispatch] = useReducer(visitorReducer, {
         registration: {
             ...initialRegistration,
             ...cachedRegistration
@@ -65,7 +65,7 @@ export const AppProvider = ({ children }) => {
         <AppContext.Provider value={{
             //domain entities
             trivia,
-            prospect,
+            visitor,
             alert,
             progress,
 
@@ -106,17 +106,17 @@ export const AppProvider = ({ children }) => {
             onProgressionEvents: onProgressionEventsAction(triviaDispatch),
 
             //account actions
-            registerPlayer: registerPlayerAction(prospectDispatch),
-            registerGuest: registerGuestAction(prospectDispatch),
-            verifyEmailAddress: verifyEmailAddressAction(prospectDispatch),
-            dropGuestPlayer: dropGuestPlayerAction(prospectDispatch),
-            accountSignUp: accountSignUpAction(prospectDispatch),
-            accountSignIn: accountSignInAction(prospectDispatch),
-            accountSignOut: accountSignOutAction(prospectDispatch),
-            resetPassword: resetPasswordAction(prospectDispatch),
-            resetVerification: resetVerifictionAction(prospectDispatch),
-            recoverPassword: recoverPasswordAction(prospectDispatch),
-            verifyRecoveryCode: verifyRecoveryCodeAction(prospectDispatch),
+            registerPlayer: registerPlayerAction(visitorDispatch),
+            registerGuest: registerGuestAction(visitorDispatch),
+            verifyEmailAddress: verifyEmailAddressAction(visitorDispatch),
+            dropGuestPlayer: dropGuestPlayerAction(visitorDispatch),
+            accountSignUp: accountSignUpAction(visitorDispatch),
+            accountSignIn: accountSignInAction(visitorDispatch),
+            accountSignOut: accountSignOutAction(visitorDispatch),
+            resetPassword: resetPasswordAction(visitorDispatch),
+            resetVerification: resetVerificationAction(visitorDispatch),
+            recoverPassword: recoverPasswordAction(visitorDispatch),
+            verifyRecoveryCode: verifyRecoveryCodeAction(visitorDispatch),
 
             //alert actions
             showAlert: showAlertAction(alertDispatch),
@@ -139,7 +139,7 @@ export const AppProvider = ({ children }) => {
             cleanupOnSignOut: cleanup,
 
             //auth functions
-            isAuthenticated: () => prospect?.authentication?.accessToken,
+            isAuthenticated: () => visitor?.authentication?.accessToken,
         }}>
             {children}
         </AppContext.Provider>

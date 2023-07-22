@@ -11,7 +11,7 @@ import {
     RESET_PASSWORD,
     VERIFY_RECOVER_CODE,
 }
-    from './prospectActions';
+    from './visitorActions';
 
 export const initialRegistration = {
     screen_name: '',
@@ -34,65 +34,65 @@ export const initialAuthentication = {
     accessToken: null,
 };
 
-export const prospectReducer = (prospect, action) => {
-    console.log('state type', typeof prospect, 'state value', prospect);
+export const visitorReducer = (visitor, action) => {
+    console.log('state type', typeof visitor, 'state value', visitor);
     switch (action.type) {
         case REGISTER_PLAYER: {
             //player details - {screen_name, email_address, verification_code, player_type, city, state, country}
             const { screen_name, email_address, player_type, player_id } = action.player;
-            return { ...prospect, registration: { ...prospect.registration, screen_name, email_address, player_type, player_id, registered: true } };
+            return { ...visitor, registration: { ...visitor.registration, screen_name, email_address, player_type, player_id, registered: true } };
         }
         case REGISTER_GUEST: {
             //player details - {screen_name, email_address, verification_code, player_type, city, state, country}
             const { screen_name, email_address, player_type, player_id } = action.guest;
-            return { ...prospect, registration: { ...prospect.registration, screen_name, email_address, player_type, player_id, registered: false } };
+            return { ...visitor, registration: { ...visitor.registration, screen_name, email_address, player_type, player_id, registered: false } };
         }
         case DROP_GUEST_PLAYER: {
             const { player_id } = action.guest;
-            if (player_id === prospect.registration.player_id) {
-                return { ...prospect, registration: initialRegistration }
+            if (player_id === visitor.registration.player_id) {
+                return { ...visitor, registration: initialRegistration }
             }
-            return prospect;
+            return visitor;
         }
         case VERIFY_EMAIL_ADDRESS: {
             const { email_address, verified } = action.verification;
-            if (prospect.registration.email_address === email_address) {
-                return { ...prospect, registration: { ...prospect.registration, email_verified: verified } };
+            if (visitor.registration.email_address === email_address) {
+                return { ...visitor, registration: { ...visitor.registration, email_verified: verified } };
             }
-            return prospect;
+            return visitor;
         }
         case ACCOUNT_SIGN_UP: {
             const { message, token } = action.account;
-            return { ...prospect, registration: { ...prospect.registration, message, verification_token: token } };
+            return { ...visitor, registration: { ...visitor.registration, message, verification_token: token } };
         }
         case ACCOUNT_SIGN_IN: {
             const { message, authUser, accessToken } = action.account;
             localState.onSignIn({ authUser: authUser, accessToken }); //cache user info and the access token for axios interceptor to use
-            return { ...prospect, authentication: { ...prospect.authentication, message, authUser, accessToken } };
+            return { ...visitor, authentication: { ...visitor.authentication, message, authUser, accessToken } };
         }
         case ACCOUNT_SIGN_OUT: {
             localState.onSignOut(); //clear the access token and user info from local cache
-            return { ...prospect, authentication: { ...prospect.authentication, message: '', authUser: null } };
+            return { ...visitor, authentication: { ...visitor.authentication, message: '', authUser: null } };
         }
         case RESET_VERIFICATION: {
             const { email_address } = action.verification;
-            if (prospect.email_address === email_address) {
-                return { ...prospect, authentication: { ...prospect.authentication, reset_verified: false } };
+            if (visitor.email_address === email_address) {
+                return { ...visitor, authentication: { ...visitor.authentication, reset_verified: false } };
             }
-            return prospect;
+            return visitor;
         }
         case RESET_PASSWORD: {
             const { username, account_id } = action.reset;
-            if (prospect.username === username) {
-                return { ...prospect, authentication: { ...prospect.authentication, account_id, reset_requested: true } }
+            if (visitor.username === username) {
+                return { ...visitor, authentication: { ...visitor.authentication, account_id, reset_requested: true } }
             }
-            return prospect;
+            return visitor;
         }
         case VERIFY_RECOVER_CODE: {
             //TODO - complete this
         }
         default: {
-            return prospect;
+            return visitor;
         }
     }
 }
