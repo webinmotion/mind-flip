@@ -9,12 +9,13 @@ export default function GameClientContainer(props) {
 
     let navigate = useNavigate();
     let {gameId, playerId} = useParams();
-    const {onProgressionEvents,} = props;
+    const {onProgressionEvents, onProgressBarEvents} = props;
 
     useEffect(() => {
         const evtSource = new EventSource(`${serverUrl()}/play/client/${gameId}/player/${playerId}`)
         if (gameId && playerId) {
             onProgressionEvents(evtSource);
+            onProgressBarEvents(evtSource);
         }
 
         return () => {
@@ -23,15 +24,15 @@ export default function GameClientContainer(props) {
     }, [gameId, playerId]);
 
     useEffect(() => {
-        if (props.trivia?.progression?.hasOwnProperty("question") && props.trivia?.progression?.question?.number > 0) {
-            const {pre_delay, duration, interval, post_delay, number, points} = props.trivia?.progression?.question;
+        if (props.progress?.hasOwnProperty("question") && props.trivia?.progression?.question?.number > 0) {
+            const {pre_delay, duration, interval, post_delay, number, points} = props.progress;
             setCounterOnTimeout({pre_delay, duration, interval, post_delay, number, points});
         }
     }, [props.trivia?.progression?.question?.number]);
 
     useEffect(() => {
-        if (props.trivia?.progression?.hasOwnProperty("placard") && props.trivia?.progression?.placard?.number > 0) {
-            const {pre_delay, duration, interval, post_delay, number, points} = props.trivia?.progression?.placard;
+        if (props.progress?.hasOwnProperty("placard") && props.trivia?.progression?.placard?.number > 0) {
+            const {pre_delay, duration, interval, post_delay, number, points} = props.progress;
             setCounterOnTimeout({pre_delay, duration, interval, post_delay, number, points});
         }
     }, [props.trivia?.progression?.placard?.number]);
@@ -40,9 +41,9 @@ export default function GameClientContainer(props) {
         //fire up progress indicator
         props.showProgress({
             pre_delay,
-            post_delay,
-            interval,
             duration,
+            interval,
+            post_delay,
             number,
             points,
             oncountdown: function ({countDown, timeRemaining}) {

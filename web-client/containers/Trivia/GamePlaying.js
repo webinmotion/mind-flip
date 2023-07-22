@@ -72,9 +72,10 @@ export default function GamePlayingContainer(props) {
     function setCounterOnTimeout(engine, layout, number, points) {
         //fire up progress indicator
         props.showProgress({
-            delay: engine?.pre_countdown_delay,
-            interval: 100,
+            pre_delay: engine?.pre_countdown_delay,
             duration: engine?.countdown_duration,
+            interval: engine?.countdown_interval,
+            post_delay: engine?.post_countdown_delay,
             number,
             points,
             oncountdown: function ({ countDown, timeRemaining }) {

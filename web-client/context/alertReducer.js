@@ -3,6 +3,7 @@ import {
     CLEAR_ALERT_MESSAGE,
     SHOW_PROGRESS_BAR,
     CLEAR_PROGRESS_BAR,
+    ON_PROGRESS_BAR_EVENT,
 }
     from './alertActions';
 
@@ -19,11 +20,11 @@ export const initialAlert = {
 export const initialProgress = {
     show: false,
     pre_delay: 0,
-    post_delay: 0,
-    interval: 0,
     duration: 0,
+    interval: 0,
+    post_delay: 0,
     points: 0,
-    number: 'label',
+    number: 0,
     count: 0,
     oncountdown: null,
     precountdown: null,
@@ -47,7 +48,8 @@ export const progressReducer = (progress, action) => {
     console.log('state type', typeof progress, 'state value', progress);
     switch (action.type) {
         case SHOW_PROGRESS_BAR:
-        case CLEAR_PROGRESS_BAR: {
+        case CLEAR_PROGRESS_BAR:
+        case ON_PROGRESS_BAR_EVENT: {
             return ({ ...progress, ...action.progress });
         }
         default: {
