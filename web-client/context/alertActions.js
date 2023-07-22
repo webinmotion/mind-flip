@@ -1,5 +1,3 @@
-import {ON_GAME_STARTING_EVENT} from "./triviaActions";
-
 export const SHOW_ALERT_MESSAGE = "SHOW_ALERT_MESSAGE";
 export const CLEAR_ALERT_MESSAGE = "CLEAR_ALERT_MESSAGE";
 export const SHOW_PROGRESS_BAR = "SHOW_PROGRESS_BAR";
