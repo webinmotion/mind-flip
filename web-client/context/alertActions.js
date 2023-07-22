@@ -2,6 +2,7 @@ export const SHOW_ALERT_MESSAGE = "SHOW_ALERT_MESSAGE";
 export const CLEAR_ALERT_MESSAGE = "CLEAR_ALERT_MESSAGE";
 export const SHOW_PROGRESS_BAR = "SHOW_PROGRESS_BAR";
 export const CLEAR_PROGRESS_BAR = "CLEAR_PROGRESS_BAR";
+export const ON_PROGRESS_BAR_EVENT = "ON_PROGRESS_BAR_EVENT";
 
 function defaultCloseOptions(autoClose = false, closeDelay, onClose) {
     return ({
@@ -65,3 +66,11 @@ export const clearProgressAction = dispatch => () => {
         }
     });
 };
+
+export const onProgressBarEventsAction = dispatch => (evtSource) => {
+
+    evtSource.addEventListener(ON_PROGRESS_BAR_EVENT, (event) => {
+        const {data} = event;
+        dispatch({type: ON_PROGRESS_BAR_EVENT, progress: JSON.parse(data)});
+    });
+}

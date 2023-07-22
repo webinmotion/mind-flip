@@ -11,6 +11,7 @@ const {
     ON_GAME_ENDING_EVENT,
     ON_ANSWER_POSTED_EVENT,
     ON_PLACARD_POSTED_EVENT,
+    ON_PROGRESS_BAR_EVENT,
 } = require('./Constants');
 
 /**
@@ -33,6 +34,7 @@ class GameStudio {
         //publish completion message
         let game_id = driver.game_id;
         this.publishMessage(ON_GAME_ENDING_EVENT, game_id, message);
+        this.publishMessage(ON_PROGRESS_BAR_EVENT, game_id, {show: false});
         //clean up driver and participants
         console.log(`unregistering game ${game_id}`);
         delete this.running[game_id];
@@ -113,9 +115,13 @@ class GameStudio {
         }
     }
 
-    nextQuestion(game_id, question,) {
+    nextQuestion(game_id, question, progression, progress) {
         //send data to all participants
         this.publishMessage(ON_QUESTION_POSTED_EVENT, game_id, question);
+        
+        if(progression === 'auto') {
+            this.publishMessage(ON_PROGRESS_BAR_EVENT, game_id, progress);
+        }
 
         //log current question
         console.log(`Que ${question.number} : ${question.que_value}`);
@@ -129,9 +135,13 @@ class GameStudio {
         console.log(`Score ${score.value}`);
     }
 
-    nextPlacard(game_id, placard,){
+    nextPlacard(game_id, placard, progression, progress){
         //send placard to all participants
         this.publishMessage(ON_PLACARD_POSTED_EVENT, game_id, placard);
+
+        if(progression === 'auto') {
+            this.publishMessage(ON_PROGRESS_BAR_EVENT, game_id, progress);
+        }
 
         //log current placard
         console.log(`Placard ${placard.placard_content}`);

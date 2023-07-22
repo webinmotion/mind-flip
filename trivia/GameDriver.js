@@ -48,14 +48,14 @@ module.exports = class GameDriver {
         //register
         this.studio.register(this);
         //start the clock on this game if server_push_mode is true
-        if(this.gameEngine?.server_push_mode) {
+        if (this.gameEngine?.server_push_mode) {
             this.clockRunning = true;
             await this.startTheClock();
         }
     }
 
-    async startTheClock(){
-        while(this.clockRunning){
+    async startTheClock() {
+        while (this.clockRunning) {
             await this.gameClock.pause();
             this.onNext();
         }
@@ -75,17 +75,28 @@ module.exports = class GameDriver {
             //check if placards are coming up
             if (this.gamePlacards) {
                 const placard = this.gamePlacards[this.placardCursor];
+
                 //set delay in game clock
-                this.gameClock.delay = placard.display_duration;
-                this.studio.nextPlacard(this.game_id, {
-                    ...placard,
-                    points: 0,
-                    number: this.placardCursor,
-                    pre_delay: 1000,
-                    duration: placard.display_duration,
-                    interval: 1000,
-                    post_delay: 1000,
-                });
+                const pre_countdown_delay = 1000;
+                const countdown_duration = placard.display_duration;
+                const countdown_interval = 1000;
+                const post_countdown_delay = 1000;
+                this.gameClock.delay = (pre_countdown_delay + countdown_duration + post_countdown_delay);
+
+                //notify subscribers of new content
+                this.studio.nextPlacard(this.game_id,
+                    placard,
+                    this.gameEngine.progression,
+                    {
+                        show: true,
+                        type: "placard",
+                        points: 0,
+                        number: this.placardCursor,
+                        pre_delay: pre_countdown_delay,
+                        duration: countdown_duration,
+                        interval: countdown_interval,
+                        post_delay: post_countdown_delay,
+                    });
 
                 //increment cursor
                 this.placardCursor += 1;
@@ -109,23 +120,32 @@ module.exports = class GameDriver {
                 }
 
                 //set delay in game clock
-                const {pre_countdown_delay, countdown_duration, countdown_interval, post_countdown_delay} = this.gameEngine;
+                const {
+                    pre_countdown_delay,
+                    countdown_duration,
+                    countdown_interval,
+                    post_countdown_delay
+                } = this.gameEngine;
                 this.gameClock.delay = (pre_countdown_delay + countdown_duration + post_countdown_delay);
 
                 //notify subscribers of new question
                 this.studio.nextQuestion(this.game_id, {
-                    ...gameQuestion,
-                    round: this.gameLayout[this.currentCursor].current_section,
-                    count: this.gameLayout[this.currentCursor].content_label,
-                    choices: questionChoices,
-                    progression: this.gameEngine.progression,
-                    points: gameQuestion.max_points,
-                    number: this.currentCursor,
-                    pre_delay: pre_countdown_delay,
-                    duration: countdown_duration,
-                    interval: countdown_interval,
-                    post_delay: post_countdown_delay,
-                });
+                        ...gameQuestion,
+                        round: this.gameLayout[this.currentCursor].current_section,
+                        number: this.gameLayout[this.currentCursor].content_label,
+                        choices: questionChoices,
+                    },
+                    this.gameEngine.progression,
+                    {
+                        show: true,
+                        type: "question",
+                        points: gameQuestion.max_points,
+                        number: this.currentCursor,
+                        pre_delay: pre_countdown_delay,
+                        duration: countdown_duration,
+                        interval: countdown_interval,
+                        post_delay: post_countdown_delay,
+                    });
 
                 //increment cursor
                 this.currentCursor += 1;
