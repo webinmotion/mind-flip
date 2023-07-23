@@ -36,13 +36,6 @@ export function useProgression() {
         }));
     }
 
-    function hideProgress(){
-        setProgression(prevProgress => ({
-            ...prevProgress,
-            show: false,
-        }));
-    }
-
     function onProgressionEvent(evtSource) {
 
         evtSource.addEventListener(ON_PROGRESSION_EVENT, (event) => {
@@ -54,7 +47,6 @@ export function useProgression() {
     return ({
         progress: progression,
         showProgress,
-        hideProgress,
         onProgressBarEvents: onProgressionEvent,
     });
 }

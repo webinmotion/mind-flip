@@ -375,10 +375,10 @@ insert into tbl_game_layout (game_fk, question_fk, current_section, section_inde
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '4 + 1'), 1, 5, '4', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '5 + 1'), 1, 6, '5',
 (select placard_id from tbl_game_placard where placard_content = 'Taking a snack break')),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '6 + 1'), 2, 1, '1', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '7 + 1'), 2, 2, '2', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '8 + 1'), 2, 3, '3', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '9 + 1'), 2, 4, '4',
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '6 + 1'), 2, 1, '6', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '7 + 1'), 2, 2, '7', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '8 + 1'), 2, 3, '8', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '9 + 1'), 2, 4, '9',
 (select placard_id from tbl_game_placard where placard_content = 'It was great having you here'));
 
 --join a game to participate

@@ -59,7 +59,7 @@ export const AppProvider = ({ children }) => {
     //initialize alert state
     const [alert, alertDispatch] = useReducer(alertReducer, initialAlert);
 
-    const { progress, showProgress, hideProgress, onProgressBarEvents, } = useProgression();
+    const { progress, showProgress, onProgressBarEvents, } = useProgression();
 
     return (
         <AppContext.Provider value={{
@@ -124,7 +124,6 @@ export const AppProvider = ({ children }) => {
 
             //toggle progress
             showProgress,
-            hideProgress,
 
             //progress bar event
             onProgressBarEvents,
