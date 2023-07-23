@@ -27,15 +27,7 @@ module.exports = class GameDriver {
         this.scorer = scorer;
         this.game_id = game_id;
         this.clockRunning = false;
-        this.gameClock = new GameClock({
-            delay: 14000,
-            points: 0,
-            period: 100,
-            duration: 2000,
-            precountdown: (number) => console.log('pre-countdown', number),
-            oncountdown: (data) => console.log('on-countdown', data),
-            postcountdown: () => console.log('post-countdown'),
-        });
+        this.gameClock = new GameClock();
     }
 
     async initialize() {
@@ -57,9 +49,10 @@ module.exports = class GameDriver {
     async startTheClock() {
         while (this.clockRunning) {
             await this.gameClock.pause();
-            this.onNext();
+            console.log('onto next() after %d millis pause', this.gameClock.delay);
+            await this.onNext();
         }
-        console.log('exiting clock');
+        console.log('exiting game clock');
     }
 
     async onRegistered() {
