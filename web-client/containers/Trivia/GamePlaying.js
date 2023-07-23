@@ -14,7 +14,7 @@ export default function GamePlayingContainer(props) {
     const [gameLayout, setGameLayout] = useState([]);
     const [gameEngine, setGameEngine] = useState({});
     const [gameQuestion, setGameQuestion] = useState({});
-    const [progress, setProgress] = useState({ countDown: 0, timeRemaining: 0 });
+    const [localProgress, setLocalProgress] = useState({ countDown: 0, timeRemaining: 0 });
 
     const navigate = useNavigate();
 
@@ -79,7 +79,7 @@ export default function GamePlayingContainer(props) {
             number,
             points,
             oncountdown: function ({ countDown, timeRemaining }) {
-                setProgress(prevProgress => ({ ...prevProgress, countDown, timeRemaining }));
+                setLocalProgress(prevProgress => ({ ...prevProgress, countDown, timeRemaining }));
                 console.log('countDown, timeRemaining', countDown, timeRemaining);
             },
             precountdown: (questionNumber) => console.log(`question ${questionNumber} coming up next...`),
@@ -97,7 +97,7 @@ export default function GamePlayingContainer(props) {
         const data = new FormData(event.currentTarget);
         const question = gameLayout[counter - 1].question_fk;
         const participant = props.participant.participant_id;
-        const { countDown, timeRemaining } = progress;
+        const { countDown, timeRemaining } = localProgress;
         //participant, question, { answer_submitted, clock_remaining, tally_points }
         remoteRespondToQuestion(participant, question, { answer_submitted: data.get('answer'), clock_remaining: timeRemaining, tally_points: countDown });
     };
@@ -105,7 +105,7 @@ export default function GamePlayingContainer(props) {
     const submitChoice = (value) => {
         const question = gameLayout[counter - 1].question_fk;
         const participant = props.participant.participant_id;
-        const { countDown, timeRemaining } = progress;
+        const { countDown, timeRemaining } = localProgress;
         //participant, question, { answer_submitted, clock_remaining, tally_points }
         remoteRespondToQuestion(participant, question, { answer_submitted: value, clock_remaining: timeRemaining, tally_points: countDown });
     }

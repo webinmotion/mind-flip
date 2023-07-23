@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import useProgression from "../../hooks/useProgression";
+import useProgressBar from "../../hooks/useProgressBar";
 
 function LinearProgressWithLabel(props) {
     return (
@@ -19,13 +19,10 @@ function LinearProgressWithLabel(props) {
 
 export default function ProgressBar({progress}) {
 
-    const {state, pause, countdown} = useProgression({
-        duration: progress.duration,
-        points: progress.points,
-    });
+    const {percent, countDown, timeRemaining, pause, countdown} = useProgressBar();
 
     useEffect(() => {
-        if (progress.number > 0 || progress.points > 0) {
+        if (progress.number > 0 && progress.points > 0) {
             const {
                 points,
                 number,
@@ -62,9 +59,9 @@ export default function ProgressBar({progress}) {
 
     return progress.show && progress.points > 0 ?
         (<Box sx={{width: '100%'}}>
-            <LinearProgressWithLabel value={state.percent}/>
-            <Typography mt={2} variant="h2" component="h2">Points available: {state.countDown} </Typography>
-            <Typography mt={2} variant="subtitle" component="h4">Time remaining: {state.timeRemaining} </Typography>
+            <LinearProgressWithLabel value={percent}/>
+            <Typography mt={2} variant="h2" component="h2">Points available: {countDown} </Typography>
+            <Typography mt={2} variant="subtitle" component="h4">Time remaining: {timeRemaining} </Typography>
         </Box>)
         : null
 }
