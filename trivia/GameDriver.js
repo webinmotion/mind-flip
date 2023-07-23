@@ -28,10 +28,10 @@ module.exports = class GameDriver {
         this.game_id = game_id;
         this.clockRunning = false;
         this.gameClock = new GameClock({
-            delay: 0,
+            delay: 14000,
             points: 0,
-            period: 0,
-            duration: 0,
+            period: 100,
+            duration: 2000,
             precountdown: (number) => console.log('pre-countdown', number),
             oncountdown: (data) => console.log('on-countdown', data),
             postcountdown: () => console.log('post-countdown'),
@@ -77,10 +77,10 @@ module.exports = class GameDriver {
                 const placard = this.gamePlacards[this.placardCursor];
 
                 //set delay in game clock
-                const pre_countdown_delay = 2000;
+                const pre_countdown_delay = 5000;
                 const countdown_duration = placard.display_duration;
                 const countdown_interval = 500;
-                const post_countdown_delay = 2000;
+                const post_countdown_delay = 5000;
                 this.gameClock.delay = (pre_countdown_delay + countdown_duration + post_countdown_delay);
 
                 //notify subscribers of new content

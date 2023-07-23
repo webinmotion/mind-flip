@@ -14,15 +14,11 @@ import {
     verifyRecoveryCodeAction,
 } from './visitorActions';
 import { visitorReducer, initialRegistration, initialAuthentication } from './visitorReducer';
-import {
-    showAlertAction,
-    clearAlertAction,
-    showProgressAction,
-    onProgressBarEventsAction
-} from "./alertActions";
-import { alertReducer, initialAlert, progressReducer, initialProgress, } from './alertReducer';
+import { showAlertAction, clearAlertAction, } from "./alertActions";
+import { alertReducer, initialAlert,  } from './alertReducer';
 import { usePageForms } from "../hooks/usePageForms";
 import { useLocalState } from "../hooks/useLocalState";
+import { useProgression } from '../hooks/useProgression';
 
 const AppContext = createContext();
 
@@ -63,8 +59,7 @@ export const AppProvider = ({ children }) => {
     //initialize alert state
     const [alert, alertDispatch] = useReducer(alertReducer, initialAlert);
 
-    //initialize progress indicator state
-    const [progress, progressDispatch] = useReducer(progressReducer, initialProgress);
+    const { progress, showProgress, hideProgress, onProgressBarEvents, } = useProgression();
 
     return (
         <AppContext.Provider value={{
@@ -127,11 +122,12 @@ export const AppProvider = ({ children }) => {
             showAlert: showAlertAction(alertDispatch),
             clearAlert: clearAlertAction(alertDispatch),
 
-            //progress bar actions
-            showProgress: showProgressAction(progressDispatch),
+            //toggle progress
+            showProgress,
+            hideProgress,
 
-            //progress bar events
-            onProgressBarEvents: onProgressBarEventsAction(progressDispatch),
+            //progress bar event
+            onProgressBarEvents,
 
             //app form functions
             setCurrentRoute,

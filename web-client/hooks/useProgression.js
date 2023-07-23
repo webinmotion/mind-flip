@@ -1,67 +1,60 @@
 import React, {useState} from 'react';
 
-export default function useProgression({duration, points, }) {
+export const ON_PROGRESSION_EVENT = "ON_PROGRESSION_EVENT";
 
-    const [percent, setPercent] = useState(0);
-    const [countDown, setCountdown] = useState(points);
-    const [timeRemaining, setTimeRemaining] = useState(duration);
+export const initialProgression = {
+    show: false,
+    pre_delay: 0,
+    duration: 0,
+    interval: 0,
+    post_delay: 0,
+    points: 0,
+    number: 0,
+    count: 0,
+    oncountdown: null,
+    precountdown: null,
+    postcountdown: null,
+};
 
-    async function pause({delay, points, duration}) {
-        return new Promise((resolve,) => {
-            let timeout = setTimeout(function () {
-                //reset progress bar state
-                setPercent(0);
-                setCountdown(points);
-                setTimeRemaining(duration);
-                //clean up - all done
-                clearTimeout(timeout);
-                resolve();
-            }, delay);
-        })
+export function useProgression() {
+
+    const [progression, setProgression] = useState(initialProgression);
+
+    function showProgress({pre_delay, duration, interval, post_delay, number, points, oncountdown, precountdown, postcountdown,}) {
+        setProgression(prevProgress => ({
+            ...prevProgress,
+            show: true,
+            pre_delay,
+            duration,
+            interval,
+            post_delay,
+            number,
+            points,
+            oncountdown,
+            precountdown,
+            postcountdown,
+        }));
     }
 
-    async function countdown({period, points, duration, oncountdown}) {
-        const ticks = duration / period;
-        const delta = points / ticks;
-        const clock = 100 / ticks;
-
-        return new Promise((resolve,) => {
-            let count = ticks;
-
-            //reset progress bar state
-            setPercent(0);
-            setCountdown(points);
-            setTimeRemaining(duration);
-
-            //count down progress bar
-            let interval = setInterval(() => {
-                if (count <= 0) {
-                    //clean up - all done
-                    clearInterval(interval);
-                    resolve();
-                } else {
-                    let nextPercent, nextCountdown, nextTimeRemaining;
-                    setPercent(prevPercent => {
-                        nextPercent = prevPercent + clock;
-                        return nextPercent
-                    });
-                    setCountdown(prevCountdown => {
-                        nextCountdown = prevCountdown - delta;
-                        return nextCountdown;
-                    });
-                    setTimeRemaining(prevTime => {
-                        nextTimeRemaining = prevTime - period;
-                        return nextTimeRemaining;
-                    });
-                    if (typeof oncountdown === 'function') oncountdown({
-                        countDown: nextCountdown,
-                        timeRemaining: nextTimeRemaining
-                    });
-                    count--;
-                }
-            }, period);
-        })
+    function hideProgress(){
+        setProgression(prevProgress => ({
+            ...prevProgress,
+            show: false,
+        }));
     }
 
-    return {state: {percent, countDown, timeRemaining}, pause, countdown}
+    function onProgressionEvent(evtSource) {
+
+        evtSource.addEventListener(ON_PROGRESSION_EVENT, (event) => {
+            const {data} = event;
+            setProgression(prevProgress => ({...prevProgress, ...JSON.parse(data)}));
+        });
+    }
+
+    return ({
+        progress: progression,
+        showProgress,
+        hideProgress,
+        onProgressBarEvents: onProgressionEvent,
+    });
 }

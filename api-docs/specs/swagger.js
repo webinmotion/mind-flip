@@ -178,7 +178,7 @@ const options = {
             },
           },
           example: {
-            ticker_id: "the 2 seconds delay",
+            ticker_id: "the 3 seconds delay",
             duration: 12000,
             delay: 2000,
             period: 500,

@@ -271,7 +271,7 @@ The UI is very similar to that of free_form except that the response submited ca
 --create default tickers
 insert into tbl_ticker (ticker_id, ticker_title, pre_countdown_delay, post_countdown_delay, countdown_interval, countdown_duration) values (100, 'no time ticker', -1, -1, -1, -1);
 insert into tbl_ticker (ticker_id, ticker_title, pre_countdown_delay, post_countdown_delay) values (200, 'aggresive ticker', 0, 0);
-insert into tbl_ticker (ticker_id, ticker_title, pre_countdown_delay, post_countdown_delay) values (300, '2 seconds cushion', 2000, 2000);
+insert into tbl_ticker (ticker_id, ticker_title, pre_countdown_delay, post_countdown_delay) values (300, '3 seconds cushion', 3000, 2000);
 
 -- register some new players
 insert into tbl_player (email_address, screen_name, player_type) values ('jimmy@email.com', 'thirsty whale', 'registered');
@@ -290,7 +290,7 @@ insert into tbl_account (username, userpass, player_fk) values ('rustic_beaver',
 --create a question
 with author as (select player_id from tbl_player where email_address = 'jimmy@email.com')
 insert into tbl_question (que_value, que_answer, has_choices, max_points, asked_by) values
-('Trivia, Quizes and Gotchas', '', false, 0, (select player_id from author)),
+('Hang in tight...', '', false, 5000, (select player_id from author)),
 ('1 + 1', '2', true, 5000, (select player_id from author)),
 ('2 + 1', '3', true, 5000, (select player_id from author)),
 ('3 + 1', '4', false, 5000, (select player_id from author)),
@@ -339,44 +339,47 @@ insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
 
 --create a game
 insert into tbl_game (organizer, title, game_status) values
-((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'friendly numbers', 'Playing');
+((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'friendly numbers', 'Accepting');
 insert into tbl_game (organizer, title, game_status) values
 ((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'around and about', 'Created');
 
 --create game placards
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
 insert into tbl_game_placard (placard_content, display_duration ) values
-('game is about to start', 3000),
-('enjoy the game', 3000),
-('taking a snack break', 3000),
-('enjoying the game? tip your waiter', 3000),
-('game is now resuming', 3000),
-('it was a blast having you', 3000);
+('Trivia, Quizes and Gotchas', 3000),
+('Game is about to start', 3000),
+('Enjoy the game', 3000),
+('Taking a snack break', 3000),
+('Enjoying the game? tip your waiter', 3000),
+('Game is now resuming', 3000),
+('It was great having you here', 3000);
 
 --assign order to the placards
-update tbl_game_placard set followed_by = (select placard_id from tbl_game_placard where placard_content = 'enjoy the game')
-where placard_content = 'game is about to start';
-update tbl_game_placard set followed_by = (select placard_id from tbl_game_placard where placard_content = 'enjoying the game? tip your waiter')
-where placard_content = 'taking a snack break';
-update tbl_game_placard set followed_by = (select placard_id from tbl_game_placard where placard_content = 'game is now resuming')
-where placard_content = 'enjoying the game? tip your waiter';
+update tbl_game_placard set followed_by = (select placard_id from tbl_game_placard where placard_content = 'Game is about to start')
+where placard_content = 'Trivia, Quizes and Gotchas';
+update tbl_game_placard set followed_by = (select placard_id from tbl_game_placard where placard_content = 'Enjoy the game')
+where placard_content = 'Game is about to start';
+update tbl_game_placard set followed_by = (select placard_id from tbl_game_placard where placard_content = 'Enjoying the game? tip your waiter')
+where placard_content = 'Taking a snack break';
+update tbl_game_placard set followed_by = (select placard_id from tbl_game_placard where placard_content = 'Game is now resuming')
+where placard_content = 'Enjoying the game? tip your waiter';
 
 --create a game layout
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
 insert into tbl_game_layout (game_fk, question_fk, current_section, section_index, content_label, placard_fk) values
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = 'Trivia, Quizes and Gotchas'), 1, 1, 'Starting...',
-(select placard_id from tbl_game_placard where placard_content = 'game is about to start')),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = 'Hang in tight...'), 1, 1, '',
+(select placard_id from tbl_game_placard where placard_content = 'Trivia, Quizes and Gotchas')),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '1 + 1'), 1, 2, '1', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '2 + 1'), 1, 3, '2', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '3 + 1'), 1, 4, '3', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '4 + 1'), 1, 5, '4', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '5 + 1'), 1, 6, '5',
-(select placard_id from tbl_game_placard where placard_content = 'taking a snack break')),
+(select placard_id from tbl_game_placard where placard_content = 'Taking a snack break')),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '6 + 1'), 2, 1, '1', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '7 + 1'), 2, 2, '2', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '8 + 1'), 2, 3, '3', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '9 + 1'), 2, 4, '4',
-(select placard_id from tbl_game_placard where placard_content = 'it was a blast having you'));
+(select placard_id from tbl_game_placard where placard_content = 'It was great having you here'));
 
 --join a game to participate
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
@@ -475,7 +478,10 @@ select * from tbl_game_player gp inner join tbl_player p on p.player_id = gp.pla
 delete from tbl_game_player where player_fk = (select player_id from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com'));
 delete from tbl_account where username in ('zumba', 'one');
 delete from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com');
-update tbl_game_engine set progression = 'manual' where game_fk = (select game_id from tbl_game where title = 'friendly numbers');
+
+update tbl_game set game_status = 'Accepting' where title ='friendly numbers';
+
+update tbl_game_engine set progression = 'auto', server_push_mode = true where game_fk = (select game_id from tbl_game where title = 'friendly numbers');
 
 select gt.participant_fk, sum(gt.tally_points) from tbl_game_tally gt
     inner join tbl_game_player gp on gp.participant_id = gt.participant_fk
@@ -486,7 +492,7 @@ select gt.participant_fk, sum(gt.tally_points) from tbl_game_tally gt
 with recursive game_extras as (
 	select parent.*, 1 as "order"
 	from tbl_game_placard parent
-	where parent.placard_content = 'taking a snack break'
+	where parent.placard_content = 'Taking a snack break'
 
 	union all
 

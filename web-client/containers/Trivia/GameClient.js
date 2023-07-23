@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import GameClient from "../../components/Trivia/GameClient";
 import {serverUrl} from "../../services/request";
 import {useNavigate, useParams} from "react-router-dom";

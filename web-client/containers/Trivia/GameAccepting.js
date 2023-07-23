@@ -15,7 +15,7 @@ export default function GameAcceptingContainer(props) {
             }
         }
 
-        participantsListing();
+        participantsListing().then(r => console.log('fetched game participants for display'));
     }, [gameId]);
 
     useEffect(() => {
