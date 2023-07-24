@@ -19,7 +19,6 @@ const {
     updateGameEngine,
     addGameParticipant,
     dropGameParticipant,
-    respondToQuestion,
     fetchParticipantTally,
     fetchGameTallies,
     updateHighestScore,
@@ -61,8 +60,6 @@ router.get('/participant/:participant/details', fetchParticipantById);
 router.put('/participant/:game/player/:player', addGameParticipant);
 
 router.delete('/participant/:participant', dropGameParticipant);
-
-router.put('/participant/:participant/question/:question', respondToQuestion);
 
 router.get('/participant/:participant/score', fetchParticipantTally);
 

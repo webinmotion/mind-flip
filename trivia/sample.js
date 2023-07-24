@@ -1,5 +1,6 @@
 const path = require('path');
 const env = require('dotenv');
+const {ClosestButNotOver, ClockCountdown, ExactMatchExpected} = require("./ScoreKeeper");
 env.config({path: path.resolve(process.cwd(), '.env.local')})
 console.log(process.env.HEALTHY_MESSAGE);
 
@@ -16,3 +17,21 @@ async function testing() {
 }
 
 testing().then(r => console.log("exiting testing"));
+
+const parameters = {
+    maxTime: 10000,
+    timeRemaining: 5000,
+    maxPoints: 1000,
+    pointsRemaining: 500,
+    expectedAnswer: 200,
+    actualAnswer: 100
+};
+
+let closestNotOver = new ClosestButNotOver(parameters);
+console.log("closestNotOver", closestNotOver.calcScore());
+
+let clockCountdown = new ClockCountdown({...parameters, actualAnswer: 200});
+console.log("clockCountdown", clockCountdown.calcScore());
+
+let exactMatchExpected = new ExactMatchExpected({...parameters, actualAnswer: 200});
+console.log("exactMatchExpected", exactMatchExpected.calcScore());

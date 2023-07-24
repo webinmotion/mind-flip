@@ -231,12 +231,11 @@ const dropGameParticipant = async (participant_id) => {
     return { game_fk, player_fk, };
 }
 
-const respondToQuestion = async (participant_fk, question_fk, { answer_submitted, clock_remaining, tally_points }) => {
+const saveResponseToQuestion = async (participant_fk, question_fk, { answer_submitted, clock_remaining, tally_points }) => {
     console.log("submitting response", answer_submitted, clock_remaining, tally_points);
     let insert_query = `insert into tbl_game_tally (participant_fk, question_fk, answer_submitted, clock_remaining, tally_points) 
-values ($1, $2, $3, $4, $5) on conflict (participant_fk, question_fk) do update set tally_points = $5`;
-    let result = await execute(insert_query,
-        [participant_fk, question_fk, answer_submitted, clock_remaining, tally_points]);
+values ($1, $2, $3, $4, $5) on conflict (participant_fk, question_fk) do update set tally_points = $5 returning tally_points`;
+    let result = await execute(insert_query, [participant_fk, question_fk, answer_submitted, clock_remaining, tally_points]);
     return result[0];
 }
 
@@ -281,6 +280,6 @@ module.exports = {
     fetchParticipantTally,
     addGameParticipant,
     dropGameParticipant,
-    respondToQuestion,
+    saveResponseToQuestion,
     updateHighestScore,
 }

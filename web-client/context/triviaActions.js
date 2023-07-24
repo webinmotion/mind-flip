@@ -15,7 +15,6 @@ import {
     remoteFetchParticipantTally,
     remoteFetchPlayerByEmail,
     remoteFetchProgression,
-    remoteRespondToQuestion,
     remoteUpdateGameEngine,
     remoteUpdateGameStatus,
     remoteUpdateHighestScore,
@@ -61,9 +60,7 @@ export const ON_AFTER_QUESTION_EVENT = "ON_AFTER_QUESTION_EVENT";
 export const ON_BREAK_STARTING_EVENT = "ON_BREAK_STARTING_EVENT";
 export const ON_SNACK_BREAK_EVENT = "ON_SNACK_BREAK_EVENT";
 export const ON_BREAK_ENDING_EVENT = "ON_BREAK_ENDING_EVENT";
-//other events
-export const ON_POINTS_SCORED_EVENT = "ON_POINTS_SCORED_EVENT";
-export const ON_CURRENT_TALLY_EVENT = "ON_CURRENT_TALLY_EVENT";
+export const ON_UPDATED_TALLIES_EVENT = "ON_UPDATED_TALLIES_EVENT";
 
 export const fetchGamesListingAction = dispatch => () => {
     remoteFetchGamesListing().then(listing => {
@@ -161,15 +158,6 @@ export const addGameParticipantAction = dispatch => ({game, email}) => {
 export const dropGameParticipantAction = dispatch => (participant) => {
     remoteDropGameParticipant(participant).then(ok =>
         dispatch(dropGameParticipantAction({type: DROP_GAME_PARTICIPANT, ok})));
-}
-
-export const respondToQuestionAction = dispatch => (participant, question, {
-    answer_submitted,
-    clock_remaining,
-    tally_points
-}) => {
-    remoteRespondToQuestion(participant, question, {answer_submitted, clock_remaining, tally_points})
-        .then(result => console.log(`submission result - ${result}`));
 }
 
 export const fetchParticipantTallyAction = dispatch => score => {
@@ -289,5 +277,10 @@ export const onProgressionEventsAction = dispatch => (evtSource) => {
     evtSource.addEventListener(ON_BREAK_ENDING_EVENT, (event) => {
         const {data} = event;
         dispatch({type: ON_BREAK_ENDING_EVENT, data: JSON.parse(data)});
+    });
+
+    evtSource.addEventListener(ON_UPDATED_TALLIES_EVENT, (event) => {
+        const {data} = event;
+        dispatch({type: ON_UPDATED_TALLIES_EVENT, data: JSON.parse(data)});
     });
 }

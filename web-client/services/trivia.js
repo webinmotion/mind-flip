@@ -114,17 +114,6 @@ export const remoteDropGameParticipant = async (participant) => {
         .then(resp => resp.data);
 }
 
-export const remoteRespondToQuestion = async (participant, question, { answer_submitted, clock_remaining, tally_points }) => {
-    return await axios.put(`${serverUrl()}/trivia/participant/${participant}/question/${question}`,
-        {answer_submitted, clock_remaining, tally_points},
-        {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(resp => resp.data);
-}
-
 export const remoteFetchParticipantTally = async (participant) => {
     return await axios.get(`${serverUrl()}/trivia/participant/${participant}/score`)
         .then(resp => resp.data);

@@ -3,7 +3,7 @@ const ScoreKeeper = require("../trivia/ScoreKeeper");
 const studio = require("../trivia/GameStudio");
 const { ON_GAME_ACCEPTING_EVENT, ON_GAME_CREATED_EVENT, ON_GAME_PLAYING_EVENT, ON_GAME_DELETED_EVENT, ON_SSE_TESTING_EVENT, ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED, ON_GAME_STARTING_EVENT,
     ON_GAME_ENDING_EVENT, ON_BEFORE_QUESTION_EVENT, ON_QUESTION_POSTED_EVENT, ON_ANSWER_POSTED_EVENT, ON_AFTER_QUESTION_EVENT, ON_BREAK_STARTING_EVENT, ON_SNACK_BREAK_EVENT, ON_BREAK_ENDING_EVENT,
-    ON_PLACARD_POSTED_EVENT, ON_PROGRESSION_EVENT, } = require('../trivia/Constants');
+    ON_PLACARD_POSTED_EVENT, ON_PROGRESSION_EVENT, ON_UPDATED_TALLIES_EVENT, } = require('../trivia/Constants');
 
 const scorer = new ScoreKeeper();
 
@@ -94,14 +94,19 @@ async function handleNextQuestionEvent(req, resp, next) {
 }
 
 async function handleAnswerPostedEvent(req, resp, next) {
-    const {game, player, question } = req.params;
-    const {answer_submitted} = req.body;
-    const driver = studio.running[game];
-    await driver.onAnswer({
+    const {game, participant, question } = req.params;
+    const { answer_submitted, display_duration, max_points, score_strategy, expected_answer, time_remaining, points_remaining,} = req.body;
+    await studio.acceptParticipantAnswer({
         game_id: game,
-        player_id: player,
+        participant_id: participant,
         question_id: question,
-        answer_submitted
+        display_duration,
+        expected_answer,
+        max_points,
+        score_strategy,
+        answer_submitted,
+        time_remaining,
+        points_remaining,
     });
     resp.json({ "success": true });
 }
@@ -130,6 +135,7 @@ async function handleProgressionEvents(req, resp, next) {
         ON_SNACK_BREAK_EVENT,
         ON_BREAK_ENDING_EVENT,
         ON_PROGRESSION_EVENT,
+        ON_UPDATED_TALLIES_EVENT,
     ], game, player);
 
     resp.write(`data: player ${player} subscription for progression events in game ${game} accepted\n\n`);
@@ -148,6 +154,7 @@ async function handleProgressionEvents(req, resp, next) {
             ON_SNACK_BREAK_EVENT,
             ON_BREAK_ENDING_EVENT,
             ON_PROGRESSION_EVENT,
+            ON_UPDATED_TALLIES_EVENT,
         ], player)
     });
 }

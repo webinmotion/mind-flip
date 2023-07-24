@@ -19,6 +19,7 @@ DROP TYPE IF EXISTS GameProgression;
 DROP TYPE IF EXISTS GameStatus;
 DROP TYPE IF EXISTS PlayerType;
 DROP TYPE IF EXISTS AccountRole;
+drop type if exists ScoreStrategy;
 
 CREATE TYPE GameCategory AS ENUM (
 	'general',
@@ -57,6 +58,13 @@ CREATE TYPE AccountRole AS ENUM (
 	'Basic',
 	'Organizer',
     'Administrator'
+);
+
+create type ScoreStrategy as enum (
+	'NON_SCORING_STRATEGY',
+	'CLOSEST_BUT_NOT_OVER',
+	'CLOCK_COUNTDOWN',
+	'EXACT_MATCH_EXPECTED'
 );
 
 create table if not exists tbl_Ticker (
@@ -150,6 +158,7 @@ create table if not exists tbl_Game_Layout (
 	section_index int not null,
 	content_label varchar(32) not null,
 	placard_fk UUID references tbl_Game_Placard(placard_id) default null,
+	score_strategy ScoreStrategy default 'EXACT_MATCH_EXPECTED',
 	constraint pk_game_layout primary key(game_fk, question_fk, current_section)
 );
 
@@ -366,19 +375,19 @@ where placard_content = 'Enjoying the game? tip your waiter';
 
 --create a game layout
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
-insert into tbl_game_layout (game_fk, question_fk, current_section, section_index, content_label, placard_fk) values
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = 'Hang in tight...'), 1, 1, '',
+insert into tbl_game_layout (game_fk, question_fk, current_section, section_index, content_label, score_strategy, placard_fk) values
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = 'Hang in tight...'), 1, 1, '', 'NON_SCORING_STRATEGY',
 (select placard_id from tbl_game_placard where placard_content = 'Trivia, Quizes and Gotchas')),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '1 + 1'), 1, 2, '1', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '2 + 1'), 1, 3, '2', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '3 + 1'), 1, 4, '3', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '4 + 1'), 1, 5, '4', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '5 + 1'), 1, 6, '5',
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '1 + 1'), 1, 2, '1', 'EXACT_MATCH_EXPECTED', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '2 + 1'), 1, 3, '2', 'EXACT_MATCH_EXPECTED', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '3 + 1'), 1, 4, '3', 'EXACT_MATCH_EXPECTED', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '4 + 1'), 1, 5, '4', 'EXACT_MATCH_EXPECTED', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '5 + 1'), 1, 6, '5', 'EXACT_MATCH_EXPECTED',
 (select placard_id from tbl_game_placard where placard_content = 'Taking a snack break')),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '6 + 1'), 2, 1, '6', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '7 + 1'), 2, 2, '7', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '8 + 1'), 2, 3, '8', null),
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '9 + 1'), 2, 4, '9',
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '6 + 1'), 2, 1, '6', 'CLOCK_COUNTDOWN', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '7 + 1'), 2, 2, '7', 'CLOCK_COUNTDOWN', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '8 + 1'), 2, 3, '8', 'CLOCK_COUNTDOWN', null),
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '9 + 1'), 2, 4, '9', 'CLOCK_COUNTDOWN',
 (select placard_id from tbl_game_placard where placard_content = 'It was great having you here'));
 
 --join a game to participate
@@ -481,7 +490,7 @@ delete from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmai
 
 update tbl_game set game_status = 'Accepting' where title ='friendly numbers';
 
-update tbl_game_engine set progression = 'auto', server_push_mode = true where game_fk = (select game_id from tbl_game where title = 'friendly numbers');
+update tbl_game_engine set progression = 'manual', server_push_mode = false where game_fk = (select game_id from tbl_game where title = 'friendly numbers');
 
 select gt.participant_fk, sum(gt.tally_points) from tbl_game_tally gt
     inner join tbl_game_player gp on gp.participant_id = gt.participant_fk

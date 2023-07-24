@@ -26,6 +26,6 @@ router.get('/client/:game/player/:player', handleProgressionEvents);
 router.post('/client/:game/question', /*validateOrganizerAuth,*/ handleNextQuestionEvent);
 
 /** POST submit response to question */
-router.post('/client/:game/player/:player/question/:question/answer', handleAnswerPostedEvent);
+router.post('/client/:game/participant/:participant/question/:question/answer', handleAnswerPostedEvent);
 
 module.exports = router;

@@ -9,9 +9,9 @@ const {
     GAME_STATUS_PLAYING,
     ON_QUESTION_POSTED_EVENT,
     ON_GAME_ENDING_EVENT,
-    ON_ANSWER_POSTED_EVENT,
     ON_PLACARD_POSTED_EVENT,
     ON_PROGRESSION_EVENT,
+    ON_UPDATED_TALLIES_EVENT,
 } = require('./Constants');
 
 /**
@@ -36,9 +36,9 @@ class GameStudio {
         this.publishMessage(ON_GAME_ENDING_EVENT, game_id, message);
         this.publishMessage(ON_PROGRESSION_EVENT, game_id, {show: false});
         //clean up driver and participants
-        console.log(`unregistering game ${game_id}`);
+        console.log(`un-registering game ${game_id}`);
         delete this.running[game_id];
-        console.log(`unenrolling participants for ${game_id}`);
+        console.log(`un-enrolling participants for ${game_id}`);
         this.unenroll(game_id);
         driver.onCompleted();
     }
@@ -127,12 +127,16 @@ class GameStudio {
         console.log(`Que ${question.number} : ${question.que_value}`);
     }
 
-    answerAccepted(game_id, score,) {
+    async acceptParticipantAnswer({game_id, participant_id, question_id, expected_answer, answer_submitted, display_duration, max_points, score_strategy, time_remaining, points_remaining,}) {
+        const driver = this.running[game_id];
+        const tallies = await driver.onAnswer(game_id, participant_id, question_id,
+            {score_strategy, expected_answer, answer_submitted, display_duration, max_points, time_remaining, points_remaining,}
+        )
         //send data to all participants
-        this.publishMessage(ON_ANSWER_POSTED_EVENT, game_id, score);
+        this.publishMessage(ON_UPDATED_TALLIES_EVENT, game_id, tallies);
 
-        //log current question
-        console.log(`Score ${score.value}`);
+        //log current tallies
+        console.log(`Updated scores: ${JSON.stringify(tallies)}`);
     }
 
     nextPlacard(game_id, placard, progression, progress){

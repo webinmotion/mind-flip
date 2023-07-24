@@ -31,6 +31,7 @@ import {
     ON_BREAK_ENDING_EVENT,
     ON_ANSWER_POSTED_EVENT,
     ON_PLACARD_POSTED_EVENT,
+    ON_UPDATED_TALLIES_EVENT,
 }
     from './triviaActions';
 
@@ -208,8 +209,13 @@ export const triviaReducer = (game, action) => {
             console.log('post_break_delay', post_break_delay);
             return ({...game, progression: {...game.progression, post_break_delay}});
         }
+        case ON_UPDATED_TALLIES_EVENT: {
+            const tallies = action.data;
+            console.log('tallies', tallies);
+            return ({...game, progression: {...game.progression, tallies}});
+        }
         default: {
             return game;
         }
     }
-}//"data: {\"question\":{\"que_value\":\"1 + 1\",\"que_answer\":\"2\",\"category\":\"general\",\"asked_by\":\"7223e9e6-2633-11ee-acdd-0242ac110002\",\"has_choices\":true,\"max_points\":5000,\"round\":1,\"number\":1,\"choices\":[{\"choice_id\":\"7229665a-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":true,\"choice_value\":\"2\",\"clue\":\"double double it is\"},{\"choice_id\":\"72296df8-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":false,\"choice_value\":\"1\",\"clue\":\"single is not right\"},{\"choice_id\":\"72296e7a-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":false,\"choice_value\":\"0\",\"clue\":\"nothingness is not an option\"},{\"choice_id\":\"72296eca-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":false,\"choice_value\":\"3\",\"clue\":\"triple sec is a drink\"},{\"choice_id\":\"72296f06-2633-11ee-acdd-0242ac110002\",\"question_fk\":\"72288f46-2633-11ee-acdd-0242ac110002\",\"is_correct\":false,\"choice_value\":\"4\",\"clue\":\"quad is an offroad vehicle\"}],\"progression\":\"manual\",\"delay\":2000,\"duration\":10000,\"interval\":100}}\n\n"
+}

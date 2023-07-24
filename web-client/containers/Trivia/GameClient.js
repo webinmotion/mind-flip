@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import GameClient from "../../components/Trivia/GameClient";
 import {serverUrl} from "../../services/request";
 import {useNavigate, useParams} from "react-router-dom";
@@ -10,6 +10,7 @@ export default function GameClientContainer(props) {
     let navigate = useNavigate();
     let {gameId, playerId} = useParams();
     const {onProgressionEvents, onProgressBarEvents} = props;
+    const [localProgress, setLocalProgress] = useState({timeRemaining: 0, countDown: 0})
 
     useEffect(() => {
         const evtSource = new EventSource(`${serverUrl()}/play/client/${gameId}/player/${playerId}`)
@@ -48,24 +49,44 @@ export default function GameClientContainer(props) {
             points,
             oncountdown: function ({countDown, timeRemaining}) {
                 console.log('countDown, timeRemaining', countDown, timeRemaining);
+                setLocalProgress(prev => ({...prev, countDown, timeRemaining }))
             },
             precountdown: (questionNumber) => console.log(`question ${questionNumber} coming up next...`),
             postcountdown: () => console.log("moving on"),
         });
     }
 
-    const submitAnswer = (event) => {
+    const submitAnswer = async (event) => {
         event.preventDefault();
-        const {que_id} = props.trivia.progression.question;
+        let {que_id, que_answer, max_points, score_strategy, countdown_duration} = props.trivia?.progression?.question;
+        let {game_id, participant_id} = props.trivia?.participant
         const data = new FormData(event.currentTarget);
-        //participant, question, { answer_submitted, clock_remaining, tally_points }
-        remoteSendResponseToQuestion(gameId, playerId, que_id, data.get('answer'));
+        let answer_submitted = data.get('answer');
+        //submit response data
+        await remoteSendResponseToQuestion(game_id, participant_id, que_id, {
+            display_duration: countdown_duration,
+            expected_answer: que_answer,
+            max_points,
+            score_strategy,
+            answer_submitted,
+            time_remaining: localProgress.timeRemaining,
+            points_remaining: localProgress.countDown,
+        });
     };
 
-    const submitChoice = (value) => {
-        const {que_id} = props.trivia.progression.question;
-        //participant, question, { answer_submitted, clock_remaining, tally_points }
-        remoteSendResponseToQuestion(gameId, playerId, que_id, value);
+    const submitChoice = async (answer_submitted) => {
+        let {que_id, que_answer, max_points, score_strategy, countdown_duration} = props.trivia?.progression?.question;
+        let {game_id, participant_id} = props.trivia?.participant
+        //submit response data
+        await remoteSendResponseToQuestion(game_id, participant_id, que_id, {
+            display_duration: countdown_duration,
+            expected_answer: que_answer,
+            max_points,
+            score_strategy,
+            answer_submitted,
+            time_remaining: localProgress.timeRemaining,
+            points_remaining: localProgress.countDown,
+        });
     }
 
     return props.trivia?.progression?.type === "question" ?

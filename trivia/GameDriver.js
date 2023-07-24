@@ -4,13 +4,12 @@ const {
     fetchGameQuestion,
     updateGameEngine,
     fetchGamePlacards,
-    respondToQuestion,
-    updateHighestScore,
     addGameParticipant,
     fetchPlayerById,
     fetchGameEngine,
     fetchQuestionChoices,
-    updateGameStatus
+    updateGameStatus,
+    saveResponseToQuestion,
 } = require('../service/trivia');
 const GameClock = require('./GameClock');
 
@@ -126,7 +125,9 @@ module.exports = class GameDriver {
                         ...gameQuestion,
                         round: this.gameLayout[this.currentCursor].current_section,
                         number: this.gameLayout[this.currentCursor].content_label,
+                        score_strategy: this.gameLayout[this.currentCursor].score_strategy,
                         choices: questionChoices,
+                        countdown_duration,
                     },
                     this.gameEngine.progression,
                     {
@@ -153,14 +154,42 @@ module.exports = class GameDriver {
         }
     }
 
-    async onAnswer({game_id, player_id, question_id, answer_submitted}) {
-        // let tally_points = this.scorer.calcScore(this.currentQuestion.que_answer, answer_submitted, clock_remaining);
-        // await respondToQuestion(participant_id, {
-        //     question_fk: this.currentQuestion.que_id, answer_submitted, clock_remaining, tally_points
-        // });
-        // //update local score tally
-        // this.scorer.updateScore(this.game_id, participant_id, tally_points);
-        console.log('{game_id, player_id, question_id, answer_submitted }', game_id, player_id, question_id, answer_submitted);
+    async onAnswer(game_id, participant_id, question_id, {
+        score_strategy,
+        expected_answer,
+        answer_submitted,
+        display_duration,
+        max_points,
+        time_remaining,
+        points_remaining,
+    }) {
+        //calculate points for storage
+        const scoreStrategy = this.scorer.strategy[score_strategy];
+        let tally_points = scoreStrategy({
+            expectedAnswer: expected_answer,
+            actualAnswer: answer_submitted,
+            maxTime: display_duration,
+            maxPoints: max_points,
+            timeRemaining: time_remaining,
+            pointsRemaining: points_remaining,
+        });
+
+        let result = await saveResponseToQuestion(participant_id, question_id, {
+            answer_submitted,
+            clock_remaining: time_remaining,
+            tally_points,
+        });
+
+        console.log('result from saving response to answer', result);
+
+        this.scorer.updateScore(game_id, participant_id, question_id, tally_points);
+
+        //prepare response
+        const summaryScores = this.scorer.summaryScores(game_id);
+        return ({
+            summaryScores,
+            highestScore: this.scorer.highestScore(summaryScores),
+        });
     }
 
     async onCompleted() {

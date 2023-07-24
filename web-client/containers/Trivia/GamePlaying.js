@@ -3,8 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import GamePlaying from "../../components/Trivia/GamePlaying";
 import {
     remoteFetchGameEngine, remoteFetchGameInfoById, remoteFetchGameLayout, remoteFetchGameQuestion, remoteFetchQuestionChoices,
-    remoteRespondToQuestion
 } from "../../services/trivia";
+import {remoteSendResponseToQuestion} from "../../services/playtime";
 
 export default function GamePlayingContainer(props) {
 
@@ -92,22 +92,22 @@ export default function GamePlayingContainer(props) {
         nextQuestion(gameEngine, gameLayout, counter)
     }
 
-    const submitAnswer = (event) => {
+    const submitAnswer = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const question = gameLayout[counter - 1].question_fk;
         const participant = props.participant.participant_id;
         const { countDown, timeRemaining } = localProgress;
         //participant, question, { answer_submitted, clock_remaining, tally_points }
-        remoteRespondToQuestion(participant, question, { answer_submitted: data.get('answer'), clock_remaining: timeRemaining, tally_points: countDown });
+        await remoteSendResponseToQuestion(participant, question, { answer_submitted: data.get('answer'), clock_remaining: timeRemaining, tally_points: countDown });
     };
 
-    const submitChoice = (value) => {
+    const submitChoice = async (value) => {
         const question = gameLayout[counter - 1].question_fk;
         const participant = props.participant.participant_id;
         const { countDown, timeRemaining } = localProgress;
         //participant, question, { answer_submitted, clock_remaining, tally_points }
-        remoteRespondToQuestion(participant, question, { answer_submitted: value, clock_remaining: timeRemaining, tally_points: countDown });
+        await remoteSendResponseToQuestion(participant, question, { answer_submitted: value, clock_remaining: timeRemaining, tally_points: countDown });
     }
 
     return (

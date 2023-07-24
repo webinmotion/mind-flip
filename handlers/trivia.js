@@ -19,7 +19,7 @@ const {
     updateGameEngine,
     addGameParticipant,
     dropGameParticipant,
-    respondToQuestion,
+    saveResponseToQuestion,
     updateHighestScore,
 } = require('../service/trivia');
 
@@ -279,19 +279,6 @@ const handleDropGameParticipant = async function (req, res, next) {
     }
 }
 
-const handleRespondToQuestion = async function (req, res, next) {
-    try {
-        const participant_fk = req.params.participant;
-        const question_fk = req.params.question;
-        const { answer_submitted, clock_remaining, tally_points } = req.body;
-        const result = await respondToQuestion(participant_fk, question_fk, { answer_submitted, clock_remaining, tally_points });
-        res.json(result);
-    }
-    catch (e) {
-        next(e);
-    }
-}
-
 const handleUpdateHighestScore = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
@@ -324,7 +311,6 @@ module.exports = {
     addGameParticipant: handleAddGameParticipant,
     dropGameParticipant: handleDropGameParticipant,
     updateGameEngine: handleUpdateGameEngine,
-    respondToQuestion: handleRespondToQuestion,
     fetchParticipantTally: handleFetchParticipantTally,
     fetchGameTallies: handleFetchGameTallies,
     updateHighestScore: handleUpdateHighestScore,
