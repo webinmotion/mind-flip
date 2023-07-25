@@ -5,15 +5,19 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import {useEffect} from "react";
 
-export default function GameClient({ progression: { question, ending_message, }, navigate, submitAnswer, submitChoice, }) {
+export default function GameSinglePlay({ navigate, engine, current, onNext, hasMore, submitAnswer, submitChoice }) {
 
-    useEffect(() => {
-        if(ending_message) {
-            navigate("/");
+    function onHandleNext(e) {
+        e.preventDefault();
+        if (typeof onNext === 'function') {
+            onNext();
         }
-    }, [ending_message]);
+    }
+
+    function onHandleCompleted(){
+        navigate("/");
+    }
 
     return (
         <React.Fragment>
@@ -25,7 +29,7 @@ export default function GameClient({ progression: { question, ending_message, },
                     color="text.secondary"
                     gutterBottom
                 >
-                    Round {question?.round} - Question {question?.number}
+                    Round {current?.round} - Question {current?.number}
                 </Typography>
 
                 <Typography
@@ -35,7 +39,7 @@ export default function GameClient({ progression: { question, ending_message, },
                     color="text.primary"
                     gutterBottom
                 >
-                    {question?.que_value}
+                    {current?.que_value}
                 </Typography>
 
                 <Typography
@@ -44,18 +48,18 @@ export default function GameClient({ progression: { question, ending_message, },
                     align="right"
                     color="text.secondary"
                 >
-                    {question?.max_points} points
+                    {current?.max_points} points
                 </Typography>
             </Container>
 
-            {question?.has_choices &&
+            {current?.has_choices &&
                 <Box sx={{ width: '100%', mb: 5 }}>
                     <Typography variant="subtitle" align="left" color="text.secondary" component="p">
                         Choices
                     </Typography>
 
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        {question?.choices.map(choice => (
+                        {current?.choices.map(choice => (
                             <Grid key={choice.choice_id} item xs={6}>
                                 <Button fullWidth sx={{ padding: 2, fontSize: '1.2em' }} variant="outlined" onClick={() => submitChoice(choice.choice_value)}>
                                     {choice.choice_value}
@@ -66,7 +70,7 @@ export default function GameClient({ progression: { question, ending_message, },
                 </Box>
             }
 
-            {!question?.has_choices &&
+            {!current?.has_choices &&
                 <Box component="form" noValidate onSubmit={submitAnswer} sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
@@ -87,6 +91,30 @@ export default function GameClient({ progression: { question, ending_message, },
                         sx={{ mt: 3, mb: 2 }}
                     >
                         Submit Answer
+                    </Button>
+                </Box>
+            }
+
+            {onNext && hasMore && engine?.progression === 'manual' ?
+                <Box component="form" noValidate onSubmit={onHandleNext} sx={{ mt: 3 }}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Next
+                    </Button>
+                </Box>
+                :
+                <Box component="form" noValidate onSubmit={onHandleCompleted} sx={{ mt: 3 }}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Completed Challenge!
                     </Button>
                 </Box>
             }

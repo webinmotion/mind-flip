@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import GamePlaying from "../../components/Trivia/GamePlaying";
+import GameSinglePlay from "../../components/Trivia/GameSinglePlay";
 import {
     remoteFetchGameEngine, remoteFetchGameInfoById, remoteFetchGameLayout, remoteFetchGameQuestion, remoteFetchQuestionChoices,
 } from "../../services/trivia";
 import {remoteSendResponseToQuestion} from "../../services/playtime";
 
-export default function GamePlayingContainer(props) {
+export default function GameSinglePlayContainer(props) {
 
     let { gameId } = useParams();
     const [counter, setCounter] = useState(0);
@@ -111,7 +111,7 @@ export default function GamePlayingContainer(props) {
     }
 
     return (
-        <GamePlaying
+        <GameSinglePlay
             navigate={navigate}
             info={gameInfo}
             engine={gameEngine}

@@ -177,10 +177,11 @@ create table if not exists tbl_Game_Engine (
 	current_section int default 1,
 	section_index int default 1,
 	progression GameProgression default 'manual',
-	allow_nav_back boolean default false,
+	is_multi_player boolean default true,
+	can_navigate_back boolean default false,
 	server_push_mode boolean default true,
 	game_ticker int references tbl_Ticker(ticker_id) default 300,
-	constraint pk_game_weaver primary key(game_fk)
+	constraint pk_game_engine primary key(game_fk)
 );
 
 create table if not exists tbl_Game_Tally (
@@ -490,7 +491,8 @@ delete from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmai
 
 update tbl_game set game_status = 'Accepting' where title ='friendly numbers';
 
-update tbl_game_engine set progression = 'manual', server_push_mode = false where game_fk = (select game_id from tbl_game where title = 'friendly numbers');
+update tbl_game_engine set progression = 'manual', server_push_mode = false, is_multi_player = false
+	where game_fk = (select game_id from tbl_game where title = 'friendly numbers');
 
 select gt.participant_fk, sum(gt.tally_points) from tbl_game_tally gt
     inner join tbl_game_player gp on gp.participant_id = gt.participant_fk

@@ -2,11 +2,11 @@ import React from 'react';
 import { Routes, Route, } from 'react-router-dom';
 import Trivia from '../Trivia';
 import AlertMessage from '../Layout/AlertMessage';
-import GamePlaying from '../../containers/Trivia/GamePlaying';
+import GameSinglePlay from '../../containers/Trivia/GameSinglePlay';
 import GameAccepting from '../../containers/Trivia/GameAccepting';
 import OrganizeGames from '../../containers/NavMenu/OrganizeGames';
 import PlayerProfile from '../../containers/NavMenu/PlayerProfile';
-import GameClient from '../../containers/Trivia/GameClient';
+import GameMultiPlay from '../../containers/Trivia/GameMultiPlay';
 import ProgressBar from '../Layout/ProgressBar';
 
 export default function App({ ...rest }) {
@@ -19,9 +19,9 @@ export default function App({ ...rest }) {
         <div className="app">
             <AlertMessage {...alert} clearAlert={clearAlert} />
             <Routes>
-                <Route path="/accepting/:gameId/player/:playerId" element={<GameClient {...rest} />} />
+                <Route path="/accepting/:gameId/player/:playerId" element={<GameMultiPlay {...rest} />} />
                 <Route path="/waiting/:gameId/player/:playerId" element={<GameAccepting {...rest} />} />
-                <Route path="/playing/:gameId/player/:playerId" element={<GamePlaying participant={trivia?.participant} showProgress={showProgress} />} />
+                <Route path="/playing/:gameId/player/:playerId" element={<GameSinglePlay participant={trivia?.participant} showProgress={showProgress} />} />
                 <Route path="/organize" element={<OrganizeGames games={trivia.listing} player={trivia.player} createGame={createGameHandle} updateGame={updateGameStatus} deleteGame={deleteGameHandle} />} />
                 <Route path="/profile" element={<PlayerProfile player={trivia.player} accessToken={auth?.accessToken} />} />
                 <Route path="/*" element={<Trivia {...rest} />} />

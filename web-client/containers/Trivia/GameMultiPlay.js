@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import GameClient from "../../components/Trivia/GameClient";
+import GameMultiPlay from "../../components/Trivia/GameMultiPlay";
 import {serverUrl} from "../../services/request";
 import {useNavigate, useParams} from "react-router-dom";
 import {remoteSendResponseToQuestion} from "../../services/playtime";
 import GamePlacard from "../../components/Trivia/GamePlacard";
 
-export default function GameClientContainer(props) {
+export default function GameMultiPlayContainer(props) {
 
     let navigate = useNavigate();
     let {gameId, playerId} = useParams();
@@ -90,7 +90,7 @@ export default function GameClientContainer(props) {
     }
 
     return props.trivia?.progression?.type === "question" ?
-        <GameClient
+        <GameMultiPlay
             progression={props.trivia.progression}
             navigate={navigate}
             submitAnswer={submitAnswer}
