@@ -77,9 +77,25 @@ export const remoteDeleteGameHandle = async (game_id) => {
         .then(resp => resp.data);
 }
 
-export const remoteCreateGameEngine = async (game, { scheduled_start, progression, display_duration, is_multi_player, can_navigate_back, server_push_mode, time_ticker }) => {
+export const remoteCreateGameEngine = async (game, {
+    scheduled_start,
+    progression,
+    display_duration,
+    is_multi_player,
+    can_navigate_back,
+    server_push_mode,
+    time_ticker
+}) => {
     return await axios.post(`${serverUrl()}/trivia/engine/${game}`,
-        {scheduled_start, progression, display_duration, is_multi_player, can_navigate_back, server_push_mode, time_ticker},
+        {
+            scheduled_start,
+            progression,
+            display_duration,
+            is_multi_player,
+            can_navigate_back,
+            server_push_mode,
+            time_ticker
+        },
         {
             headers: {
                 'Content-Type': 'application/json'
@@ -88,7 +104,7 @@ export const remoteCreateGameEngine = async (game, { scheduled_start, progressio
         .then(resp => resp.data);
 }
 
-export const remoteUpdateGameEngine = async (game, { current_section, section_index }) => {
+export const remoteUpdateGameEngine = async (game, {current_section, section_index}) => {
     return await axios.put(`${serverUrl()}/trivia/engine/${game}`,
         {current_section, section_index},
         {
@@ -121,6 +137,34 @@ export const remoteFetchParticipantTally = async (participant) => {
 
 export const remoteUpdateHighestScore = async (participant, score) => {
     return await axios.put(`${serverUrl()}/trivia/participant/${participant}/highscore/${score}`)
+        .then(resp => resp.data);
+}
+
+export const remoteUpdateParticipantAnswer = async (game_id, participant_id, question_id,
+                                                    {
+                                                        answer_submitted,
+                                                        display_duration,
+                                                        max_points,
+                                                        score_strategy,
+                                                        expected_answer,
+                                                        time_remaining,
+                                                        points_remaining,
+                                                    }) => {
+    return await axios.post(`${serverUrl()}/trivia/game/${game_id}/participant/${participant_id}/question/${question_id}/answer`,
+        {
+            answer_submitted,
+            display_duration,
+            max_points,
+            score_strategy,
+            expected_answer,
+            time_remaining,
+            points_remaining,
+        },
+        {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
         .then(resp => resp.data);
 }
 

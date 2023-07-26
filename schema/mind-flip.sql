@@ -18,6 +18,7 @@ DROP TYPE IF EXISTS GameCategory;
 DROP TYPE IF EXISTS GameProgression;
 DROP TYPE IF EXISTS GameStatus;
 DROP TYPE IF EXISTS PlayerType;
+drop type if exists AnswerType;
 DROP TYPE IF EXISTS AccountRole;
 drop type if exists ScoreStrategy;
 
@@ -54,6 +55,12 @@ CREATE TYPE PlayerType AS ENUM (
 	'business'
 );
 
+create type AnswerType as enum (
+	'number',
+	'string',
+	'boolean'
+);
+
 CREATE TYPE AccountRole AS ENUM (
 	'Basic',
 	'Organizer',
@@ -64,7 +71,8 @@ create type ScoreStrategy as enum (
 	'NON_SCORING_STRATEGY',
 	'CLOSEST_BUT_NOT_OVER',
 	'CLOCK_COUNTDOWN',
-	'EXACT_MATCH_EXPECTED'
+	'EXACT_MATCH_EXPECTED',
+	'LIST_OF_CORRECT_VALUES'
 );
 
 create table if not exists tbl_Ticker (
@@ -124,7 +132,8 @@ create table if not exists tbl_Game (
 create table if not exists tbl_Question (
     que_id UUID default uuid_generate_v1(),
     que_value varchar(256) unique not null,
-    que_answer varchar(32) not null,
+    que_answer varchar(256) not null,
+    answer_type AnswerType default 'string',
     category GameCategory default 'general',
     asked_by UUID references tbl_Player(player_id) not null,
     has_choices boolean default false,
@@ -286,7 +295,7 @@ insert into tbl_ticker (ticker_id, ticker_title, pre_countdown_delay, post_count
 -- register some new players
 insert into tbl_player (email_address, screen_name, player_type) values ('jimmy@email.com', 'thirsty whale', 'registered');
 insert into tbl_player (email_address, screen_name) values ('winnie@email.com', 'crocked pots');
-insert into tbl_player (email_address, screen_name) values ('kadzoe@email.com', 'rustic beaver');
+insert into tbl_player (email_address, screen_name, player_type) values ('kadzoe@email.com', 'rustic beaver', 'registered');
 insert into tbl_player (email_address, screen_name) values ('wakili@email.com', 'dancing fish');
 insert into tbl_player (email_address, screen_name) values ('julisha@email.com', 'laughing hyena');
 
@@ -300,7 +309,7 @@ insert into tbl_account (username, userpass, player_fk) values ('rustic_beaver',
 --create a question
 with author as (select player_id from tbl_player where email_address = 'jimmy@email.com')
 insert into tbl_question (que_value, que_answer, has_choices, max_points, asked_by) values
-('Hang in tight...', '', false, 5000, (select player_id from author)),
+('Are you ready?', '', true, 0, (select player_id from author)),
 ('1 + 1', '2', true, 5000, (select player_id from author)),
 ('2 + 1', '3', true, 5000, (select player_id from author)),
 ('3 + 1', '4', false, 5000, (select player_id from author)),
@@ -312,6 +321,11 @@ insert into tbl_question (que_value, que_answer, has_choices, max_points, asked_
 ('9 + 1', '10', false, 5000, (select player_id from author));
 
 --(optional) create multiple choices for a question
+with question as (select que_id from tbl_question where que_value = 'Are you ready?')
+insert into tbl_choice ( question_fk, is_correct, choice_value) values
+((select que_id from question), true, 'Yes'),
+((select que_id from question), false, 'No');
+
 with question as (select que_id from tbl_question where que_value = '1 + 1')
 insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
 ((select que_id from question), true, 2, 'double double it is'),
@@ -347,14 +361,24 @@ insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
 ((select que_id from question), true, 0, 'third time is a charm'),
 ((select que_id from question), false, 4, 'quad is an offroad vehicle');
 
+with author as (select player_id from tbl_player where email_address = 'kadzoe@email.com')
+insert into tbl_question (que_value, que_answer, has_choices, max_points, asked_by) values
+('What are the five largest states in the US?', 'Alaska, Texas, California, Montana, New Mexico', false, 1000, (select player_id from author)),
+('What are the five longest rivers in the world?', 'Nile, Amazon, Yangtze, Mississippi, Yenisley', false, 1000, (select player_id from author)),
+('What are the five deepest lakes in the world?', 'Baikal, Tanganyika, Caspian Sea, Viedma, Vostok', false, 1000, (select player_id from author)),
+('What are the five most populous countries on earth?', 'India, China, USA, Indonesia, Pakistan', false, 1000, (select player_id from author));
+
 --create a game
 insert into tbl_game (organizer, title, game_status) values
-((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'friendly numbers', 'Accepting');
+((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'friendly numbers', 'Playing');
+
 insert into tbl_game (organizer, title, game_status) values
 ((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'), 'around and about', 'Created');
 
+insert into tbl_game (organizer, title, game_status) values
+((select ta.account_id from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'kadzoe@email.com'), 'guestimations ay', 'Accepting');
+
 --create game placards
-with game1 as (select game_id from tbl_game where title = 'friendly numbers')
 insert into tbl_game_placard (placard_content, display_duration ) values
 ('Trivia, Quizes and Gotchas', 3000),
 ('Game is about to start', 3000),
@@ -377,7 +401,7 @@ where placard_content = 'Enjoying the game? tip your waiter';
 --create a game layout
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
 insert into tbl_game_layout (game_fk, question_fk, current_section, section_index, content_label, score_strategy, placard_fk) values
-((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = 'Hang in tight...'), 1, 1, '', 'NON_SCORING_STRATEGY',
+((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = 'Are you ready?'), 1, 1, '', 'NON_SCORING_STRATEGY',
 (select placard_id from tbl_game_placard where placard_content = 'Trivia, Quizes and Gotchas')),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '1 + 1'), 1, 2, '1', 'EXACT_MATCH_EXPECTED', null),
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '2 + 1'), 1, 3, '2', 'EXACT_MATCH_EXPECTED', null),
@@ -391,7 +415,17 @@ insert into tbl_game_layout (game_fk, question_fk, current_section, section_inde
 ((select game_id from game1), (select que_id from tbl_question tq where tq.que_value = '9 + 1'), 2, 4, '9', 'CLOCK_COUNTDOWN',
 (select placard_id from tbl_game_placard where placard_content = 'It was great having you here'));
 
---join a game to participate
+with game2 as (select game_id from tbl_game where title = 'guestimations ay')
+insert into tbl_game_layout (game_fk, question_fk, current_section, section_index, content_label, score_strategy, placard_fk) values
+((select game_id from game2), (select que_id from tbl_question tq where tq.que_value = 'Are you ready?'), 1, 1, '', 'NON_SCORING_STRATEGY', null),
+((select game_id from game2), (select que_id from tbl_question tq where tq.que_value = 'What are the five largest states in the US?'), 1, 2, '1', 'LIST_OF_CORRECT_VALUES', null),
+((select game_id from game2), (select que_id from tbl_question tq where tq.que_value = 'What are the five longest rivers in the world?'), 1, 3, '2', 'LIST_OF_CORRECT_VALUES',
+(select placard_id from tbl_game_placard where placard_content = 'Taking a snack break')),
+((select game_id from game2), (select que_id from tbl_question tq where tq.que_value = 'What are the five deepest lakes in the world?'), 2, 1, '3', 'LIST_OF_CORRECT_VALUES', null),
+((select game_id from game2), (select que_id from tbl_question tq where tq.que_value = 'What are the five most populous countries on earth?'), 2, 2, '4', 'LIST_OF_CORRECT_VALUES',
+(select placard_id from tbl_game_placard where placard_content = 'It was great having you here'));
+
+--join game1 to participate
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
 insert into tbl_game_player (game_fk, player_fk) values
 ((select game_id from game1), (select player_id from tbl_player where email_address = 'jimmy@email.com')),
@@ -404,11 +438,21 @@ insert into tbl_game_player (game_fk, player_fk) values
 with game1 as (select game_id from tbl_game where title = 'friendly numbers')
 insert into tbl_game_engine (game_fk, scheduled_start) values ((select game_id from game1), now());
 
+--join game2 to participate
+with game2 as (select game_id from tbl_game where title = 'guestimations ay')
+insert into tbl_game_player (game_fk, player_fk) values
+((select game_id from game2), (select player_id from tbl_player where email_address = 'jimmy@email.com')),
+((select game_id from game2), (select player_id from tbl_player where email_address = 'winnie@email.com'));
+
+with game2 as (select game_id from tbl_game where title = 'guestimations ay')
+insert into tbl_game_engine (game_fk, scheduled_start) values ((select game_id from game2), now());
+
 --start racking up points
 with question1 as (select que_id from tbl_question where que_value = '1 + 1')
 insert into tbl_game_tally (participant_fk, question_fk, answer_submitted, clock_remaining, tally_points) values
 ((select gp.participant_id from tbl_game_player gp inner join tbl_player p on p.player_id = gp.player_fk
-where p.email_address = 'jimmy@email.com'), (select que_id from question1), '3', 5000, 0);
+where p.email_address = 'jimmy@email.com'
+and gp.game_fk = (select game_id from tbl_game where title = 'friendly numbers')), (select que_id from question1), '3', 5000, 0);
 
 --fetch game using title and organizer email
 select * from tbl_game where title = 'friendly numbers' and organizer = (
@@ -459,11 +503,13 @@ select player_id, verified_email from tbl_player P where P.email_address = 'happ
     and verified_email is true and player_type != 'guest';
 
 --listing of trivia (landing page)
-select G.*, P.* from tbl_Game G
-join tbl_account A on A.account_id = G.organizer
-join tbl_player P on P.player_id = A.player_fk
-where A.is_active = true
-	and G.game_status in ('Created', 'Accepting', 'Playing');
+select G.*, P.*, GE.* from tbl_Game G
+    join tbl_account A on A.account_id = G.organizer
+    join tbl_player P on P.player_id = A.player_fk
+    left outer join tbl_game_engine GE on GE.game_fk = G.game_id
+    where A.is_active = true
+        and P.player_type != 'guest'
+        and G.game_status in ('Created', 'Accepting', 'Playing');
 
 --delete from tbl_account where username = 'omolloc';
 --delete from tbl_player where screen_name = 'mainas';
@@ -489,7 +535,7 @@ delete from tbl_game_player where player_fk = (select player_id from tbl_player 
 delete from tbl_account where username in ('zumba', 'one');
 delete from tbl_player where email_address in ('zes.ty@aol.com', 'mainacell@gmail.com', 'm41na@yahoo.com');
 
-update tbl_game set game_status = 'Accepting' where title ='friendly numbers';
+update tbl_game set game_status = 'Playing' where title ='friendly numbers';
 
 update tbl_game_engine set progression = 'manual', server_push_mode = false, is_multi_player = false
 	where game_fk = (select game_id from tbl_game where title = 'friendly numbers');

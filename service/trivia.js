@@ -1,16 +1,18 @@
 const { execute } = require('../repo');
 
 const fetchGamesListing = async () => {
-    let results = await execute(`select G.*, P.* from tbl_Game G 
-    join tbl_account A on A.account_id = G.organizer
-    join tbl_player P on P.player_id = A.player_fk 
-    where A.is_active = true
+    let results = await execute(`select G.*, P.*, GE.* from tbl_Game G
+        join tbl_account A on A.account_id = G.organizer
+        join tbl_player P on P.player_id = A.player_fk
+        left outer join tbl_game_engine GE on GE.game_fk = G.game_id
+        where A.is_active = true
         and P.player_type != 'guest'
         and G.game_status in ('Created', 'Accepting', 'Playing')`, [])
-    return results?.length === 0 ? [] : results.map(record => {
+        return results?.length === 0 ? [] : results.map(record => {
         const {
             game_id, title, description, game_status,
-            player_id, organizer, email_address, screen_name, player_type, city, state, country
+            player_id, organizer, email_address, screen_name, player_type, city, state, country,
+            progression, is_multi_player, can_navigate_back, server_push_mode,
         } = record;
 
         return ({
@@ -24,6 +26,12 @@ const fetchGamesListing = async () => {
                 city,
                 state,
                 country
+            },
+            engine_info: {
+                progression,
+                is_multi_player,
+                can_navigate_back,
+                server_push_mode
             }
         });
     });

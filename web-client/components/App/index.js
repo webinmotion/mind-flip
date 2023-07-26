@@ -19,12 +19,12 @@ export default function App({ ...rest }) {
         <div className="app">
             <AlertMessage {...alert} clearAlert={clearAlert} />
             <Routes>
-                <Route path="/accepting/:gameId/player/:playerId" element={<GameMultiPlay {...rest} />} />
-                <Route path="/waiting/:gameId/player/:playerId" element={<GameAccepting {...rest} />} />
-                <Route path="/playing/:gameId/player/:playerId" element={<GameSinglePlay participant={trivia?.participant} showProgress={showProgress} />} />
-                <Route path="/organize" element={<OrganizeGames games={trivia.listing} player={trivia.player} createGame={createGameHandle} updateGame={updateGameStatus} deleteGame={deleteGameHandle} />} />
-                <Route path="/profile" element={<PlayerProfile player={trivia.player} accessToken={auth?.accessToken} />} />
-                <Route path="/*" element={<Trivia {...rest} />} />
+                <Route path={"/accepting/:gameId/player/:playerId"} element={<GameAccepting {...rest} />} />
+                <Route path={"/playing/subscribe/:gameId/player/:playerId"} element={<GameMultiPlay {...rest} />} />
+                <Route path={"/playing/prescribe/:gameId/player/:playerId"} element={<GameSinglePlay participant={trivia?.participant} showProgress={showProgress} />} />
+                <Route path={"/organize"} element={<OrganizeGames games={trivia.listing} player={trivia.player} createGame={createGameHandle} updateGame={updateGameStatus} deleteGame={deleteGameHandle} />} />
+                <Route path={"/profile"} element={<PlayerProfile player={trivia.player} accessToken={auth?.accessToken} />} />
+                <Route path={"/*"} element={<Trivia {...rest} />} />
             </Routes>
             <ProgressBar progress={progress} />
         </div>

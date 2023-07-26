@@ -22,8 +22,10 @@ const {
     fetchParticipantTally,
     fetchGameTallies,
     updateHighestScore,
+    updateParticipantAnswer,
 } = require('../handlers/trivia');
 const { validateAccessToken } = require('../middleware/authorize');
+const {handleAnswerPostedEvent} = require("../handlers/playtime");
 
 router.get('/listing', fetchGamesListing);
 
@@ -66,5 +68,7 @@ router.get('/participant/:participant/score', fetchParticipantTally);
 router.get('/game/:game/scores', fetchGameTallies);
 
 router.put('/participant/:participant/highscore/:score', updateHighestScore);
+
+router.post('/game/:game/participant/:participant/question/:question/answer', updateParticipantAnswer);
 
 module.exports = router;
