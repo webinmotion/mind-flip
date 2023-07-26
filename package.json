@@ -4,25 +4,37 @@
   "description": "flipping minds all day",
   "main": "server.js",
   "scripts": {
-    "start": "PORT=5000 && NODE_ENV=production node ./bin/www",
-    "start:watch": "set PORT=5000 && set NODE_ENV=development && nodemon ./bin/www",
+    "start": "PORT=5000 && NODE_ENV=production && CONTENT_DIR=frontend/build node ./bin/www",
+    "start:watch": "set PORT=5000 && set NODE_ENV=development && set CONTENT_DIR=frontend/build && nodemon ./bin/www",
     "start:dev": "concurrently \"npm run serve\" \"npm run start:watch\"",
+    "start:mobile": "concurrently \"npm run serve:mobile\" \"npm run start:watch\"",
     "serve": "npm run --prefix frontend start",
     "build": "npm run --prefix frontend build",
-    "test": "jest"
+    "serve:client": "npm run --prefix web-client start",
+    "build:client": "npm run --prefix web-client build:dev",
+    "start:client": "concurrently \"npm run serve:client\" \"npm run start:watch\"",
+    "test": "jest",
+    "sample": "node trivia/sample"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.0.2",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "date-fns": "^2.30.0",
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
     "morgan": "^1.10.0",
-    "pg": "^8.11.0"
+    "pg": "^8.11.0",
+    "sib-api-v3-sdk": "^8.5.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3",
+    "uuid": "^9.0.0",
+    "ws": "^8.13.0"
   },
   "keywords": [],
   "author": "",
@@ -31,7 +43,6 @@
     "@babel/core": "^7.22.1",
     "@babel/preset-env": "^7.22.4",
     "@babel/preset-react": "^7.22.3",
-    "@faker-js/faker": "^8.0.2",
     "@flydotio/dockerfile": "^0.2.14",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
@@ -44,7 +55,6 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-environment-node": "^29.5.0",
     "nodemon": "^2.0.22",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^4.6.3"
+    "supertest": "^6.3.3"
   }
 }

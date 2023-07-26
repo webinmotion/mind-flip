@@ -1,98 +1,174 @@
-import axios from 'axios';
-import { serverUrl } from './common';
+import axios, {serverUrl} from './request';
+
+export const remoteFetchGamesListing = async () => {
+    return await axios.get(`${serverUrl()}/trivia/listing`)
+        .then(resp => resp.data);
+}
 
 export const remoteFetchGameInfo = async (title, organizer) => {
-    const result = await axios.get(`${serverUrl()}/trivia/title/${title}/organizer/${organizer}`)
+    return await axios.get(`${serverUrl()}/trivia/title/${title}/organizer/${organizer}`)
         .then(resp => resp.data);
-    return result;
+}
+
+export const remoteFetchGameInfoById = async (game_id) => {
+    return await axios.get(`${serverUrl()}/trivia/info/${game_id}`)
+        .then(resp => resp.data);
 }
 
 export const remoteFetchProgression = async (ticker) => {
-    const result = await axios.get(`${serverUrl()}/trivia/ticker/${ticker}`)
+    return await axios.get(`${serverUrl()}/trivia/ticker/${ticker}`)
         .then(resp => resp.data);
-    return result;
 }
 
 export const remoteFetchGameLayout = async (game) => {
-    const result = await axios.get(`${serverUrl()}/trivia/layout/${game}`)
+    return await axios.get(`${serverUrl()}/trivia/layout/${game}`)
         .then(resp => resp.data);
-    return result;
 }
 
 export const remoteFetchGameQuestion = async (question) => {
-    const result = await axios.get(`${serverUrl()}/trivia/question/${question}`)
+    return await axios.get(`${serverUrl()}/trivia/question/${question}`)
         .then(resp => resp.data);
-    return result;
+}
+
+export const remoteFetchQuestionChoices = async (question) => {
+    return await axios.get(`${serverUrl()}/trivia/question/${question}/choices`)
+        .then(resp => resp.data);
 }
 
 export const remoteFetchGameEngine = async (game) => {
-    const result = await axios.get(`${serverUrl()}/trivia/engine/${game}`)
+    return await axios.get(`${serverUrl()}/trivia/engine/${game}`)
         .then(resp => resp.data);
-    return result;
+}
+
+export const remoteFetchGameParticipant = async (participant) => {
+    return await axios.get(`${serverUrl()}/trivia/participant/${participant}/details`)
+        .then(resp => resp.data);
 }
 
 export const remoteFetchPlayerByEmail = async (email) => {
-    const result = await axios.get(`${serverUrl()}/trivia/player/${email}`)
+    return await axios.get(`${serverUrl()}/trivia/player/${email}`)
         .then(resp => resp.data);
-    return result;
 }
 
-export const remoteCreateGameEngine = async (game, { scheduled_start, progression, display_duration, time_ticker }) => {
-    const result = await axios.post(`${serverUrl()}/trivia/engine/${game}`,
-        { scheduled_start, progression, display_duration, time_ticker },
+export const remoteCreateGameHandle = async ({title, organizer}) => {
+    return await axios.post(`${serverUrl()}/trivia/game`, {
+        title, organizer
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(resp => resp.data);
+}
+
+export const remoteUpdateGameStatus = async (game_id, game_status) => {
+    return await axios.put(`${serverUrl()}/trivia/game/${game_id}`, {
+        game_status
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(resp => resp.data);
+}
+
+export const remoteDeleteGameHandle = async (game_id) => {
+    return await axios.delete(`${serverUrl()}/trivia/game/${game_id}`)
+        .then(resp => resp.data);
+}
+
+export const remoteCreateGameEngine = async (game, {
+    scheduled_start,
+    progression,
+    display_duration,
+    is_multi_player,
+    can_navigate_back,
+    server_push_mode,
+    time_ticker
+}) => {
+    return await axios.post(`${serverUrl()}/trivia/engine/${game}`,
+        {
+            scheduled_start,
+            progression,
+            display_duration,
+            is_multi_player,
+            can_navigate_back,
+            server_push_mode,
+            time_ticker
+        },
         {
             headers: {
                 'Content-Type': 'application/json'
             }
         })
         .then(resp => resp.data);
-    return result;
 }
 
-export const remoteUpdateGameEngine = async (game, { current_section, section_index }) => {
-    const result = await axios.put(`${serverUrl()}/trivia/engine/${game}`,
-        { current_section, section_index },
+export const remoteUpdateGameEngine = async (game, {current_section, section_index}) => {
+    return await axios.put(`${serverUrl()}/trivia/engine/${game}`,
+        {current_section, section_index},
         {
             headers: {
                 "Content-Type": 'application/json'
             }
         })
         .then(resp => resp.data);
-    return result;
+}
+
+export const remoteFetchGameParticipants = async (game) => {
+    return await axios.get(`${serverUrl()}/trivia/participant/${game}`)
+        .then(resp => resp.data);
 }
 
 export const remoteAddGameParticipant = async (game, player) => {
-    const result = await axios.put(`${serverUrl()}/trivia/participant/${game}/player/${player}`)
+    return await axios.put(`${serverUrl()}/trivia/participant/${game}/player/${player}`)
         .then(resp => resp.data);
-    return result;
 }
 
 export const remoteDropGameParticipant = async (participant) => {
-    const result = await axios.delete(`${serverUrl()}/trivia/participant/${participant}`)
+    return await axios.delete(`${serverUrl()}/trivia/participant/${participant}`)
         .then(resp => resp.data);
-    return result;
 }
 
-export const remoteUpdatePointsTally = async (participant, question, { answer_submitted, clock_remaining, tally_points }) => {
-    const result = await axios.put(`${serverUrl()}/trivia/participant/${participant}/question/${question}`,
-        { answer_submitted, clock_remaining, tally_points },
+export const remoteFetchParticipantTally = async (participant) => {
+    return await axios.get(`${serverUrl()}/trivia/participant/${participant}/score`)
+        .then(resp => resp.data);
+}
+
+export const remoteUpdateHighestScore = async (participant, score) => {
+    return await axios.put(`${serverUrl()}/trivia/participant/${participant}/highscore/${score}`)
+        .then(resp => resp.data);
+}
+
+export const remoteUpdateParticipantAnswer = async (game_id, participant_id, question_id,
+                                                    {
+                                                        answer_submitted,
+                                                        display_duration,
+                                                        max_points,
+                                                        score_strategy,
+                                                        expected_answer,
+                                                        time_remaining,
+                                                        points_remaining,
+                                                    }) => {
+    return await axios.post(`${serverUrl()}/trivia/game/${game_id}/participant/${participant_id}/question/${question_id}/answer`,
+        {
+            answer_submitted,
+            display_duration,
+            max_points,
+            score_strategy,
+            expected_answer,
+            time_remaining,
+            points_remaining,
+        },
         {
             headers: {
                 "Content-Type": "application/json"
             }
         })
         .then(resp => resp.data);
-    return result;
 }
 
-export const remoteFetchCummulativeTally = async (participant) => {
-    const result = await axios.get(`${serverUrl()}/trivia/participant/${participant}/score`)
+export const remoteFetchGameTallies = async (game) => {
+    return await axios.put(`${serverUrl()}/trivia/game/${game}/score`)
         .then(resp => resp.data);
-    return result;
-}
-
-export const remoteUpdateHighestScore = async (participant, score) => {
-    const result = await axios.put(`${serverUrl()}/trivia/participant/${participant}/highscore/${score}`)
-        .then(resp => resp.data);
-    return result;
 }

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "nodemon ./index.js",
-    "start": "node ./index.js"
+    "start": "node ./swagger.js"
   },
   "keywords": [],
   "author": "Maina, Stephen",

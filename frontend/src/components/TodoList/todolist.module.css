@@ -1,0 +1,6 @@
+.container{
+    flex: 1;
+    align-content: center;
+    max-width: 600px;
+    background-color: #ddd;
+}

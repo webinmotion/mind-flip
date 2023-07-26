@@ -1,54 +1,171 @@
-const moment = require('moment');
 const GameDriver = require('../trivia/GameDriver');
 const ScoreKeeper = require("../trivia/ScoreKeeper");
 const studio = require("../trivia/GameStudio");
+const { ON_GAME_ACCEPTING_EVENT, ON_GAME_CREATED_EVENT, ON_GAME_PLAYING_EVENT, ON_GAME_DELETED_EVENT, ON_SSE_TESTING_EVENT, ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED, ON_GAME_STARTING_EVENT,
+    ON_GAME_ENDING_EVENT, ON_BEFORE_QUESTION_EVENT, ON_QUESTION_POSTED_EVENT, ON_ANSWER_POSTED_EVENT, ON_AFTER_QUESTION_EVENT, ON_BREAK_STARTING_EVENT, ON_SNACK_BREAK_EVENT, ON_BREAK_ENDING_EVENT,
+    ON_PLACARD_POSTED_EVENT, ON_PROGRESSION_EVENT, ON_UPDATED_TALLIES_EVENT, } = require('../trivia/Constants');
 
 const scorer = new ScoreKeeper();
 
-function handleGameEvents(request, response, next) {
-    const game = request.params.game;
-    const participant = request.params.participant;
-    console.log(`request made by ${participant} to join game ${game}`);
+function handleGamesListing(req, resp, next) {
+    const headers = {
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache'
+    };
+    resp.writeHead(200, headers);
+
+    studio.subscribeBroadcastEvents(resp, [
+        ON_GAME_CREATED_EVENT,
+        ON_GAME_ACCEPTING_EVENT,
+        ON_GAME_PLAYING_EVENT,
+        ON_GAME_DELETED_EVENT,
+        ON_SSE_TESTING_EVENT,
+    ]);
+
+    resp.write(`data: subscription to game listing accepted\n\n`);
+
+    req.on('close', () => {
+        console.log(`sse Connection closed`);
+        studio.unsubscribeBroadcastEvents([
+            ON_GAME_CREATED_EVENT,
+            ON_GAME_ACCEPTING_EVENT,
+            ON_GAME_PLAYING_EVENT,
+            ON_GAME_DELETED_EVENT,
+            ON_SSE_TESTING_EVENT,
+        ], resp)
+    });
+}
+
+function handleParticipantEvents(req, resp, next) {
+    const game = req.params.game;
+    const player = req.params.player;
+    console.log(`request made by ${player} to join game ${game}`);
 
     const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache'
     };
-    response.writeHead(200, headers);
-    
-   studio.subscribe(game, participant, response);
+    resp.writeHead(200, headers);
 
-    request.on('close', () => {
-        console.log(`${clientId} Connection closed`);
-        studio.unsubscribe(game, participant)
+    studio.subscribeChannelEvents(resp, [ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED], game, player);
+
+    resp.write(`data: player ${player} subscription to game ${game} participant events accepted\n\n`);
+
+    req.on('close', () => {
+        console.log(`${game} Connection closed`);
+        studio.unsubscribeChannelEvents([ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED], player)
     });
 }
 
-async function enrollDriver(request, respsonse, next) {
-    const title = request.params.title;
-    const organizer = request.params.organizer;
-    const { pregame_delay, progression, ticker, ticker_delay, display_duration } = request.body;
-    let start_time = moment(new Date()).add(moment.duration(pregame_delay, 'seconds'));
-    const driver = new GameDriver(studio, studio, scorer, start_time, progression, ticker, ticker_delay, display_duration);
-    await driver.initialize(title, organizer);
-    respsonse.json({ "success": true });
+async function enrollDriver(req, resp, next) {
+    const game_id = req.params.game;
+    const driver = new GameDriver(game_id, studio, scorer);
+    await driver.initialize(game_id);
+    resp.json({ "success": true });
 }
 
-async function enrollPlayer(request, respsonse, next) {
-    const game_id = request.params.game;
-    const player_id = request.params.player;
+async function enrollPlayer(req, resp, next) {
+    const game_id = req.params.game;
+    const player_id = req.params.player;
     const { participant_id, screen_name } = await studio.enroll(game_id, player_id);
-    respsonse.json({ game_id, participant_id, screen_name });
-    return sendEventsToAll("joined", { screen_name });
+    resp.json({ game_id, participant_id, screen_name });
+    studio.broadcastMessage("joined", { screen_name });
 }
 
-function sendEventsToAll(event, payload) {
-    clients.forEach(client => client.response.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`))
+async function sendTestMessage(req, resp, next) {
+    //use - curl -X POST ${host}/play/test/ON_SSE_TESTING_EVENT -H "Content-Type: application/json" -d '{"sample": 1}'
+    const { event } = req.params;
+    const data = req.body;
+    studio.broadcastMessage(event, data);
+    resp.json({
+        reason: 'testing',
+        event,
+        data,
+    })
+}
+
+async function handleNextQuestionEvent(req, resp, next) {
+    const game_id = req.params.game;
+    const driver = studio.running[game_id];
+    await driver.onNext();
+    resp.json({ "success": true });
+}
+
+async function handleAnswerPostedEvent(req, resp, next) {
+    const {game, participant, question } = req.params;
+    const { answer_submitted, display_duration, max_points, score_strategy, expected_answer, time_remaining, points_remaining,} = req.body;
+    await studio.acceptParticipantAnswer({
+        game_id: game,
+        participant_id: participant,
+        question_id: question,
+        display_duration,
+        expected_answer,
+        max_points,
+        score_strategy,
+        answer_submitted,
+        time_remaining,
+        points_remaining,
+    });
+    resp.json({ "success": true });
+}
+
+async function handleProgressionEvents(req, resp, next) {
+    const game = req.params.game;
+    const player = req.params.player;
+    console.log(`player:${player} subscribed for game:${game} progression events`);
+
+    const headers = {
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache'
+    };
+    resp.writeHead(200, headers);
+
+    studio.subscribeChannelEvents(resp, [
+        ON_GAME_STARTING_EVENT,
+        ON_GAME_ENDING_EVENT,
+        ON_BEFORE_QUESTION_EVENT,
+        ON_QUESTION_POSTED_EVENT,
+        ON_ANSWER_POSTED_EVENT,
+        ON_PLACARD_POSTED_EVENT,
+        ON_AFTER_QUESTION_EVENT,
+        ON_BREAK_STARTING_EVENT,
+        ON_SNACK_BREAK_EVENT,
+        ON_BREAK_ENDING_EVENT,
+        ON_PROGRESSION_EVENT,
+        ON_UPDATED_TALLIES_EVENT,
+    ], game, player);
+
+    resp.write(`data: player ${player} subscription for progression events in game ${game} accepted\n\n`);
+
+    req.on('close', () => {
+        console.log(`sse Connection closed`);
+        studio.unsubscribeChannelEvents([
+            ON_GAME_STARTING_EVENT,
+            ON_GAME_ENDING_EVENT,
+            ON_BEFORE_QUESTION_EVENT,
+            ON_QUESTION_POSTED_EVENT,
+            ON_ANSWER_POSTED_EVENT,
+            ON_PLACARD_POSTED_EVENT,
+            ON_AFTER_QUESTION_EVENT,
+            ON_BREAK_STARTING_EVENT,
+            ON_SNACK_BREAK_EVENT,
+            ON_BREAK_ENDING_EVENT,
+            ON_PROGRESSION_EVENT,
+            ON_UPDATED_TALLIES_EVENT,
+        ], player)
+    });
 }
 
 module.exports = {
     enrollDriver,
     enrollPlayer,
-    handleGameEvents
+    sendTestMessage,
+    handleGamesListing,
+    handleParticipantEvents,
+    handleProgressionEvents,
+    handleNextQuestionEvent,
+    handleAnswerPostedEvent,
 };

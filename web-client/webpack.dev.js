@@ -24,7 +24,12 @@ module.exports = (env) => {
             devMiddleware: {
                 index: 'index.html',
                 writeToDisk: true
-            }
+            },
+            historyApiFallback: {
+                rewrites: [
+                    {from: /^\/.+$/, to: "/"}
+                ]
+            },
         },
         module: {
             rules: [
@@ -53,10 +58,10 @@ module.exports = (env) => {
         plugins: [
             new CleanWebpackPlugin(),     //cleans up all files inside output path by default
             new HtmlWebpackPlugin({
-                title: "Minute Man",
+                title: "Mind Flip",
                 filename: 'index.html',
                 template: 'public/template.html',
-                description: "Meeting minutes manager"
+                description: "Meeting of the minds"
             }),
             new CopyPlugin({
                 patterns: [

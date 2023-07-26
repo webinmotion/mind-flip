@@ -25,6 +25,14 @@ Check out **_frontend\src\css\custom.css_** for the proposed color scheme. The p
 
 ---
 
+to create a random sequence of characters, like secrets, you can use the _crypto_ library that ships with nodejs
+
+```js
+node
+require('crypto').randomBytes(64).toString('hex');
+.exit
+```
+
 ## Database deployment notes
 
 ```bash
@@ -64,3 +72,44 @@ node <hit enter key>
 require("crypto").randomBytes(35).toString("hex")
 ```
 
+## Env variables that need to be set up. 
+
+The values to be supplied with the properties are specific to a particular deployment environment. 
+
+Some properties also apply to only a specific deployment environment and not necessarily to others
+
+- HEALTHY_MESSAGE=
+- SERVER_HOST_URL=
+- POSTGRES_USER=
+- POSTGRES_PASSWORD=
+- POSTGRES_HOST=
+- POSTGRES_DATABASE=
+- POSTGRES_PORT=
+- FLYCAST_IPv6=
+- PG_PROXY_PORT=
+- PG_CONNECTION_STRING=
+- ACCESS_TOKEN_SECRET=
+- REFRESH_TOKEN_SECRET=
+
+### Material to review for refactoring
+
+- Bun js
+- uWebsockets
+- React Query
+- Discord Nodejs Bot
+- Tailwindcss
+- Complete guide to Flexbox
+- Complete guide to css Grid
+- Railway app
+- Cyclic app
+- Jotai
+- Zustand
+- Qwik/Astro/SolidJS
+- Axios interceptors - refreshing API token
+- Detect user leaving page to save state to locastorage
+- jsonwebtoken docs
+- Nodemailer
+- Mailersend
+- React Native
+- React Navigation
+- React Native Paper

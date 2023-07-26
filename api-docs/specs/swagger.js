@@ -11,7 +11,7 @@ const options = {
       contact: {
         name: "Maina, Stephen", // your name
         email: "m41na@yahoo.com", // your email
-        url: "practicaldime.org", // your website
+        url: "akilisha.org", // your website
       },
     },
     servers: [
@@ -21,7 +21,7 @@ const options = {
       },
     ],
     tags: [{
-      "name": "Home",
+      "name": "Index",
       "description": "The landing page and health check endpoints"
     },
     {
@@ -178,7 +178,7 @@ const options = {
             },
           },
           example: {
-            ticker_id: "the 2 seconds delay",
+            ticker_id: "the 3 seconds delay",
             duration: 12000,
             delay: 2000,
             period: 500,
@@ -384,9 +384,9 @@ const options = {
     },
     paths: {
       "/": {
-        post: {
+        get: {
           description: "The landing page",
-          tags: ["Home"],
+          tags: ["Index"],
           responses: {
             200: {
               description: "Details of the newly created player",
@@ -402,9 +402,9 @@ const options = {
         },
       },
       "/health": {
-        post: {
+        get: {
           description: "The health check endpoint",
-          tags: ["Home"],
+          tags: ["Index"],
           responses: {
             200: {
               description: "Tells whether the server is up and running",

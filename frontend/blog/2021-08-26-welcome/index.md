@@ -2,7 +2,7 @@
 slug: welcome
 title: Welcome
 authors: [stephen, zes]
-tags: [practicaldime, welcome, introduction]
+tags: [akilisha, welcome, introduction]
 ---
 
 Simply add Markdown files (or folders) to the `blog` directory.
