@@ -9,6 +9,7 @@ import Faqs from "./routes/faqs/Faqs";
 import HomePage from "./components/HomePage";
 import Registration from "./routes/Register";
 import { useEffect, useState } from "react";
+import StepperPage from "./components/GameDetailPage";
 function App() {
   const [theme, setTheme] = useState("light");
 
@@ -36,6 +37,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/faqs" element={<Faqs />} />
+          <Route path="/details" element={<StepperPage />} />
         </Routes>
         <Footer />
       </ChakraProvider>
