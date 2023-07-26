@@ -26,7 +26,7 @@ export default function ReadyToGo({ selectedGame, playerEmail, addGameParticipan
                 alignItems: 'center',
             }}
         >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
                 <ThumbUpIcon />
             </Avatar>
             <Alert severity="success">

@@ -20,7 +20,7 @@ function Copyright() {
         <Typography variant="body2" color="text.secondary">
             {'Copyright © '}
             <Link color="inherit" href="https://mui.com/">
-                akilisha
+                Akilisha
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -30,7 +30,19 @@ function Copyright() {
 
 const defaultTheme = createTheme({
     palette: {
-      mode: 'light',
+        mode: 'light',
+        primary: {
+            main: '#b53f3f',
+            light: '#CE6D6D',
+            dark: '#7E2C2C',
+            contrastText: '#fff',
+        },
+        secondary: {
+            main: '#5a61de',
+            light: '#7B80E4',
+            dark: '#3E439B',
+            contrastText: '#fff',
+        },
     },
   });
 
@@ -75,7 +87,7 @@ function Layout({ children }) {
                 <CssBaseline />
                 <AppBar
                     position="absolute"
-                    color="default"
+                    color="primary"
                     elevation={0}
                     sx={{
                         position: 'relative',
