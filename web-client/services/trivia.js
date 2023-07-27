@@ -5,6 +5,16 @@ export const remoteFetchGamesListing = async () => {
         .then(resp => resp.data);
 }
 
+export const remoteFetchGamesByOrganizer = async (organizer) => {
+    return await axios.get(`${serverUrl()}/trivia/${organizer}/listing`)
+        .then(resp => resp.data);
+}
+
+export const remoteFetchGameTickers = async () => {
+    return await axios.get(`${serverUrl()}/trivia/ticker`)
+        .then(resp => resp.data);
+}
+
 export const remoteFetchGameInfo = async (title, organizer) => {
     return await axios.get(`${serverUrl()}/trivia/title/${title}/organizer/${organizer}`)
         .then(resp => resp.data);
@@ -80,21 +90,19 @@ export const remoteDeleteGameHandle = async (game_id) => {
 export const remoteCreateGameEngine = async (game, {
     scheduled_start,
     progression,
-    display_duration,
     is_multi_player,
     can_navigate_back,
     server_push_mode,
-    time_ticker
+    game_ticker
 }) => {
     return await axios.post(`${serverUrl()}/trivia/engine/${game}`,
         {
             scheduled_start,
             progression,
-            display_duration,
             is_multi_player,
             can_navigate_back,
             server_push_mode,
-            time_ticker
+            game_ticker
         },
         {
             headers: {

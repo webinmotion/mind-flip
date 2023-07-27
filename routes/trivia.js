@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { 
     fetchGamesListing,
+    fetchGamesByOrganizer,
+    fetchGameTickers,
     fetchGameInfo,
     fetchGameInfoById,
     fetchProgression,
@@ -25,9 +27,12 @@ const {
     updateParticipantAnswer,
 } = require('../handlers/trivia');
 const { validateAccessToken } = require('../middleware/authorize');
-const {handleAnswerPostedEvent} = require("../handlers/playtime");
 
 router.get('/listing', fetchGamesListing);
+
+router.get('/:organizer/listing', fetchGamesByOrganizer);
+
+router.get('/ticker', fetchGameTickers);
 
 router.get('/title/:title/organizer/:organizer', validateAccessToken, fetchGameInfo);
 

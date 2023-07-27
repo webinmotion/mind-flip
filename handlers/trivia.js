@@ -1,5 +1,7 @@
 const {
     fetchGamesListing,
+    fetchGamesByOrganizer,
+    fetchGameTickers,
     fetchGameInfo,
     fetchGameInfoById,
     fetchProgression,
@@ -27,10 +29,29 @@ const studio = require("../trivia/GameStudio");
 const ScoreKeeper = require("../trivia/ScoreKeeper");
 const scorer = new ScoreKeeper();
 
-const handleFetchGamesListing = async function (rew, res, next) {
+const handleFetchGamesListing = async function (req, res, next) {
     try {
         const listing = await fetchGamesListing();
         res.json(listing);
+    } catch (e) {
+        next(e);
+    }
+}
+
+const handleFetchGamesByOrganizer = async function (req, res, next) {
+    try {
+        const {organizer} = req.params;
+        const listing = await fetchGamesByOrganizer(organizer);
+        res.json(listing);
+    } catch (e) {
+        next(e);
+    }
+}
+
+const handleFetchGameTickers = async function (req, res, next) {
+    try {
+        const tickers = await fetchGameTickers();
+        res.json(tickers);
     } catch (e) {
         next(e);
     }
@@ -174,8 +195,8 @@ const handleDeleteGameHandle = async function (req, res, next) {
 const handleCreateGameEngine = async function (req, res, next) {
     try {
         const game_id = req.params.game;
-        const {scheduled_start, progression, display_duration, time_ticker} = req.body;
-        const result = await createGameEngine(game_id, {scheduled_start, progression, display_duration, time_ticker});
+        const {scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker} = req.body;
+        const result = await createGameEngine(game_id, {scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker});
         res.json(result);
     } catch (e) {
         next(e);
@@ -310,6 +331,8 @@ const handleUpdateParticipantAnswer = async function (req, res, next) {
 
 module.exports = {
     fetchGamesListing: handleFetchGamesListing,
+    fetchGamesByOrganizer: handleFetchGamesByOrganizer,
+    fetchGameTickers: handleFetchGameTickers,
     fetchGameInfo: handleFetchGameInfo,
     fetchGameInfoById: handleFetchGameInfoById,
     fetchProgression: handleFetchProgression,

@@ -8,11 +8,11 @@ const fetchGamesListing = async () => {
         where A.is_active = true
         and P.player_type != 'guest'
         and G.game_status in ('Created', 'Accepting', 'Playing')`, [])
-        return results?.length === 0 ? [] : results.map(record => {
+    return results?.length === 0 ? [] : results.map(record => {
         const {
             game_id, title, description, game_status,
             player_id, organizer, email_address, screen_name, player_type, city, state, country,
-            progression, is_multi_player, can_navigate_back, server_push_mode,
+            scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker,
         } = record;
 
         return ({
@@ -28,13 +28,58 @@ const fetchGamesListing = async () => {
                 country
             },
             engine_info: {
+                scheduled_start,
                 progression,
                 is_multi_player,
                 can_navigate_back,
-                server_push_mode
+                server_push_mode,
+                game_ticker,
             }
         });
     });
+}
+
+const fetchGamesByOrganizer = async (player_id) => {
+    let results = await execute(`select G.*, P.*, GE.* from tbl_Game G
+        join tbl_account A on A.account_id = G.organizer
+        join tbl_player P on P.player_id = A.player_fk
+        left outer join tbl_game_engine GE on GE.game_fk = G.game_id
+        where A.is_active = true
+        and P.player_id = $1::uuid
+        and G.game_status in ('Created', 'Accepting', 'Playing')`, [player_id])
+    return results?.length === 0 ? [] : results.map(record => {
+        const {
+            game_id, title, description, game_status,
+            player_id, organizer, email_address, screen_name, player_type, city, state, country,
+            scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker,
+        } = record;
+
+        return ({
+            game_info: { game_id, title, description, game_status },
+            organizer: {
+                player: player_id,
+                account: organizer,
+                email_address,
+                screen_name,
+                player_type,
+                city,
+                state,
+                country
+            },
+            engine_info: {
+                scheduled_start,
+                progression,
+                is_multi_player,
+                can_navigate_back,
+                server_push_mode,
+                game_ticker,
+            }
+        });
+    });
+}
+
+const fetchGameTickers = async () => {
+    return await execute("select * from tbl_ticker", []);
 }
 
 const fetchGameInfo = async (title, organizer) => {
@@ -184,13 +229,13 @@ const deleteGameHandle = async (game_id) => {
     return { rows: result };
 }
 
-const createGameEngine = async (game_id, { scheduled_start, progression, display_duration, time_ticker }) => {
+const createGameEngine = async (game_id, { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker}) => {
     let result = await execute(`
-    insert into tbl_game_engine (game_fk, scheduled_start, progression, display_duration, time_ticker) values 
-    ($1::uuid, $2, $3, $4, $5) on conflict (game_fk) do update set scheduled_start = $2, progression = $3, display_duration = $4, time_ticker = $5 returning *`,
-        [game_id, scheduled_start, progression, display_duration, time_ticker]);
+    insert into tbl_game_engine (game_fk, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker) values 
+    ($1::uuid, $2, $3, $4, $5, $6, $7) on conflict (game_fk) do update set scheduled_start = $2, progression = $3, is_multi_player = $4, can_navigate_back = $5, server_push_mode =$6, game_ticker = $7 returning *`,
+        [game_id, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker]);
     const { game_fk, current_section, section_index } = result[0];
-    return { game_fk, scheduled_start, current_section, section_index, progression, display_duration, time_ticker };
+    return { game_fk, scheduled_start, current_section, section_index, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker };
 }
 
 const updateGameEngine = async (game_id, { current_section, section_index }) => {
@@ -269,6 +314,8 @@ const updateHighestScore = async (participant_id, score) => {
 
 module.exports = {
     fetchGamesListing,
+    fetchGamesByOrganizer,
+    fetchGameTickers,
     fetchGameInfo,
     fetchGameInfoById,
     fetchProgression,

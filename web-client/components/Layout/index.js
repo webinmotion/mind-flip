@@ -75,6 +75,16 @@ function Layout({ children }) {
         setAnchorEl(null);
     };
 
+    const handleGameEngine = () => {
+        setCurrentRoute('engine');
+        handleClose();
+    };
+
+    const handleGameLayout = () => {
+        setCurrentRoute('layout');
+        handleClose();
+    };
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box
@@ -138,6 +148,9 @@ function Layout({ children }) {
                                     
                                     <MenuItem onClick={handleProfile}>Profile</MenuItem>
                                     <MenuItem onClick={handleOrganize}>Organize Game</MenuItem>
+                                    <Divider />
+                                    <MenuItem onClick={handleGameEngine}>Game Engine</MenuItem>
+                                    <MenuItem onClick={handleGameLayout}>Game Layout</MenuItem>
                                     <Divider />
                                     <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
                                 </Menu>

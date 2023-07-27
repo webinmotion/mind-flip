@@ -8,11 +8,14 @@ import OrganizeGames from '../../containers/NavMenu/OrganizeGames';
 import PlayerProfile from '../../containers/NavMenu/PlayerProfile';
 import GameMultiPlay from '../../containers/Trivia/GameMultiPlay';
 import ProgressBar from '../Layout/ProgressBar';
+import ManageGameEngine from "../../containers/NavMenu/ManageGameEngine";
+import ManageGameLayout from "../NavMenu/ManageGameLayout";
 
 export default function App({...rest}) {
 
     const {
         alert,
+        showAlert,
         clearAlert,
         progress,
         showProgress,
@@ -42,6 +45,8 @@ export default function App({...rest}) {
                                                                   deleteGame={deleteGameHandle}/>}/>
                 <Route path={"/profile"}
                        element={<PlayerProfile player={trivia.player} accessToken={auth?.accessToken}/>}/>
+                <Route path={"/engine"} element={<ManageGameEngine player={visitor.authentication?.authUser?.player_id} showAlert={showAlert} />}/>
+                <Route path={"/layout"} element={<ManageGameLayout {...rest} />}/>
                 <Route path={"/*"} element={<Trivia {...rest} />}/>
             </Routes>
             <ProgressBar progress={progress}/>

@@ -91,6 +91,24 @@ Some properties also apply to only a specific deployment environment and not nec
 - ACCESS_TOKEN_SECRET=
 - REFRESH_TOKEN_SECRET=
 
+## About the Game app
+
+### understanding engine_info
+
+It contains the following fields
+
+- progression - this will turn ON/OFF the progress bar. When ON (auto), it means that the question should be answered 
+within the countdown duration to be eligible for scoring points. It applies to both multi-player ans single-player mode.
+- is_multi_player - this will instruct the front-end to use either the MultiPlay or the SinglePlay component. The 
+difference is that MultiPLay will subscribe for content from the server, while SinglePlay will request content from the 
+server.
+- server_push_mode - this will instruct the server to register a GameDriver which will manage pushing content 
+automatically to all subscribed participants. Because of this, the game has to use a progress bar (progression MUST be 
+auto) otherwise, the participants would have no clue when the next question will show up. When OFF, the organizer is 
+responsible for triggering the server to push content.
+- can_navigate_back - (not yet implemented) this will allow a participant to navigate back and forth through the 
+questions. Because of this, the game cannot use a progress bar (progression MUST be manual)
+
 ### Material to review for refactoring
 
 - Bun js
