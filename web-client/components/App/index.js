@@ -8,7 +8,6 @@ import OrganizeGames from '../../containers/NavMenu/OrganizeGames';
 import PlayerProfile from '../../containers/NavMenu/PlayerProfile';
 import GameMultiPlay from '../../containers/Trivia/GameMultiPlay';
 import ProgressBar from '../Layout/ProgressBar';
-import {Outlet} from "@mui/icons-material";
 
 export default function App({...rest}) {
 
