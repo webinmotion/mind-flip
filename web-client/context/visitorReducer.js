@@ -32,6 +32,7 @@ export const initialAuthentication = {
         role: null
     },
     accessToken: null,
+    message: '',
 };
 
 export const visitorReducer = (visitor, action) => {
@@ -72,7 +73,7 @@ export const visitorReducer = (visitor, action) => {
         }
         case ACCOUNT_SIGN_OUT: {
             localState.onSignOut(); //clear the access token and user info from local cache
-            return { ...visitor, authentication: { ...visitor.authentication, message: '', authUser: null } };
+            return { ...visitor, authentication: { ...visitor.authentication, ...initialAuthentication } };
         }
         case RESET_VERIFICATION: {
             const { email_address } = action.verification;

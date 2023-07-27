@@ -8,6 +8,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { ViewNames } from '../../../hooks/usePageForms';
+import {validateEmailAddress} from "../../../context/formValidation";
 
 export default function RecoverPassword({ showAlert, recoveryForm, setRecoveryForm, setSignUpForm, recoverPassword, toggleCurrentView }) {
 
@@ -20,13 +21,24 @@ export default function RecoverPassword({ showAlert, recoveryForm, setRecoveryFo
 
         const { email_address } = formData;
 
-        setRecoveryForm(form => ({
-            ...form,
-            email_address: { ...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : '' },
-        }));
+        //validate form input
+        validateEmailAddress(email_address, (err) => {
+            if (err) {
+                setRecoveryForm(form => ({
+                    ...form,
+                    email_address: {...form.email_address, value: email_address, error: true, message: err}
+                }))
+            } else {
+                //all clear
+                setRecoveryForm(form => ({
+                    ...form,
+                    email_address: {...form.email_address, value: email_address, error: false, message: ''}
+                }));
+            }
+        });
 
         //if all is good, register the details
-        if (email_address) {
+        if (!recoveryForm.email_address.error) {
             //send recovery code to the email
             recoverPassword(email_address, function(error, data) {
                 if(!error){

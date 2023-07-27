@@ -7,9 +7,17 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
-import { ViewNames } from '../../../hooks/usePageForms';
+import {ViewNames} from '../../../hooks/usePageForms';
+import {validateUsername, validatePassword, validateEmailAddress, validateScreenName} from "../../../context/formValidation";
 
-export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, setSignInForm, registerPlayer, toggleCurrentView }) {
+export default function SignUpPlayer({
+                                         showAlert,
+                                         signUpForm,
+                                         setSignUpForm,
+                                         setSignInForm,
+                                         registerPlayer,
+                                         toggleCurrentView,
+                                     }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -21,18 +29,71 @@ export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, set
             password: data.get('password'),
         };
 
-        const { email_address, screen_name, username, password } = formData;
+        const {email_address, screen_name, username, password} = formData;
 
-        setSignUpForm(form => ({
-            ...form,
-            email_address: { ...form.email_address, value: email_address, error: !email_address, message: !email_address ? 'email address is a required field' : '' },
-            screen_name: { ...form.screen_name, value: screen_name, error: !screen_name, message: !screen_name ? 'screen name is a required field' : '' },
-            username: { ...form.username, value: username, error: !username, message: !username ? 'username is a required field' : '' },
-            password: { ...form.password, value: password, error: !password, message: !password ? 'password is a required field' : '' }
-        }));
+        //validate form inputs
+        validateUsername(username, (err) => {
+            if (err) {
+                setSignUpForm(form => ({
+                    ...form,
+                    username: {...form.username, value: username, error: true, message: err}
+                }));
+            } else {
+                //all clear
+                setSignUpForm(form => ({
+                    ...form,
+                    username: {...form.username, value: username, error: false, message: ''}
+                }));
+            }
+        });
+
+        validatePassword(password, (err) => {
+            if (err) {
+                setSignUpForm(form => ({
+                    ...form,
+                    password: {...form.password, value: password, error: true, message: err}
+                }));
+            } else {
+                //all clear
+                setSignUpForm(form => ({
+                    ...form,
+                    password: {...form.password, value: password, error: false, message: ''}
+                }));
+            }
+        });
+
+        validateEmailAddress(email_address, (err) => {
+            if (err) {
+                setSignUpForm(form => ({
+                    ...form,
+                    email_address: {...form.email_address, value: email_address, error: true, message: err}
+                }))
+            } else {
+                //all clear
+                setSignUpForm(form => ({
+                    ...form,
+                    email_address: {...form.email_address, value: email_address, error: false, message: ''}
+                }));
+            }
+        });
+
+        validateScreenName(screen_name, (err) => {
+            if (err) {
+                setSignUpForm(form => ({
+                    ...form,
+                    screen_name: {...form.screen_name, value: screen_name, error: true, message: err}
+                }))
+            } else {
+                //all clear
+                setSignUpForm(form => ({
+                    ...form,
+                    screen_name: {...form.screen_name, value: screen_name, error: false, message: ''}
+                }));
+            }
+        });
 
         //if all is good, register the details
-        if (email_address && screen_name && username && password) {
+        if (!signUpForm.email_address.error && !signUpForm.screen_name.error && !signUpForm.username.error && !signUpForm.password.error) {
             registerPlayer({
                 email_address,
                 screen_name,
@@ -43,7 +104,7 @@ export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, set
                     setSignInForm(form => ({
                         ...form,
                         account_exists: true,
-                        username: { ...form.username, value: signUpForm.username.value },
+                        username: {...form.username, value: signUpForm.username.value},
                     }));
 
                     showAlert({
@@ -53,8 +114,7 @@ export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, set
                     });
 
                     toggleCurrentView(ViewNames.SIGNIN_VIEW);
-                }
-                else {
+                } else {
                     showAlert({
                         message: error,
                         autoClose: true,
@@ -79,13 +139,13 @@ export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, set
                 alignItems: 'center',
             }}
         >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                <LockIcon />
+            <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                <LockIcon/>
             </Avatar>
             <Typography component="h1" variant="h5">
                 Sign Up
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <TextField
@@ -141,7 +201,7 @@ export default function SignUpPlayer({ showAlert, signUpForm, setSignUpForm, set
                     type="submit"
                     fullWidth
                     variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
+                    sx={{mt: 3, mb: 2}}
                 >
                     Sign Up
                 </Button>

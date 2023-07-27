@@ -48,7 +48,7 @@ const defaultTheme = createTheme({
 
 function Layout({ children }) {
 
-    const {visitor, setCurrentRoute, isAuthenticated, accountSignOut} = useAppContext();
+    const {visitor, setCurrentRoute, accountSignOut} = useAppContext();
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleSignOut = () => {
@@ -108,7 +108,7 @@ function Layout({ children }) {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             Mind Flip
                         </Typography>
-                        {isAuthenticated() && (
+                        {visitor?.authentication?.authUser?.is_active && (
                             <div>
                                 <IconButton
                                     size="large"
