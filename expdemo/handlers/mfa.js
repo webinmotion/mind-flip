@@ -3,7 +3,6 @@ const {Config} = require('node-json-db/dist/lib/JsonDBConfig');
 const uuid = require('uuid');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
-const {verify} = require("jsonwebtoken");
 
 const dbConfig = new Config('local-json-db', true, false, '/');
 const db = new JsonDB(dbConfig);

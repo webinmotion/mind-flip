@@ -55,12 +55,6 @@ CREATE TYPE PlayerType AS ENUM (
 	'business'
 );
 
-create type AnswerType as enum (
-	'number',
-	'string',
-	'boolean'
-);
-
 CREATE TYPE AccountRole AS ENUM (
 	'Basic',
 	'Organizer',
@@ -133,7 +127,7 @@ create table if not exists tbl_Question (
     que_id UUID default uuid_generate_v1(),
     que_value varchar(256) unique not null,
     que_answer varchar(256) not null,
-    answer_type AnswerType default 'string',
+    answer_reason varchar(1024) not null,
     category GameCategory default 'general',
     asked_by UUID references tbl_Player(player_id) not null,
     has_choices boolean default false,
@@ -308,17 +302,17 @@ insert into tbl_account (username, userpass, player_fk) values ('rustic_beaver',
 
 --create a question
 with author as (select player_id from tbl_player where email_address = 'jimmy@email.com')
-insert into tbl_question (que_value, que_answer, has_choices, max_points, asked_by) values
-('Are you ready?', '', true, 0, (select player_id from author)),
-('1 + 1', '2', true, 5000, (select player_id from author)),
-('2 + 1', '3', true, 5000, (select player_id from author)),
-('3 + 1', '4', false, 5000, (select player_id from author)),
-('4 + 1', '5', false, 5000, (select player_id from author)),
-('5 + 1', '6', false, 5000, (select player_id from author)),
-('6 + 1', '7', true, 5000, (select player_id from author)),
-('7 + 1', '8', true, 5000, (select player_id from author)),
-('8 + 1', '9', false, 5000, (select player_id from author)),
-('9 + 1', '10', false, 5000, (select player_id from author));
+insert into tbl_question (que_value, que_answer, answer_reason, has_choices, max_points, asked_by) values
+('Are you ready?', '', '', true, 0, (select player_id from author)),
+('1 + 1', '2', 'adding 1 to 1 will produce 2', true, 5000, (select player_id from author)),
+('2 + 1', '3', 'adding 1 to 2 will produce 3', true, 5000, (select player_id from author)),
+('3 + 1', '4', 'adding 1 to 3 will produce 4', false, 5000, (select player_id from author)),
+('4 + 1', '5', 'adding 1 to 4 will produce 5', false, 5000, (select player_id from author)),
+('5 + 1', '6', 'adding 1 to 5 will produce 6', false, 5000, (select player_id from author)),
+('6 + 1', '7', 'adding 1 to 6 will produce 7', true, 5000, (select player_id from author)),
+('7 + 1', '8', 'adding 1 to 7 will produce 8', true, 5000, (select player_id from author)),
+('8 + 1', '9', 'adding 1 to 8 will produce 9', false, 5000, (select player_id from author)),
+('9 + 1', '10', 'adding 1 to 9 will produce 10', false, 5000, (select player_id from author));
 
 --(optional) create multiple choices for a question
 with question as (select que_id from tbl_question where que_value = 'Are you ready?')
@@ -362,11 +356,60 @@ insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
 ((select que_id from question), false, 4, 'quad is an offroad vehicle');
 
 with author as (select player_id from tbl_player where email_address = 'kadzoe@email.com')
-insert into tbl_question (que_value, que_answer, has_choices, max_points, asked_by) values
-('What are the five largest states in the US?', 'Alaska, Texas, California, Montana, New Mexico', false, 1000, (select player_id from author)),
-('What are the five longest rivers in the world?', 'Nile, Amazon, Yangtze, Mississippi, Yenisley', false, 1000, (select player_id from author)),
-('What are the five deepest lakes in the world?', 'Baikal, Tanganyika, Caspian Sea, Viedma, Vostok', false, 1000, (select player_id from author)),
-('What are the five most populous countries on earth?', 'India, China, USA, Indonesia, Pakistan', false, 1000, (select player_id from author));
+insert into tbl_question (que_value, que_answer, answer_reason, has_choices, max_points, asked_by) values
+('What are the five largest states in the US?', 'Alaska, Texas, California, Montana, New Mexico', '
+ State	Rank	Sq.Mi
+ Alaska	1	665,384.04
+ Texas	2	268,596.46
+ California	3	163,694.74
+ Montana	4	147,039.71
+ New Mexico	5	121,590.30
+ Arizona	6	113,990.30
+ Nevada	7	110,571.82
+ Colorado	8	104,093.67
+ Oregon	9	98,378.54
+ Wyoming	10	97,813.01', false, 1000, (select player_id from author)),
+('What are the five longest rivers in the world?', 'Nile, Amazon, Yangtze, Mississippi, Yenisley', '
+Rank	River	Length (km)	Length (mi)
+1.	Nile–White Nile–Kagera–Nyabarongo–Mwogo–Rukarara	6,650	4,130
+2.	Amazon–Ucayali–Tambo–Ene–Mantaro	6,400	3,976
+3.	Yangtze–Jinsha–Tongtian–Dangqu (Chang Jiang)	6,300	3,917
+4.	Mississippi–Missouri–Jefferson–Beaverhead–Red Rock–Hell Roaring	6,275	3,902
+5.	Yenisey–Angara–Selenga–Ider	5,539	3,445
+6.	Yellow River (Huang He)	5,464	3,395
+7.	Ob–Irtysh	5,410	3,364
+8.	Río de la Plata–Paraná–Rio Grande	4,880	3,030
+9.	Congo–Chambeshi (Zaïre)	4,700	2,922
+10.	Amur–Argun–Kherlen (Heilong Jiang)	4,444	2,763
+', false, 1000, (select player_id from author)),
+('What are the five deepest lakes in the world?', 'Baikal, Tanganyika, Caspian Sea, Viedma, Vostok', '
+Rank	Name	Depth(meters)	(feet)
+1.	Baikal		1,642	5,387
+2.	Tanganyika	1,470	4,823
+3.	Caspian Sea	1,025	3,363
+4.	Viedma	~900	~2953
+4.	Vostok	~900	~2953
+6.	O''Higgins-San Martín	836	2,742
+7.	Malawi	 706	2,316
+8.	Issyk Kul	 668	2,192
+9.	Great Slave	 614	2,015
+10.	Crater	594	1,949
+', false, 1000, (select player_id from author)),
+('What are the five most populous countries on earth?', 'India, China, USA, Indonesia, Pakistan', '
+Rank	Country	Population Size
+1	India	1,428,627,663
+2	China	1,425,671,352
+3	United States	339,996,563
+4	Indonesia	277,534,122
+5	Pakistan	240,485,658
+6	Nigeria	223,804,632
+7	Brazil	216,422,446
+8	Bangladesh	172,954,319
+9	Russia	144,444,359
+10	Mexico	128,455,567
+11	Ethiopia	126,527,060
+12	Japan	123,294,513
+', false, 1000, (select player_id from author));
 
 --create a game
 insert into tbl_game (organizer, title, game_status) values
