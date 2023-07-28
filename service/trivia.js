@@ -358,6 +358,55 @@ const deleteGamePlacard = async (placard_id) => {
     return result[0];
 }
 
+const fetchQuestionsByAuthor = async (author_id) => {
+    const result = await execute(`
+        select tq.*, tp.screen_name, tch.*  from tbl_question tq 
+        join tbl_player tp on tq.asked_by = tp.player_id 
+        left outer join tbl_choice tch on tch.question_fk = tq.que_id 
+        where tq.asked_by = $1 order by tq.que_id`, [author_id,]);
+    let merged = [];
+    let current = null;
+    result.forEach(res => {
+        const {que_id, que_value, que_answer, answer_reason, category, asked_by, has_choices, max_points, publish_time, choice_id, choice_value, clue, is_correct} = res;
+        if(current !== que_id) {
+            let question = { que_id, que_value, que_answer, answer_reason, category, asked_by, has_choices, max_points, publish_time, choices: [] };
+            question.choices.push({choice_id, choice_value, clue, is_correct});
+            merged.push(question);
+            current = que_id;
+        }
+        else{
+            merged[merged.length - 1].choices.push({choice_id, choice_value, clue, is_correct});
+        }
+    });
+    return merged;
+}
+
+const upsertGameQuestion = async ({ que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by, }) => {
+    let result = await execute(`insert into tbl_question (que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by) 
+    values ($1, $2, $3, $4, $5, $6, $7::uuid) on conflict (que_value) do update set que_answer = $2, answer_reason = $3, category = $4, max_points = $5, has_choices = $6, asked_by = $7 
+    returning *`,
+        [que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by,]);
+    return result[0];
+}
+
+const deleteGameQuestion = async (question_id) => {
+    let result = await execute(`delete from tbl_question where que_id = $1::uuid returning que_id`, [question_id,]);
+    return result[0];
+}
+
+const upsertQuestionChoices = async({question_id, choice_value, clue, is_correct}) => {
+    let result = await execute(`insert into tbl_choice (question_fk, choice_value, clue, is_correct) 
+    values ($1, $2, $3, $4) on conflict (choice_value, question_fk) do update set clue = $3, is_correct = $4 
+    returning *`,
+        [question_id, choice_value, clue, is_correct,]);
+    return result[0];
+}
+
+const deleteGameChoice = async(choice_id) => {
+    let result = await execute(`delete from tbl_choice where choice_id = $1::uuid returning choice_id`, [choice_id,]);
+    return result[0];
+}
+
 module.exports = {
     fetchGamesListing,
     fetchGamesByOrganizer,
@@ -391,4 +440,9 @@ module.exports = {
     fetchAllGamePlacards,
     upsertGamePlacard,
     deleteGamePlacard,
+    fetchQuestionsByAuthor,
+    upsertGameQuestion,
+    deleteGameQuestion,
+    upsertQuestionChoices,
+    deleteGameChoice,
 }

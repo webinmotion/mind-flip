@@ -29,6 +29,11 @@ const {
     fetchAllGamePlacards,
     upsertGamePlacard,
     deleteGamePlacard,
+    fetchQuestionsByAuthor,
+    upsertGameQuestion,
+    deleteGameQuestion,
+    upsertQuestionChoices,
+    deleteGameChoice,
 } = require('../service/trivia');
 
 const studio = require("../trivia/GameStudio");
@@ -412,6 +417,64 @@ const handleDeleteGamePlacard = async function (req, res, next) {
     }
 }
 
+const handleFetchQuestionsByAuthor = async function(req, res, next) {
+    try{
+        const { author_id, } = req.params;
+        const result = await fetchQuestionsByAuthor(author_id);
+        console.log('result from fetching questions by author', result);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleUpsertGameQuestion = async function(req, res, next) {
+    try{
+        const { que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by, } = req.body;
+        const result = await upsertGameQuestion({ que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by, });
+        console.log('result from updating a question', result);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleDeleteGameQuestion = async function(req, res, next) {
+    try{
+        const {question_id} = req.params;
+        const result = await deleteGameQuestion(question_id);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleUpsertQuestionChoices = async function(req, res, next) {
+    try{
+        const {question_id} = req.params;
+        const {choice_value, clue, is_correct} = req.body;
+        const result = await upsertQuestionChoices({question_id, choice_value, clue, is_correct});
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleDeleteGameChoice = async function(req, res, next) {
+    try{
+        const {choice_id} = req.params;
+        const result = await deleteGameChoice(choice_id);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 module.exports = {
     fetchGamesListing: handleFetchGamesListing,
     fetchGamesByOrganizer: handleFetchGamesByOrganizer,
@@ -444,4 +507,9 @@ module.exports = {
     fetchAllGamePlacards: handleFetchAllGamePlacards,
     upsertGamePlacard: handleUpsertGamePlacard,
     deleteGamePlacard: handleDeleteGamePlacard,
+    fetchQuestionsByAuthor: handleFetchQuestionsByAuthor,
+    upsertGameQuestion: handleUpsertGameQuestion,
+    upsertQuestionChoices: handleUpsertQuestionChoices,
+    deleteGameChoice: handleDeleteGameChoice,
+    deleteGameQuestion: handleDeleteGameQuestion,
 }

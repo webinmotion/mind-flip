@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ManageGameTicker from '../../../components/NavMenu/ManageGameTicker';
-import { remoteFetchGameTickers, remoteCreateOrUpdateGameTicker, remoteDeleteGameTicker, } from '../../../services/trivia';
+import { remoteFetchGameTickers, remoteUpsertGameTicker, remoteDeleteGameTicker, } from '../../../services/trivia';
 
 const initialGameTicker = {
     ticker_id: '',
@@ -37,7 +37,7 @@ function ManageGameTickerContainer({ showAlert }) {
 
     const updateTickers = async () => {
         if (form.ticker_id) {
-            const data = await remoteCreateOrUpdateGameTicker(form);
+            const data = await remoteUpsertGameTicker(form);
             if (tickers.findIndex(tck => tck.ticker_id === data.ticker_id) === -1) {
                 setTickers(tickers => ({ ...tickers, data }));
             }

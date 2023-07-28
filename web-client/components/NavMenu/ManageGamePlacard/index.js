@@ -122,9 +122,9 @@ export default function ManageGamePlacard({ placards, form, updatePlacards, hand
                         <MenuItem value="">
                             <em>None</em>
                         </MenuItem>
-                        {Object.entries(ContentType)?.filter(([_, value]) => value !== form.content_type).map(([key, value]) => {
-                            return <MenuItem key={key} value={value}>{key}</MenuItem>
-                        })}
+                        {Object.values(ContentType).map(value =>
+                            <MenuItem key={value} value={value}>{value}</MenuItem>
+                        )}
                     </Select>
                 </FormControl>
 
