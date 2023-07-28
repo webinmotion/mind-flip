@@ -358,6 +358,31 @@ const deleteGamePlacard = async (placard_id) => {
     return result[0];
 }
 
+const fetchQuestionsByAuthor = async (author_id) => {
+    const result = await execute(`
+        select tq.*, tp.screen_name, tch.*  from tbl_question tq 
+        join tbl_player tp on tq.asked_by = tp.player_id 
+        left outer join tbl_choice tch on tch.question_fk = tq.que_id 
+        where tq.asked_by = $1 order by tq.que_id`, [author_id,]);
+    let merged = [];
+    let current = null;
+    let question = null;
+    result.forEach(res => {
+        const {que_id, que_value, que_answer, que_reason, category, asked_by, has_choices, max_points, publish_time, choice_id, choice_value, clue, is_correct} = res;
+        if(!current !== que_id){
+            if(question !== null){
+                merged.push(question);
+            }
+            question = { que_id, que_value, que_answer, que_reason, category, asked_by, has_choices, max_points, publish_time };
+            question.choices = [{choice_id, choice_value, clue, is_correct}];
+        }
+        else{
+            question.choices = [{choice_id, choice_value, clue, is_correct}];
+        }
+    });
+    return merged;
+}
+
 module.exports = {
     fetchGamesListing,
     fetchGamesByOrganizer,
@@ -391,4 +416,5 @@ module.exports = {
     fetchAllGamePlacards,
     upsertGamePlacard,
     deleteGamePlacard,
+    fetchQuestionsByAuthor,
 }

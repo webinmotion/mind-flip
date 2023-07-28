@@ -31,6 +31,7 @@ const {
     fetchAllGamePlacards,
     upsertGamePlacard,
     deleteGamePlacard,
+    fetchQuestionsByAuthor,
 } = require('../handlers/trivia');
 const { validateAccessToken } = require('../middleware/authorize');
 
@@ -93,5 +94,7 @@ router.get('/placard', fetchAllGamePlacards);
 router.post('/placard', upsertGamePlacard);
 
 router.delete('/placard/:placard_id', deleteGamePlacard);
+
+router.get('/question/author/:author_id', fetchQuestionsByAuthor);
 
 module.exports = router;

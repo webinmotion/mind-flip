@@ -61,6 +61,11 @@ export default function ManageGameEngine({ games, tickers, form, handleSelected,
                             <FormControlLabel value="auto" control={<Radio />} label="Auto" />
                             <FormControlLabel value="manual" control={<Radio />} label="Manual" />
                         </RadioGroup>
+                        <FormHelperText>
+                            This will turn ON/OFF the progress bar. When ON (auto), it means that the question should be
+                            answered within the countdown duration to be eligible for scoring points. It applies to both
+                            multi-player ans single-player mode.
+                        </FormHelperText>
                     </FormControl>
                 </Box>
 
@@ -72,18 +77,34 @@ export default function ManageGameEngine({ games, tickers, form, handleSelected,
                             label="Is multi-player mode"
                             title='subscribe to the server for content'
                             onChange={handleChecked} />
+                        <FormHelperText>
+                            This will instruct the web client to make use of either the MultiPlay or the SinglePlay
+                            component. The difference is that MultiPLay will subscribe for content from the server, while
+                            SinglePlay will request content from the server.
+                        </FormHelperText>
                         <FormControlLabel control={<Checkbox />}
                             name="can_navigate_back"
                             checked={form.can_navigate_back}
                             label="Can navigate back"
                             title='allow a participant to move back and forth in the questions'
                             onChange={handleChecked} />
+                        <FormHelperText>
+                            (not yet implemented) This will allow a participant to navigate back and forth through the
+                            questions. Because of this, the game cannot use a progress bar (progression MUST be manual)
+                        </FormHelperText>
                         <FormControlLabel control={<Checkbox />}
                             name="server_push_mode"
                             checked={form.server_push_mode}
                             label="Server push mode"
                             title='server sets the cadence of the game through a timer'
                             onChange={handleChecked} />
+                        <FormHelperText>
+                            This will instruct the server to register a GameDriver which will manage pushing content
+                            automatically to all subscribed participants. Because of this, the game has to use a progress
+                            bar (progression MUST be auto) otherwise, the participants would have no clue when the next
+                            question will show up. When OFF, the organizer is responsible for triggering the server to push
+                            content.
+                        </FormHelperText>
                     </FormGroup>
                 </Box>
 

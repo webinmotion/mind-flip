@@ -29,10 +29,12 @@ const {
     fetchAllGamePlacards,
     upsertGamePlacard,
     deleteGamePlacard,
+    fetchQuestionsByAuthor,
 } = require('../service/trivia');
 
 const studio = require("../trivia/GameStudio");
 const ScoreKeeper = require("../trivia/ScoreKeeper");
+const {remoteFetchQuestionsByAuthor} = require("../web-client/services/trivia");
 const scorer = new ScoreKeeper();
 
 const handleFetchGamesListing = async function (req, res, next) {
@@ -412,6 +414,18 @@ const handleDeleteGamePlacard = async function (req, res, next) {
     }
 }
 
+const handleFetchQuestionsByAuthor = async function(req, res, next) {
+    try{
+        const { author_id, } = req.params;
+        const result = await fetchQuestionsByAuthor(author_id);
+        console.log('result from fetching questions by author', result);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 module.exports = {
     fetchGamesListing: handleFetchGamesListing,
     fetchGamesByOrganizer: handleFetchGamesByOrganizer,
@@ -444,4 +458,5 @@ module.exports = {
     fetchAllGamePlacards: handleFetchAllGamePlacards,
     upsertGamePlacard: handleUpsertGamePlacard,
     deleteGamePlacard: handleDeleteGamePlacard,
+    fetchQuestionsByAuthor: handleFetchQuestionsByAuthor,
 }
