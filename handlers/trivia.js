@@ -23,6 +23,9 @@ const {
     dropGameParticipant,
     saveResponseToQuestion,
     updateHighestScore,
+    searchQuestionsByCriteria,
+    createOrUpdateGameTicker,
+    deleteGameTicker,
 } = require('../service/trivia');
 
 const studio = require("../trivia/GameStudio");
@@ -40,7 +43,7 @@ const handleFetchGamesListing = async function (req, res, next) {
 
 const handleFetchGamesByOrganizer = async function (req, res, next) {
     try {
-        const {organizer} = req.params;
+        const { organizer } = req.params;
         const listing = await fetchGamesByOrganizer(organizer);
         res.json(listing);
     } catch (e) {
@@ -150,8 +153,8 @@ const handleFetchPlayerById = async function (req, res, next) {
 
 const handleCreateGameHandle = async function (req, res, next) {
     try {
-        const {organizer, title} = req.body;
-        const created = await createGameHandle({organizer, title});
+        const { organizer, title } = req.body;
+        const created = await createGameHandle({ organizer, title });
         //fetch created game info
         const result = await fetchGameInfoById(created.game_id);
         res.json(result);
@@ -166,8 +169,8 @@ const handleCreateGameHandle = async function (req, res, next) {
 const handleUpdateGameStatus = async function (req, res, next) {
     //curl -X PUT ${host}/trivia/game/${game_id} -H "Authorization: Bearer ${token}" -H "Content-Type: application/json" -d "{\"game_status\": \"${status}\"}"
     try {
-        const {game_id} = req.params;
-        const {game_status} = req.body;
+        const { game_id } = req.params;
+        const { game_status } = req.body;
         const result = await updateGameStatus(game_id, game_status);
         res.json(result);
         //update clients
@@ -181,12 +184,12 @@ const handleUpdateGameStatus = async function (req, res, next) {
 const handleDeleteGameHandle = async function (req, res, next) {
     //curl -X DELETE ${host}/trivia/game/${game_id} -H "Authorization: Bearer ${token}" -H "Content-Type: application/json"
     try {
-        const {game_id} = req.params;
+        const { game_id } = req.params;
         const result = await deleteGameHandle(game_id);
-        res.json({game_id, result});
+        res.json({ game_id, result });
         //update clients
         console.log(result);
-        studio.sendGameDeletedEvent({game_id});
+        studio.sendGameDeletedEvent({ game_id });
     } catch (e) {
         next(e);
     }
@@ -195,8 +198,8 @@ const handleDeleteGameHandle = async function (req, res, next) {
 const handleCreateGameEngine = async function (req, res, next) {
     try {
         const game_id = req.params.game;
-        const {scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker} = req.body;
-        const result = await createGameEngine(game_id, {scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker});
+        const { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker } = req.body;
+        const result = await createGameEngine(game_id, { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker });
         res.json(result);
     } catch (e) {
         next(e);
@@ -206,8 +209,8 @@ const handleCreateGameEngine = async function (req, res, next) {
 const handleUpdateGameEngine = async function (req, res, next) {
     try {
         const game_id = req.params.game;
-        const {current_section, section_index} = req.body;
-        const result = await updateGameEngine(game_id, {current_section, section_index});
+        const { current_section, section_index } = req.body;
+        const result = await updateGameEngine(game_id, { current_section, section_index });
         res.json(result);
     } catch (e) {
         next(e);
@@ -262,7 +265,7 @@ const handleAddGameParticipant = async function (req, res, next) {
         res.json(result);
         //update clients
         console.log('adding participant', result)
-        studio.sendAddParticipantEvent(game_id, {participant_id: result.participant_id});
+        studio.sendAddParticipantEvent(game_id, { participant_id: result.participant_id });
     } catch (e) {
         next(e);
     }
@@ -271,11 +274,11 @@ const handleAddGameParticipant = async function (req, res, next) {
 const handleDropGameParticipant = async function (req, res, next) {
     try {
         const participant_id = req.params.participant;
-        const {game_fk, player_fk} = await dropGameParticipant(participant_id);
-        res.status(201).json({game_fk, player_fk});
+        const { game_fk, player_fk } = await dropGameParticipant(participant_id);
+        res.status(201).json({ game_fk, player_fk });
         //update clients
         console.log('dropping participant', `game-${game_fk}`, `player-${player_fk}`)
-        studio.sendDropParticipantEvent(game_fk, {participant_id});
+        studio.sendDropParticipantEvent(game_fk, { participant_id });
     } catch (e) {
         next(e);
     }
@@ -294,7 +297,7 @@ const handleUpdateHighestScore = async function (req, res, next) {
 
 const handleUpdateParticipantAnswer = async function (req, res, next) {
     try {
-        const {participant, question} = req.params;
+        const { participant, question } = req.params;
         const {
             answer_submitted,
             display_duration,
@@ -329,6 +332,48 @@ const handleUpdateParticipantAnswer = async function (req, res, next) {
     }
 }
 
+const handleSearchQuestionsByCriteria = async function (req, res, next) {
+    try {
+        const { start_from, fetch_size, author_username, author_screen_name, category } = req.query;
+        const criteria = Object.entries({ start_from, fetch_size, author_username, author_screen_name, category })
+            .filter(([_, value]) => value !== null && value !== undefined)
+            .reduce((acc, [key, value]) => {
+                acc[key] = value;
+                return acc;
+            }, {});
+        const page = searchQuestionsByCriteria(criteria);
+        console.log('result from questions search', page);
+        res.json(page);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleCreateOrUpdateGameTicker = async function (req, res, next) {
+    try {
+        const { ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, } = req.body;
+        const result = await createOrUpdateGameTicker({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, });
+        console.log('result from creating a ticker', result);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleDeleteGameTicker = async function(req, res, next) {
+    try{
+        const { ticker_id, } = req.params;
+        const result = await deleteGameTicker(ticker_id);
+        console.log('result from deleting a ticker', result);
+        res.json(result);
+    }
+    catch(e){
+        next(e);
+    }
+}
+
 module.exports = {
     fetchGamesListing: handleFetchGamesListing,
     fetchGamesByOrganizer: handleFetchGamesByOrganizer,
@@ -355,4 +400,7 @@ module.exports = {
     fetchGameTallies: handleFetchGameTallies,
     updateHighestScore: handleUpdateHighestScore,
     updateParticipantAnswer: handleUpdateParticipantAnswer,
+    searchQuestionsByCriteria: handleSearchQuestionsByCriteria,
+    createOrUpdateGameTicker: handleCreateOrUpdateGameTicker,
+    deleteGameTicker: handleDeleteGameTicker,
 }

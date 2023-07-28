@@ -1,4 +1,4 @@
-import axios, {serverUrl} from './request';
+import axios, { serverUrl } from './request';
 
 export const remoteFetchGamesListing = async () => {
     return await axios.get(`${serverUrl()}/trivia/listing`)
@@ -60,7 +60,7 @@ export const remoteFetchPlayerByEmail = async (email) => {
         .then(resp => resp.data);
 }
 
-export const remoteCreateGameHandle = async ({title, organizer}) => {
+export const remoteCreateGameHandle = async ({ title, organizer }) => {
     return await axios.post(`${serverUrl()}/trivia/game`, {
         title, organizer
     }, {
@@ -112,9 +112,9 @@ export const remoteCreateGameEngine = async (game, {
         .then(resp => resp.data);
 }
 
-export const remoteUpdateGameEngine = async (game, {current_section, section_index}) => {
+export const remoteUpdateGameEngine = async (game, { current_section, section_index }) => {
     return await axios.put(`${serverUrl()}/trivia/engine/${game}`,
-        {current_section, section_index},
+        { current_section, section_index },
         {
             headers: {
                 "Content-Type": 'application/json'
@@ -149,15 +149,15 @@ export const remoteUpdateHighestScore = async (participant, score) => {
 }
 
 export const remoteUpdateParticipantAnswer = async (game_id, participant_id, question_id,
-                                                    {
-                                                        answer_submitted,
-                                                        display_duration,
-                                                        max_points,
-                                                        score_strategy,
-                                                        expected_answer,
-                                                        time_remaining,
-                                                        points_remaining,
-                                                    }) => {
+    {
+        answer_submitted,
+        display_duration,
+        max_points,
+        score_strategy,
+        expected_answer,
+        time_remaining,
+        points_remaining,
+    }) => {
     return await axios.post(`${serverUrl()}/trivia/game/${game_id}/participant/${participant_id}/question/${question_id}/answer`,
         {
             answer_submitted,
@@ -179,4 +179,31 @@ export const remoteUpdateParticipantAnswer = async (game_id, participant_id, que
 export const remoteFetchGameTallies = async (game) => {
     return await axios.put(`${serverUrl()}/trivia/game/${game}/score`)
         .then(resp => resp.data);
+}
+
+export const remoteSearchQuestionsByCriteria = async (start_from = 1, fetch_size = 10, { author_username, author_screen_name, category, created_before, created_after, }) => {
+    let criteria = { start_from, fetch_size, author_username, author_screen_name, category, created_before, created_after, };
+
+    return await axios.get(`${serverUrl()}/trivia/question/search`, {
+        criteria,
+        paramsSerializer: params => {
+            return Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&');
+        }
+    }).then(resp => resp.data);
+}
+
+export const remoteCreateOrUpdateGameTicker = async ({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay }) => {
+    return await axios.post(`${serverUrl()}/trivia/ticker`,
+        { ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, },
+        {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(resp => resp.data);
+}
+
+export const remoteDeleteGameTicker = async (ticker_id) => {
+    console.log("remoteDeleteGameTicker", ticker_id);
+    return await axios.delete(`${serverUrl()}/trivia/ticker/${ticker_id}`).then(resp => resp.data);
 }

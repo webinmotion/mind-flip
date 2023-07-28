@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import ManageGameEngine from '../../../components/NavMenu/ManageGameEngine';
-import { remoteFetchGamesByOrganizer, remoteFetchGameTickers, remoteCreateGameEngine } from '../../../services/trivia';
+import ManageGameLayout from '../../../components/NavMenu/ManageGameLayout';
+import { remoteFetchGamesByOrganizer, remoteFetchGameTickers, remoteCreateGameLayout } from '../../../services/trivia';
 
-const initialGameEngine = {
+const initialGameLayout = {
     scheduled_start: dayjs().add(1, 'day'),
     progression: 'manual',
     is_multi_player: false,
@@ -12,11 +12,11 @@ const initialGameEngine = {
     game_ticker: 300,
 };
 
-function ManageGameEngineContainer({ player, showAlert }) {
+function ManageGameLayoutContainer({ player, showAlert }) {
 
     const [games, setGames] = useState([]);
     const [tickers, setTickers] = useState([]);
-    const [form, setForm] = useState(initialGameEngine);
+    const [form, setForm] = useState(initialGameLayout);
 
     useEffect(() => {
         if (player) {
@@ -67,12 +67,12 @@ function ManageGameEngineContainer({ player, showAlert }) {
                 message: "There is no game to apply the engine",
                 autoClose: true,
                 severity: 'warning',
-            });
+            })
         }
     }
 
     return (
-        <ManageGameEngine
+        <ManageGameLayout
             games={games}
             tickers={tickers}
             form={form}
@@ -85,4 +85,4 @@ function ManageGameEngineContainer({ player, showAlert }) {
     )
 }
 
-export default ManageGameEngineContainer
+export default ManageGameLayoutContainer

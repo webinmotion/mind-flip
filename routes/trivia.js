@@ -25,6 +25,9 @@ const {
     fetchGameTallies,
     updateHighestScore,
     updateParticipantAnswer,
+    searchQuestionsByCriteria,
+    createOrUpdateGameTicker,
+    deleteGameTicker,
 } = require('../handlers/trivia');
 const { validateAccessToken } = require('../middleware/authorize');
 
@@ -75,5 +78,11 @@ router.get('/game/:game/scores', fetchGameTallies);
 router.put('/participant/:participant/highscore/:score', updateHighestScore);
 
 router.post('/game/:game/participant/:participant/question/:question/answer', updateParticipantAnswer);
+
+router.get('/question/search', searchQuestionsByCriteria);
+
+router.post('/ticker', createOrUpdateGameTicker);
+
+router.delete('/ticker/:ticker_id', deleteGameTicker);
 
 module.exports = router;
