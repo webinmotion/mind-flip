@@ -207,3 +207,24 @@ export const remoteDeleteGameTicker = async (ticker_id) => {
     console.log("remoteDeleteGameTicker", ticker_id);
     return await axios.delete(`${serverUrl()}/trivia/ticker/${ticker_id}`).then(resp => resp.data);
 }
+
+export const remoteFetchAllGamePlacards = async () => {
+    return await axios.get(`${serverUrl()}/trivia/placard`)
+        .then(resp => resp.data);
+}
+
+export const remoteUpsertGamePlacard = async ({ placard_content, display_duration, followed_by, content_type }) => {
+    return await axios.post(`${serverUrl()}/trivia/placard`,
+        { placard_content, display_duration, followed_by, content_type, },
+        {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(resp => resp.data);
+}
+
+export const remoteDeleteGamePlacard = async (placard_id) => {
+    console.log("remoteDeleteGamePlacard", placard_id);
+    return await axios.delete(`${serverUrl()}/trivia/placard/${placard_id}`).then(resp => resp.data);
+}

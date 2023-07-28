@@ -229,7 +229,7 @@ const deleteGameHandle = async (game_id) => {
     return { rows: result };
 }
 
-const createGameEngine = async (game_id, { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker}) => {
+const createGameEngine = async (game_id, { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker }) => {
     let result = await execute(`
     insert into tbl_game_engine (game_fk, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker) values 
     ($1::uuid, $2, $3, $4, $5, $6, $7) on conflict (game_fk) do update set scheduled_start = $2, progression = $3, is_multi_player = $4, can_navigate_back = $5, server_push_mode =$6, game_ticker = $7 returning *`,
@@ -312,32 +312,49 @@ const updateHighestScore = async (participant_id, score) => {
     return 0;
 }
 
-const searchQuestionsByCriteria = async (criteria) => {
-    const {start_from, fetch_size, author_username, author_screen_name, category, created_before, created_after, has_choices, min_points, } = criteria;
+const searchQuestions = async (criteria) => {
+    const { start_from, fetch_size, author_username, author_screen_name, category, created_before, created_after, has_choices, min_points, } = criteria;
     let query = ['select tq.* from tbl_question tq',
-    'join tbl_player tp on tq.asked_by = tp.player_id',
-    'join tbl_account ta on ta.player_fk = tp.player_id where',
-    category? "tq.category in ($1) or" : "",
-    author_screen_name? "tp.screen_name in ($2) or" : "",
-    author_username? "ta.username in ($3) or" : "",
-    created_before? "tq.publish_time in ($3) or" : "",
-    created_after? "tq.publish_time in ($3) or" : "",
-    has_choices? "tq.has_choices = $6 or" : "",
-    min_points? "tq.max_points > $7 or" : ""
-    `offset ${start_from} limit ${fetch_size}`];
+        'join tbl_player tp on tq.asked_by = tp.player_id',
+        'join tbl_account ta on ta.player_fk = tp.player_id where',
+        category ? "tq.category in ($1) or" : "",
+        author_screen_name ? "tp.screen_name in ($2) or" : "",
+        author_username ? "ta.username in ($3) or" : "",
+        created_before ? "tq.publish_time in ($3) or" : "",
+        created_after ? "tq.publish_time in ($3) or" : "",
+        has_choices ? "tq.has_choices = $6 or" : "",
+        min_points ? "tq.max_points > $7 or" : ""
+            `offset ${start_from} limit ${fetch_size}`];
     return await execute(query.join(" "), [category, author_screen_name, author_username, created_before, created_after, has_choices, min_points, start_from, fetch_size,]);
 }
 
-const createOrUpdateGameTicker = async ({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, }) => {
+const upsertGameTicker = async ({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, }) => {
     let result = await execute(`insert into tbl_ticker (ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay) 
     values ($1, $2, $3, $4, $5) on conflict (ticker_id) do update set ticker_title = $2, pre_countdown_delay = $3, countdown_duration = $4, post_countdown_delay = $5 
     returning *`,
-    [ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay]);
+        [ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay]);
     return result[0];
 }
 
 const deleteGameTicker = async (ticker_id) => {
     let result = await execute(`delete from tbl_ticker where ticker_id = $1 returning ticker_id`, [ticker_id,]);
+    return result[0];
+}
+
+const fetchAllGamePlacards = async () => {
+    return await execute(`select * from tbl_game_placard`, []);
+}
+
+const upsertGamePlacard = async ({ placard_content, display_duration, followed_by, content_type, }) => {
+    let result = await execute(`insert into tbl_game_placard (placard_content, display_duration, followed_by, content_type) 
+    values ($1, $2, $3::uuid, $4) on conflict (placard_content) do update set display_duration = $2, followed_by = $3::uuid, content_type = $4 
+    returning *`,
+        [placard_content, display_duration, followed_by, content_type,]);
+    return result[0];
+}
+
+const deleteGamePlacard = async (placard_id) => {
+    let result = await execute(`delete from tbl_game_placard where placard_id = $1::uuid returning placard_id`, [placard_id,]);
     return result[0];
 }
 
@@ -368,7 +385,10 @@ module.exports = {
     dropGameParticipant,
     saveResponseToQuestion,
     updateHighestScore,
-    searchQuestionsByCriteria,
-    createOrUpdateGameTicker,
+    searchQuestions,
+    upsertGameTicker,
     deleteGameTicker,
+    fetchAllGamePlacards,
+    upsertGamePlacard,
+    deleteGamePlacard,
 }

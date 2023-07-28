@@ -33,6 +33,14 @@ require('crypto').randomBytes(64).toString('hex');
 .exit
 ```
 
+to keep your application dependencies fresh, you can do this
+
+```npm dedupe```
+
+or 
+
+```npm prune```
+
 ## Database deployment notes
 
 ```bash

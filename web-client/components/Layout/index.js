@@ -90,6 +90,16 @@ function Layout({ children }) {
         handleClose();
     }
 
+    const handleGamePlacard = () => {
+        setCurrentRoute('placard');
+        handleClose();
+    }
+
+    const handleGameQuestion = () => {
+        setCurrentRoute('question');
+        handleClose();
+    }
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box
@@ -157,6 +167,9 @@ function Layout({ children }) {
                                     <MenuItem onClick={handleGameEngine}>Game Engine</MenuItem>
                                     <MenuItem onClick={handleGameLayout}>Game Layout</MenuItem>
                                     <MenuItem onClick={handleGameTicker}>Game Ticker</MenuItem>
+                                    <Divider />
+                                    <MenuItem onClick={handleGamePlacard}>Game Placard</MenuItem>
+                                    <MenuItem onClick={handleGameQuestion}>Game Question</MenuItem>
                                     <Divider />
                                     <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
                                 </Menu>

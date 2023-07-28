@@ -23,9 +23,12 @@ const {
     dropGameParticipant,
     saveResponseToQuestion,
     updateHighestScore,
-    searchQuestionsByCriteria,
-    createOrUpdateGameTicker,
+    searchQuestions,
+    upsertGameTicker,
     deleteGameTicker,
+    fetchAllGamePlacards,
+    upsertGamePlacard,
+    deleteGamePlacard,
 } = require('../service/trivia');
 
 const studio = require("../trivia/GameStudio");
@@ -332,7 +335,7 @@ const handleUpdateParticipantAnswer = async function (req, res, next) {
     }
 }
 
-const handleSearchQuestionsByCriteria = async function (req, res, next) {
+const handleSearchQuestions = async function (req, res, next) {
     try {
         const { start_from, fetch_size, author_username, author_screen_name, category } = req.query;
         const criteria = Object.entries({ start_from, fetch_size, author_username, author_screen_name, category })
@@ -341,7 +344,7 @@ const handleSearchQuestionsByCriteria = async function (req, res, next) {
                 acc[key] = value;
                 return acc;
             }, {});
-        const page = searchQuestionsByCriteria(criteria);
+        const page = searchQuestions(criteria);
         console.log('result from questions search', page);
         res.json(page);
     }
@@ -350,10 +353,10 @@ const handleSearchQuestionsByCriteria = async function (req, res, next) {
     }
 }
 
-const handleCreateOrUpdateGameTicker = async function (req, res, next) {
+const handleUpsertGameTicker = async function (req, res, next) {
     try {
         const { ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, } = req.body;
-        const result = await createOrUpdateGameTicker({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, });
+        const result = await upsertGameTicker({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, });
         console.log('result from creating a ticker', result);
         res.json(result);
     }
@@ -362,14 +365,49 @@ const handleCreateOrUpdateGameTicker = async function (req, res, next) {
     }
 }
 
-const handleDeleteGameTicker = async function(req, res, next) {
-    try{
+const handleDeleteGameTicker = async function (req, res, next) {
+    try {
         const { ticker_id, } = req.params;
         const result = await deleteGameTicker(ticker_id);
         console.log('result from deleting a ticker', result);
         res.json(result);
     }
-    catch(e){
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleFetchAllGamePlacards = async function (req, res, next) {
+    try {
+        const result = await fetchAllGamePlacards();
+        console.log('result from fetching all placards', result);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleUpsertGamePlacard = async function (req, res, next) {
+    try {
+        const { placard_content, display_duration, followed_by, content_type, } = req.body;
+        const result = await upsertGamePlacard({ placard_content, display_duration, followed_by, content_type, });
+        console.log('result from updating placard', result);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleDeleteGamePlacard = async function (req, res, next) {
+    try {
+        const { placard_id, } = req.params;
+        const result = await deleteGamePlacard(placard_id);
+        console.log('result from deleting a placard', result);
+        res.json(result);
+    }
+    catch (e) {
         next(e);
     }
 }
@@ -400,7 +438,10 @@ module.exports = {
     fetchGameTallies: handleFetchGameTallies,
     updateHighestScore: handleUpdateHighestScore,
     updateParticipantAnswer: handleUpdateParticipantAnswer,
-    searchQuestionsByCriteria: handleSearchQuestionsByCriteria,
-    createOrUpdateGameTicker: handleCreateOrUpdateGameTicker,
+    searchQuestions: handleSearchQuestions,
+    upsertGameTicker: handleUpsertGameTicker,
     deleteGameTicker: handleDeleteGameTicker,
+    fetchAllGamePlacards: handleFetchAllGamePlacards,
+    upsertGamePlacard: handleUpsertGamePlacard,
+    deleteGamePlacard: handleDeleteGamePlacard,
 }
