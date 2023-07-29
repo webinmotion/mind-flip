@@ -31,7 +31,7 @@ export default function GameCard() {
                 </span>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="hover:bg-blue-700 text-white rounded  bg-primary-lightest dark:bg-primary-lightest dark:text-darkest px-5 py-1 font-bold"
+                  className="hover:bg-blue-700 text-light-text rounded  bg-primary-lightest dark:bg-primary-lightest dark:text-darkest px-5 py-1 font-bold"
                 >
                   Join
                 </button>

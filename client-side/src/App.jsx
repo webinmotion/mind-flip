@@ -10,6 +10,8 @@ import HomePage from "./components/HomePage";
 import Registration from "./routes/Register";
 import { useEffect, useState } from "react";
 import StepperPage from "./components/GameDetailPage";
+import WelcomeEmail from "./email_templates/WelcomeEmail";
+import EmailVerificationTemplate from "./email_templates/EmailVerification";
 function App() {
   const [theme, setTheme] = useState("light");
 
@@ -27,9 +29,9 @@ function App() {
   return (
     <div className="bg-background-color dark:text-primary-lightest-dark dark:bg-darkest relative">
       <div className="toggle">
-        <button className="rounded-full bg-primary p-4 absolute top-[100px] right-1" onClick={toggleTheme}>
+        {/* <button className="rounded-full bg-primary p-4 absolute top-[100px] right-1" onClick={toggleTheme}>
           {theme === "dark" ? "Light" : "Dark"}
-        </button>
+        </button> */}
       </div>
       <ChakraProvider>
         <Routes>
@@ -38,6 +40,8 @@ function App() {
           <Route path="/register" element={<Registration />} />
           <Route path="/faqs" element={<Faqs />} />
           <Route path="/details" element={<StepperPage />} />
+          <Route path="/email" element={<WelcomeEmail />} />
+          <Route path="/email-verification" element={<EmailVerificationTemplate />} />
         </Routes>
         <Footer />
       </ChakraProvider>
