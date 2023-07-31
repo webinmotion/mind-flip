@@ -32,8 +32,12 @@ const {
     upsertGamePlacard,
     deleteGamePlacard,
     fetchQuestionsByAuthor,
+    upsertGameQuestion,
+    upsertQuestionChoices,
+    deleteGameChoice,
 } = require('../handlers/trivia');
 const { validateAccessToken } = require('../middleware/authorize');
+const {remoteDeleteGameChoice} = require("../web-client/services/trivia");
 
 router.get('/listing', fetchGamesListing);
 
@@ -96,5 +100,11 @@ router.post('/placard', upsertGamePlacard);
 router.delete('/placard/:placard_id', deleteGamePlacard);
 
 router.get('/question/author/:author_id', fetchQuestionsByAuthor);
+
+router.post('/question', upsertGameQuestion);
+
+router.post('/question/:question_id/choices', upsertQuestionChoices);
+
+router.delete('/question/choices/:choice_id', deleteGameChoice);
 
 module.exports = router;

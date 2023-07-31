@@ -139,3 +139,15 @@ questions. Because of this, the game cannot use a progress bar (progression MUST
 - React Native
 - React Navigation
 - React Native Paper
+
+## Notes about WebRTC
+
+1. Three main tasks
+   - acquiring audio and video
+   - communicating audio and video
+   - communicating arbitrary data
+2. Key abstractions
+   - MediaStream (aka getUserMedia)
+   - RTCPeerConnection
+   - RTCDataChannel
+3. 

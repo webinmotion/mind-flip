@@ -7,20 +7,49 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import FormHelperText from '@mui/material/FormHelperText';
-import FingerprintIcon from '@mui/icons-material/Fingerprint';
-import TocIcon from '@mui/icons-material/Toc';
-import HourglassFullIcon from '@mui/icons-material/HourglassFull';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import HourglassTopIcon from '@mui/icons-material/HourglassTop';
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Tooltip from '@mui/material/Tooltip';
+import ScaleIcon from '@mui/icons-material/Scale';
+import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
+import GavelIcon from '@mui/icons-material/Gavel';
+import ConstructionIcon from '@mui/icons-material/Construction';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableBody from "@mui/material/TableBody";
+import Tooltip from "@mui/material/Tooltip";
+import Link from "@mui/material/Link";
+import TableContainer from "@mui/material/TableContainer";
+import {styled} from "@mui/material/styles";
+import TableCell, {tableCellClasses} from "@mui/material/TableCell";
+import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
+import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+import FormGroup from "@mui/material/FormGroup";
+import Radio from "@mui/material/Radio";
+
+const GameCategory = {
+    GENERAL: 'general',
+    SCIENCE: 'science',
+    GEOGRAPHY: 'geography',
+    HISTORY: 'history',
+    MUSIC: 'music',
+    MOVIES: 'movies',
+    TELEVISION: 'television',
+    SPORTS: 'sports',
+    FOOD: 'food',
+    TRAVEL: 'travel',
+    POLITICS: 'politics',
+}
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -42,116 +71,204 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-export default function ManageGameQuestion({ questions, form, updateQuestions, handleChange, handleSelect, handleDelete }) {
+export default function ManageGameQuestion({ questions, queForm, choiceForm, updateQuestions, updateChoices, handleChange, handleQueSelected, handleChoiceSelected, handleDeleteChoice, handleChoiceChange, handleCorrectChecked, handleClueChecked, handleDelete, handleChecked, handleDropdown, }) {
+
+    const [expanded, setExpanded] = React.useState('');
+
+    const handleToggle = (panel, que_id) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+        handleQueSelected(que_id);
+    };
 
     return (
-        <Box
-            component="form"
-            sx={{
-                '& .MuiTextField-root': { m: 2, minWidth: 120 },
-            }}
-            noValidate
-            autoComplete="off"
-        >
-            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                <FormControl fullWidth sx={{ m: 1 }}>
-                    <InputLabel htmlFor="question_id">ID</InputLabel>
-                    <OutlinedInput
-                        id="question_id"
-                        aria-describedby="question-id-error-text"
-                        startAdornment={<InputAdornment position="start"><FingerprintIcon /></InputAdornment>}
-                        label="ID"
-                        value={form.question_id}
-                        onChange={handleChange}
-                        type='number'
-                        required
-                    />
-                    <FormHelperText id="question-id-error-text">
-                        question id is a required field
-                    </FormHelperText>
-                </FormControl>
+        <>
+            <Box
+                component="form"
+                sx={{
+                    '& .MuiTextField-root': { m: 2, minWidth: 120 },
+                }}
+                noValidate
+                autoComplete="off"
+            >
+                <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <FormControl fullWidth sx={{ m: 1 }}>
+                        <InputLabel htmlFor="que_value">Question</InputLabel>
+                        <OutlinedInput
+                            id="que_value"
+                            aria-describedby="question-title-error-text"
+                            startAdornment={<InputAdornment position="start"><PsychologyAltIcon /></InputAdornment>}
+                            label="Question"
+                            value={queForm.que_value}
+                            onChange={handleChange}
+                            required
+                            multiline
+                        />
+                        <FormHelperText id="question-title-error-text">
+                            The question is a required field
+                        </FormHelperText>
+                    </FormControl>
 
-                <FormControl fullWidth sx={{ m: 1 }}>
-                    <InputLabel htmlFor="question_title">Title</InputLabel>
-                    <OutlinedInput
-                        id="question_title"
-                        aria-describedby="question-title-error-text"
-                        startAdornment={<InputAdornment position="start"><TocIcon /></InputAdornment>}
-                        label="Title"
-                        value={form.question_title}
-                        onChange={handleChange}
-                        required
-                    />
-                    <FormHelperText id="question-title-error-text">
-                        question title is a required field
-                    </FormHelperText>
-                </FormControl>
+                    <FormControl fullWidth sx={{ m: 1 }}>
+                        <InputLabel htmlFor="que_answer">Answer</InputLabel>
+                        <OutlinedInput
+                            id="que_answer"
+                            startAdornment={<InputAdornment position="start"><GavelIcon /></InputAdornment>}
+                            label="Answer"
+                            value={queForm.que_answer}
+                            onChange={handleChange}
+                        />
+                        <FormHelperText id="question-title-error-text">
+                            The answer to a question is a required field
+                        </FormHelperText>
+                    </FormControl>
 
-                <FormControl fullWidth sx={{ m: 1 }}>
-                    <InputLabel htmlFor="pre_countdown_delay">Pre Countdown delay</InputLabel>
-                    <OutlinedInput
-                        id="pre_countdown_delay"
-                        startAdornment={<InputAdornment position="start"><HourglassFullIcon /></InputAdornment>}
-                        label="Pre Countdown delay"
-                        value={form.pre_countdown_delay}
-                        onChange={handleChange}
-                        type='number'
-                    />
-                </FormControl>
+                    <FormControl fullWidth sx={{ m: 1 }}>
+                        <InputLabel htmlFor="answer_reason">Reason</InputLabel>
+                        <OutlinedInput
+                            id="answer_reason"
+                            startAdornment={<InputAdornment position="start"><ConstructionIcon /></InputAdornment>}
+                            label="Brief reason for the answer"
+                            value={queForm.answer_reason}
+                            onChange={handleChange}
+                            multiline
+                        />
+                        <FormHelperText id="question-title-error-text">
+                            It helps to briefly explain why the answer is correct
+                        </FormHelperText>
+                    </FormControl>
 
-                <FormControl fullWidth sx={{ m: 1 }}>
-                    <InputLabel htmlFor="countdown_duration">Countdown Duration</InputLabel>
-                    <OutlinedInput
-                        id="countdown_duration"
-                        startAdornment={<InputAdornment position="start"><HourglassTopIcon /></InputAdornment>}
-                        label="Countdown Duration"
-                        value={form.countdown_duration}
-                        onChange={handleChange}
-                        type='number'
-                    />
-                </FormControl>
+                    <FormControl fullWidth sx={{ m: 1, }}>
+                        <InputLabel htmlFor="max_points">Max Points</InputLabel>
+                        <OutlinedInput
+                            id="max_points"
+                            startAdornment={<InputAdornment position="start"><ScaleIcon /></InputAdornment>}
+                            label="Maximum points"
+                            value={queForm.max_points}
+                            onChange={handleChange}
+                            type='number'
+                        />
+                    </FormControl>
 
-                <FormControl fullWidth sx={{ m: 1, }}>
-                    <InputLabel htmlFor="post_countdown_delay">Post Countdown delay</InputLabel>
-                    <OutlinedInput
-                        id="post_countdown_delay"
-                        startAdornment={<InputAdornment position="start"><HourglassEmptyIcon /></InputAdornment>}
-                        label="Post Countdown delay"
-                        value={form.post_countdown_delay}
-                        onChange={handleChange}
-                        type='number'
-                    />
-                </FormControl>
+                    <FormControl fullWidth sx={{ m: 1, }}>
+                        <InputLabel htmlFor="question-category-helper-label">Category</InputLabel>
+                        <Select
+                            labelId="question-category-helper-label"
+                            name="category"
+                            value={queForm.category}
+                            label="Category"
+                            onChange={handleDropdown}
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            {Object.values(GameCategory).map(value =>
+                                <MenuItem key={value} value={value}>{value}</MenuItem> )}
+                        </Select>
+                    </FormControl>
 
-                <Button variant="contained" sx={{ mt: 2 }} fullWidth endIcon={<UpdateIcon />} onClick={updateQuestions}>Update</Button>
+                    <FormControl sx={{ m: 1, }}>
+                        <FormControlLabel control={<Checkbox name="has_choices" checked={queForm.has_choices} onChange={handleChecked} />}
+                          label="Question has choices"
+                          title='the question contains choices' />
+                        <FormHelperText>
+                            This will indicate whether a question contains choices or not.
+                        </FormHelperText>
+                    </FormControl>
+
+                    <Button variant="contained" sx={{ mt: 2 }} fullWidth endIcon={<UpdateIcon />} onClick={updateQuestions}>Update Question</Button>
+                </Box>
             </Box>
 
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 700, mt: 4 }} aria-label="table of existing questions">
-                    <TableHead>
-                        <TableRow>
-                            <StyledTableCell>Game Question/Clock</StyledTableCell>
-                            <StyledTableCell align="right">Title</StyledTableCell>
-                            <StyledTableCell align="right">Pre Coutdown delay&nbsp;(ms)</StyledTableCell>
-                            <StyledTableCell align="right">Countdown duration&nbsp;(ms)</StyledTableCell>
-                            <StyledTableCell align="right">Post Countdown delay&nbsp;(ms)</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {questions.map(({ question_id, question_title, pre_countdown_delay, countdown_duration, post_countdown_delay }) => (
-                            <StyledTableRow key={question_id} sx={{ cursor: 'pointer' }} onClick={(event) => handleSelect(event, question_id)}>
-                                <StyledTableCell component="th" scope="row">
-                                    <Tooltip title="Delete" arrow><Button onClick={() => handleDelete(question_id)}>{question_id}</Button></Tooltip>
-                                </StyledTableCell>
-                                <StyledTableCell align="left">{question_title}</StyledTableCell>
-                                <StyledTableCell align="right">{pre_countdown_delay}</StyledTableCell>
-                                <StyledTableCell align="right">{countdown_duration}</StyledTableCell>
-                                <StyledTableCell align="right">{post_countdown_delay}</StyledTableCell>
-                            </StyledTableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Box>
+            <Box sx={{my: 2}}>
+                {questions.map((que, i) => (
+                    <Accordion key={que.que_id} expanded={expanded === `panel${i}`} onChange={handleToggle(`panel${i}`, que.que_id)}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls={`panel${i}a-content`}
+                            id={`panel${i}a-header`}
+                        >
+                            <Typography>{que.que_value}</Typography>
+                        </AccordionSummary>
+                        {queForm.has_choices && <AccordionDetails>
+                            <Box component="form"
+                                 sx={{
+                                     '& .MuiTextField-root': { m: 1, width: '40ch' },
+                                 }}
+                                 noValidate
+                                 autoComplete="off">
+                                <div>
+                                    <TextField
+                                        error={false}
+                                        id="choice_value"
+                                        label="Choice"
+                                        helperText=""
+                                        value={choiceForm.choice_value}
+                                        onChange={handleChoiceChange}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <ZoomInMapIcon />
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+
+                                    <FormGroup sx={{ mx: 1 }}>
+                                        <FormControlLabel control={<Checkbox name={"is_correct"} onChange={handleCorrectChecked} value={choiceForm.is_correct} />} label="Correct choice" />
+                                    </FormGroup>
+
+                                    <FormGroup sx={{ mx: 1 }}>
+                                        <FormControlLabel control={<Checkbox name={"has_clue"} onChange={handleClueChecked} value={choiceForm.has_clue} />} label="Add a clue?" />
+                                    </FormGroup>
+
+                                    {choiceForm.has_clue && <TextField
+                                        error={false}
+                                        id="clue"
+                                        label="Clue"
+                                        helperText=""
+                                        value={choiceForm.clue}
+                                        onChange={handleChoiceChange}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <TroubleshootIcon />
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                    }
+                                </div>
+
+                                <Button variant="contained" sx={{ mt: 2 }} fullWidth endIcon={<UpdateIcon />} onClick={updateChoices}>Add/Edit Choices</Button>
+                            </Box>
+
+                            <TableContainer component={Paper}>
+                                <Table sx={{ minWidth: 700, mt: 4 }} aria-label="table of choices and clues">
+                                    <TableHead>
+                                        <TableRow>
+                                            <StyledTableCell align="left">Choice</StyledTableCell>
+                                            <StyledTableCell align="left">Clue</StyledTableCell>
+                                            <StyledTableCell align="right">is Correct</StyledTableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {que?.choices.map(({ choice_id, choice_value, is_correct, clue, }) => (
+                                            <StyledTableRow key={choice_id} sx={{ cursor: 'pointer' }} onClick={(event) => handleChoiceSelected(event, que.que_id, choice_id)}>
+                                                <StyledTableCell component="th" scope="row">
+                                                    <Tooltip title="Delete" arrow><Link sx={{ textDecoration: 'none' }} onClick={() => handleDeleteChoice(choice_id)}>{choice_value}</Link></Tooltip>
+                                                </StyledTableCell>
+                                                <StyledTableCell align="left">{clue}</StyledTableCell>
+                                                <StyledTableCell align="right">{is_correct && <CheckCircleIcon />}</StyledTableCell>
+                                            </StyledTableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </AccordionDetails>
+                        }
+                    </Accordion> )
+                )}
+            </Box>
+        </>
     );
 }

@@ -30,11 +30,13 @@ const {
     upsertGamePlacard,
     deleteGamePlacard,
     fetchQuestionsByAuthor,
+    upsertGameQuestion,
+    upsertQuestionChoices,
+    deleteGameChoice,
 } = require('../service/trivia');
 
 const studio = require("../trivia/GameStudio");
 const ScoreKeeper = require("../trivia/ScoreKeeper");
-const {remoteFetchQuestionsByAuthor} = require("../web-client/services/trivia");
 const scorer = new ScoreKeeper();
 
 const handleFetchGamesListing = async function (req, res, next) {
@@ -426,6 +428,41 @@ const handleFetchQuestionsByAuthor = async function(req, res, next) {
     }
 }
 
+const handleUpsertGameQuestion = async function(req, res, next) {
+    try{
+        const { que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by, } = req.body;
+        const result = await upsertGameQuestion({ que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by, });
+        console.log('result from updating a question', result);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleUpsertQuestionChoices = async function(req, res, next) {
+    try{
+        const {question_id} = req.params;
+        const {choice_value, clue, is_correct} = req.body;
+        const result = await upsertQuestionChoices({question_id, choice_value, clue, is_correct});
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
+const handleDeleteGameChoice = async function(req, res, next) {
+    try{
+        const {choice_id} = req.params;
+        const result = await deleteGameChoice(choice_id);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 module.exports = {
     fetchGamesListing: handleFetchGamesListing,
     fetchGamesByOrganizer: handleFetchGamesByOrganizer,
@@ -459,4 +496,7 @@ module.exports = {
     upsertGamePlacard: handleUpsertGamePlacard,
     deleteGamePlacard: handleDeleteGamePlacard,
     fetchQuestionsByAuthor: handleFetchQuestionsByAuthor,
+    upsertGameQuestion: handleUpsertGameQuestion,
+    upsertQuestionChoices: handleUpsertQuestionChoices,
+    deleteGameChoice: handleDeleteGameChoice,
 }

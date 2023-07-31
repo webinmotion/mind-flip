@@ -197,17 +197,35 @@ export const remoteDeleteGamePlacard = async (placard_id) => {
 }
 
 export const remoteFetchQuestionsByAuthor = async (author_id) => {
-    console.log("remoteFetchQuestionsByAuthor", author_id);
     return await axios.get(`${serverUrl()}/trivia/question/author/${author_id}`).then(resp => resp.data);
 }
 
-export const remoteUpsertGameQuestion = async ({ placard_content, display_duration, followed_by, content_type }) => {
+export const remoteUpsertGameQuestion = async ({ que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by, }) => {
     return await axios.post(`${serverUrl()}/trivia/question`,
-        { placard_content, display_duration, followed_by, content_type, },
+        { que_value, que_answer, answer_reason, category, max_points, has_choices, asked_by, },
         {
             headers: {
                 "Content-Type": "application/json"
             }
         })
         .then(resp => resp.data);
+}
+
+export const remoteDeleteGameQuestion = async (que_id) => {
+    return await axios.delete(`${serverUrl()}/trivia/question/${que_id}`).then(resp => resp.data);
+}
+
+export const remoteUpsertQuestionChoices = async ({ question_fk, choice_value, clue, is_correct, }) => {
+    return await axios.post(`${serverUrl()}/trivia/question/${question_fk}/choices`,
+        { choice_value, clue, is_correct, },
+        {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(resp => resp.data);
+}
+
+export const remoteDeleteGameChoice = async (choice_id) => {
+    return await axios.delete(`${serverUrl()}/trivia/question/choices/${choice_id}`).then(resp => resp.data);
 }
