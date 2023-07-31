@@ -31,6 +31,7 @@ const {
     deleteGamePlacard,
     fetchQuestionsByAuthor,
     upsertGameQuestion,
+    deleteGameQuestion,
     upsertQuestionChoices,
     deleteGameChoice,
 } = require('../service/trivia');
@@ -440,6 +441,17 @@ const handleUpsertGameQuestion = async function(req, res, next) {
     }
 }
 
+const handleDeleteGameQuestion = async function(req, res, next) {
+    try{
+        const {question_id} = req.params;
+        const result = await deleteGameQuestion(question_id);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 const handleUpsertQuestionChoices = async function(req, res, next) {
     try{
         const {question_id} = req.params;
@@ -499,4 +511,5 @@ module.exports = {
     upsertGameQuestion: handleUpsertGameQuestion,
     upsertQuestionChoices: handleUpsertQuestionChoices,
     deleteGameChoice: handleDeleteGameChoice,
+    deleteGameQuestion: handleDeleteGameQuestion,
 }

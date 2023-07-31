@@ -80,7 +80,7 @@ function ManageGameQuestionContainer({ player, showAlert }) {
         setQueForm(form => ({ ...form, [e.target.name]: e.target.checked }));
     }
 
-    const handleDelete = async (que_id) => {
+    const handleDeleteQue = async (que_id) => {
         const data = await remoteDeleteGameQuestion(que_id);
         if (data.que_id) {
             setQuestions(ques => ques.filter(q => q.que_id !== data.que_id));
@@ -128,7 +128,7 @@ function ManageGameQuestionContainer({ player, showAlert }) {
             choiceForm={choiceForm}
             handleChange={handleChange}
             handleQueSelected={handleQueSelected}
-            handleDelete={handleDelete}
+            handleDeleteQue={handleDeleteQue}
             handleChecked={handleChecked}
             handleChoiceSelected={handleChoiceSelected}
             handleChoiceChange={handleChoiceChange}

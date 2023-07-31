@@ -7,11 +7,12 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import FormHelperText from '@mui/material/FormHelperText';
-import ScaleIcon from '@mui/icons-material/Scale';
+import ScoreIcon from '@mui/icons-material/Score';
 import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
 import GavelIcon from '@mui/icons-material/Gavel';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Accordion from '@mui/material/Accordion';
@@ -35,7 +36,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import FormGroup from "@mui/material/FormGroup";
-import Radio from "@mui/material/Radio";
+import IconButton from "@mui/material/IconButton";
 
 const GameCategory = {
     GENERAL: 'general',
@@ -71,7 +72,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-export default function ManageGameQuestion({ questions, queForm, choiceForm, updateQuestions, updateChoices, handleChange, handleQueSelected, handleChoiceSelected, handleDeleteChoice, handleChoiceChange, handleCorrectChecked, handleClueChecked, handleDelete, handleChecked, handleDropdown, }) {
+export default function ManageGameQuestion({ questions, queForm, choiceForm, updateQuestions, updateChoices, handleChange, handleQueSelected, handleChoiceSelected, handleDeleteChoice, handleChoiceChange, handleCorrectChecked, handleClueChecked, handleDeleteQue, handleChecked, handleDropdown, }) {
 
     const [expanded, setExpanded] = React.useState('');
 
@@ -141,7 +142,7 @@ export default function ManageGameQuestion({ questions, queForm, choiceForm, upd
                         <InputLabel htmlFor="max_points">Max Points</InputLabel>
                         <OutlinedInput
                             id="max_points"
-                            startAdornment={<InputAdornment position="start"><ScaleIcon /></InputAdornment>}
+                            startAdornment={<InputAdornment position="start"><ScoreIcon /></InputAdornment>}
                             label="Maximum points"
                             value={queForm.max_points}
                             onChange={handleChange}
@@ -187,7 +188,14 @@ export default function ManageGameQuestion({ questions, queForm, choiceForm, upd
                             aria-controls={`panel${i}a-content`}
                             id={`panel${i}a-header`}
                         >
-                            <Typography>{que.que_value}</Typography>
+                            <Typography sx={{ width: '30px', flexShrink: 0 }}>
+                                <Tooltip title="Delete">
+                                    <IconButton onClick={() => handleDeleteQue(que.que_id)}>
+                                        <MoreHorizIcon color={"primary"} fontSize={"small"} />
+                                    </IconButton>
+                                </Tooltip>
+                            </Typography>
+                            <Typography sx={{ pt: 1 }}>{que.que_value}</Typography>
                         </AccordionSummary>
                         {queForm.has_choices && <AccordionDetails>
                             <Box component="form"

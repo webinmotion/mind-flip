@@ -389,6 +389,11 @@ const upsertGameQuestion = async ({ que_value, que_answer, answer_reason, catego
     return result[0];
 }
 
+const deleteGameQuestion = async (question_id) => {
+    let result = await execute(`delete from tbl_question where que_id = $1::uuid returning que_id`, [question_id,]);
+    return result[0];
+}
+
 const upsertQuestionChoices = async({question_id, choice_value, clue, is_correct}) => {
     let result = await execute(`insert into tbl_choice (question_fk, choice_value, clue, is_correct) 
     values ($1, $2, $3, $4) on conflict (choice_value, question_fk) do update set clue = $3, is_correct = $4 
@@ -437,6 +442,7 @@ module.exports = {
     deleteGamePlacard,
     fetchQuestionsByAuthor,
     upsertGameQuestion,
+    deleteGameQuestion,
     upsertQuestionChoices,
     deleteGameChoice,
 }

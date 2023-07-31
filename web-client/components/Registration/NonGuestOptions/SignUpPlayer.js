@@ -11,13 +11,13 @@ import {ViewNames} from '../../../hooks/usePageForms';
 import {validateUsername, validatePassword, validateEmailAddress, validateScreenName} from "../../../context/formValidation";
 
 export default function SignUpPlayer({
-                                         showAlert,
-                                         signUpForm,
-                                         setSignUpForm,
-                                         setSignInForm,
-                                         registerPlayer,
-                                         toggleCurrentView,
-                                     }) {
+     showAlert,
+     signUpForm,
+     setSignUpForm,
+     setSignInForm,
+     registerPlayer,
+     toggleCurrentView,
+ }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
