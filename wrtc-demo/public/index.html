@@ -2,17 +2,30 @@
 
 <head>
     <title>Express</title>
-    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <script defer src="/javascripts/handshake.js"></script>
 </head>
 
 <body>
 <h1>Web RTC Demo</h1>
-<div>
-    <label for="message">Message to send</label>
-    <textarea id="message"></textarea>
+<div id="videos">
+    <video class="video-player" id="user-1" autoplay playsinline></video>
+    <video class="video-player" id="user-2" autoplay playsinline></video>
 </div>
-<button id="send">Send</button>
-<div id="receive"></div>
+
+<div id="offer">
+    <button id="create-offer">Create Offer</button>
+    <label for="offer-sdp">SDP Offer</label>
+    <textarea id="offer-sdp"></textarea>
+</div>
+
+<div id="answer">
+    <button id="create-answer">Create Answer</button>
+    <label for="answer-sdp">SDP Answer</label>
+    <textarea id="answer-sdp"></textarea>
+</div>
+
+<button id="add-answer">Add Answer</button>
 </body>
 
 </html>

@@ -146,8 +146,11 @@ questions. Because of this, the game cannot use a progress bar (progression MUST
    - acquiring audio and video
    - communicating audio and video
    - communicating arbitrary data
-2. Key abstractions
+2. Key abstractions (API)
    - MediaStream (aka getUserMedia)
    - RTCPeerConnection
    - RTCDataChannel
-3. 
+3. Parties involved
+   - STUN server - resolution of public IPs for nodes behind a NAT
+   - TURN server - relay server for nodes behind a firewall
+   - ICE candidates

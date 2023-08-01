@@ -18,9 +18,9 @@ DROP TYPE IF EXISTS GameCategory;
 DROP TYPE IF EXISTS GameProgression;
 DROP TYPE IF EXISTS GameStatus;
 DROP TYPE IF EXISTS PlayerType;
-drop type if exists AnswerType;
 DROP TYPE IF EXISTS AccountRole;
 drop type if exists ScoreStrategy;
+drop type if exists ContentType;
 
 CREATE TYPE GameCategory AS ENUM (
 	'general',
@@ -69,6 +69,14 @@ create type ScoreStrategy as enum (
 	'LIST_OF_CORRECT_VALUES'
 );
 
+create type ContentType as enum (
+	'text/plain',
+	'text/html',
+	'image',
+	'video',
+	'audio'
+);
+
 create table if not exists tbl_Ticker (
 	ticker_id int primary key not null,
 	ticker_title varchar(64) unique not null,
@@ -110,7 +118,7 @@ create table if not exists tbl_Account (
     is_active boolean default true,
     account_role AccountRole default 'Basic',
     recovery_code varchar(40) default null,
-    player_fk UUID not null references tbl_Player(player_id) on delete cascade,
+    player_fk UUID not null references tbl_Player(player_id) on delete cascade on update cascade,
     constraint pk_account primary key(account_id)
 );
 
@@ -138,7 +146,7 @@ create table if not exists tbl_Question (
 
 create table if not exists tbl_Choice (
     choice_id UUID default uuid_generate_v1(),
-	question_fk UUID references tbl_Question(que_id) not null,
+	question_fk UUID references tbl_Question(que_id) on delete cascade on update cascade not null,
     is_correct boolean default false,
     choice_value varchar(32) not null,
     clue varchar(64),
@@ -149,9 +157,11 @@ create table if not exists tbl_Choice (
 create table if not exists tbl_Game_Placard (
 	placard_id UUID default uuid_generate_v1(),
 	placard_content varchar(512) not null,
+	content_type ContentType default 'text/plain',
 	display_duration int default 5000,
 	followed_by UUID references tbl_Game_Placard(placard_id),
-	constraint pk_placard_id primary key(placard_id)
+	constraint pk_placard_id primary key(placard_id),
+	constraint uniq_content unique(placard_content)
 );
 
 create table if not exists tbl_Game_Layout (
@@ -554,18 +564,13 @@ select G.*, P.*, GE.* from tbl_Game G
         and P.player_type != 'guest'
         and G.game_status in ('Created', 'Accepting', 'Playing');
 
---delete from tbl_account where username = 'omolloc';
+--delete from tbl_account where username = 'malloc';
 --delete from tbl_player where screen_name = 'mainas';
 
 --with target_record as (select player_id from tbl_player where email_address = $1 and verification_code = 'e79ea91b-3952-4234-b2bb-9b0a4377ef39')
 --    update tbl_player set verified_email = true where player_id = (select player_id from target_record) returning verified_email
 
 --select ta.* from tbl_account ta join tbl_player tp on ta.player_fk = tp.player_id where tp.email_address = 'jimmy@email.com'
-
---select tg.*, tp.* from tbl_game tg
---inner join tbl_account ta on tg.organizer = ta.account_id
---inner join tbl_player tp on ta.player_fk = tp.player_id
---where tg.game_id = '7d9c5730-0d8e-11ee-b8cb-022ac110002'::uuid;
 
 select tg.*, tp.* from tbl_game tg
     inner join tbl_account ta on tg.organizer = ta.account_id
