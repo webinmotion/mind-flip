@@ -3,7 +3,7 @@ const router = express.Router();
 const { 
     fetchGamesListing,
     fetchGamesByOrganizer,
-    fetchGameTickers,
+    fetchGameClocks,
     fetchGameInfo,
     fetchGameInfoById,
     fetchProgression,
@@ -26,11 +26,11 @@ const {
     updateHighestScore,
     updateParticipantAnswer,
     searchQuestions,
-    upsertGameTicker,
-    deleteGameTicker,
-    fetchAllGamePlacards,
-    upsertGamePlacard,
-    deleteGamePlacard,
+    upsertGameClock,
+    deleteGameClock,
+    fetchAllGameMessages,
+    upsertGameMessage,
+    deleteGameMessage,
     fetchQuestionsByAuthor,
     upsertGameQuestion,
     deleteGameQuestion,
@@ -43,13 +43,13 @@ router.get('/listing', fetchGamesListing);
 
 router.get('/:organizer/listing', fetchGamesByOrganizer);
 
-router.get('/ticker', fetchGameTickers);
+router.get('/clock', fetchGameClocks);
 
 router.get('/title/:title/organizer/:organizer', validateAccessToken, fetchGameInfo);
 
 router.get('/info/:game', fetchGameInfoById);
 
-router.get('/ticker/:ticker', fetchProgression);
+router.get('/clock/:clock', fetchProgression);
 
 router.get('/layout/:game', fetchGameLayout);
 
@@ -89,15 +89,15 @@ router.post('/game/:game/participant/:participant/question/:question/answer', up
 
 router.get('/question/search', searchQuestions);
 
-router.post('/ticker', upsertGameTicker);
+router.post('/clock', upsertGameClock);
 
-router.delete('/ticker/:ticker_id', deleteGameTicker);
+router.delete('/clock/:clock_id', deleteGameClock);
 
-router.get('/placard', fetchAllGamePlacards);
+router.get('/message', fetchAllGameMessages);
 
-router.post('/placard', upsertGamePlacard);
+router.post('/message', upsertGameMessage);
 
-router.delete('/placard/:placard_id', deleteGamePlacard);
+router.delete('/message/:message_id', deleteGameMessage);
 
 router.get('/question/author/:author_id', fetchQuestionsByAuthor);
 

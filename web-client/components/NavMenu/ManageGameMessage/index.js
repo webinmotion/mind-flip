@@ -50,7 +50,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-export default function ManageGamePlacard({ placards, form, updatePlacards, handleChange, handleSelect, handleDelete }) {
+export default function ManageGameMessage({ messages, form, updateMessages, handleChange, handleSelect, handleDelete }) {
 
     return (
         <Box
@@ -63,18 +63,18 @@ export default function ManageGamePlacard({ placards, form, updatePlacards, hand
         >
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <FormControl fullWidth sx={{ m: 1 }}>
-                    <InputLabel htmlFor="placard_content">Content</InputLabel>
+                    <InputLabel htmlFor="message_content">Content</InputLabel>
                     <OutlinedInput
-                        id="placard_content"
-                        aria-describedby="placard-content-error-text"
+                        id="message_content"
+                        aria-describedby="message-content-error-text"
                         startAdornment={<InputAdornment position="start"><PersonalVideoIcon /></InputAdornment>}
                         label="Content"
-                        value={form.placard_content}
+                        value={form.message_content}
                         onChange={handleChange}
                         required
                     />
-                    <FormHelperText id="placard-content-error-text">
-                        placard content is a required field
+                    <FormHelperText id="message-content-error-text">
+                        message content is a required field
                     </FormHelperText>
                 </FormControl>
 
@@ -89,7 +89,7 @@ export default function ManageGamePlacard({ placards, form, updatePlacards, hand
                         type='number'
                         required
                     />
-                    <FormHelperText id="placard-content-error-text">
+                    <FormHelperText id="message-content-error-text">
                         display duration is a required field
                     </FormHelperText>
                 </FormControl>
@@ -106,7 +106,7 @@ export default function ManageGamePlacard({ placards, form, updatePlacards, hand
                         <MenuItem value="">
                             <em>None</em>
                         </MenuItem>
-                        {placards?.filter(plc => plc.placard_id !== form.placard_id).map(plc => <MenuItem key={plc.placard_id} value={plc.placard_id}>{plc.placard_content}</MenuItem>)}
+                        {messages?.filter(plc => plc.message_id !== form.message_id).map(plc => <MenuItem key={plc.message_id} value={plc.message_id}>{plc.message_content}</MenuItem>)}
                     </Select>
                 </FormControl>
 
@@ -128,11 +128,11 @@ export default function ManageGamePlacard({ placards, form, updatePlacards, hand
                     </Select>
                 </FormControl>
 
-                <Button variant="contained" sx={{ mt: 2 }} fullWidth endIcon={<UpdateIcon />} onClick={updatePlacards}>Update</Button>
+                <Button variant="contained" sx={{ mt: 2 }} fullWidth endIcon={<UpdateIcon />} onClick={updateMessages}>Update</Button>
             </Box>
 
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 700, mt: 4 }} aria-label="table of existing placards">
+                <Table sx={{ minWidth: 700, mt: 4 }} aria-label="table of existing messages">
                     <TableHead>
                         <TableRow>
                             <StyledTableCell align="left">Content</StyledTableCell>
@@ -142,12 +142,12 @@ export default function ManageGamePlacard({ placards, form, updatePlacards, hand
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {placards?.map(({ placard_id, placard_content, display_duration, followed_by, content_type, }) => (
-                            <StyledTableRow key={placard_id} sx={{ cursor: 'pointer' }} onClick={(event) => handleSelect(event, placard_id)}>
+                        {messages?.map(({ message_id, message_content, display_duration, followed_by, content_type, }) => (
+                            <StyledTableRow key={message_id} sx={{ cursor: 'pointer' }} onClick={(event) => handleSelect(event, message_id)}>
                                 <StyledTableCell component="th" scope="row">
-                                    <Tooltip title="Delete" arrow><Link sx={{ textDecoration: 'none' }} onClick={() => handleDelete(placard_id)}>{placard_content}</Link></Tooltip>
+                                    <Tooltip title="Delete" arrow><Link sx={{ textDecoration: 'none' }} onClick={() => handleDelete(message_id)}>{message_content}</Link></Tooltip>
                                 </StyledTableCell>
-                                <StyledTableCell align="left">{placards.find(plc => plc.placard_id === followed_by)?.placard_content}</StyledTableCell>
+                                <StyledTableCell align="left">{messages.find(plc => plc.message_id === followed_by)?.message_content}</StyledTableCell>
                                 <StyledTableCell align="right">{display_duration}</StyledTableCell>
                                 <StyledTableCell align="left">{content_type}</StyledTableCell>
                             </StyledTableRow>

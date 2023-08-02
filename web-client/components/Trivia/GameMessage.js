@@ -2,7 +2,7 @@ import * as React from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-export default function GamePlacard({progression: {placard,}}) {
+export default function GameMessage({progression: {message,}}) {
 
     return (
         <Container disableGutters maxWidth="sm" component="main" sx={{pt: 4, pb: 4}}>
@@ -13,7 +13,7 @@ export default function GamePlacard({progression: {placard,}}) {
                 color="text.secondary"
                 gutterBottom
             >
-                Snack Break
+                Game Message
             </Typography>
 
             <Typography
@@ -23,7 +23,7 @@ export default function GamePlacard({progression: {placard,}}) {
                 color="text.primary"
                 gutterBottom
             >
-                {placard?.placard_content}
+                {message?.message_content}
             </Typography>
         </Container>
     )

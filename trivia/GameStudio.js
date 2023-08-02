@@ -9,7 +9,7 @@ const {
     GAME_STATUS_PLAYING,
     ON_QUESTION_POSTED_EVENT,
     ON_GAME_ENDING_EVENT,
-    ON_PLACARD_POSTED_EVENT,
+    ON_MESSAGE_POSTED_EVENT,
     ON_PROGRESSION_EVENT,
     ON_UPDATED_TALLIES_EVENT,
 } = require('./Constants');
@@ -139,16 +139,16 @@ class GameStudio {
         console.log(`Updated scores: ${JSON.stringify(tallies)}`);
     }
 
-    nextPlacard(game_id, placard, progression, progress){
-        //send placard to all participants
-        this.publishMessage(ON_PLACARD_POSTED_EVENT, game_id, placard);
+    nextMessage(game_id, message, progression, progress){
+        //send message to all participants
+        this.publishMessage(ON_MESSAGE_POSTED_EVENT, game_id, message);
 
         if(progression === 'auto') {
             this.publishMessage(ON_PROGRESSION_EVENT, game_id, progress);
         }
 
-        //log current placard
-        console.log(`Placard ${placard.placard_content}`);
+        //log current message
+        console.log(`Message ${message.message_content}`);
     }
 
     sendGameCreatedEvent({ game, organizer }) {

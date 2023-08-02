@@ -1,32 +1,24 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 import UpdateIcon from '@mui/icons-material/Update';
 import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import {GameCategory} from "../../App/Constants";
+import SortableTable from '../SortableTable';
+import TextField from "@mui/material/TextField";
 
-export default function ManageGameLayout({ games, tickers, form, handleSelected, handleChange, handleChecked, handleDateTime, applyEngine, }) {
+export default function ManageGameLayout({games, form, questions, head, criteria, editable, setEditable, handleSelected, handleChangeCriteria, handleCheckCriteria, applyLayout,}) {
 
     return (
         <Box
             component="form"
             sx={{
-                '& .MuiTextField-root': { m: 2, minWidth: 120 },
+                '& .MuiTextField-root': {m: 2, minWidth: 120},
             }}
             noValidate
             autoComplete="off"
@@ -41,93 +33,70 @@ export default function ManageGameLayout({ games, tickers, form, handleSelected,
                         label="Game ID"
                         onChange={handleSelected}
                     >
-                        {games?.length > 0 ?
-                            games.map(({ game_info }) => <MenuItem key={game_info?.game_id} value={game_info?.game_id}>{game_info?.title}</MenuItem>)
-                            :
-                            <MenuItem>{"No games available"}</MenuItem>}
+                        {games?.length > 0
+                            ? games.map(({game_info}) => <MenuItem key={game_info?.game_id} value={game_info?.game_id}>{game_info?.title}</MenuItem>)
+                            : <MenuItem>{"No games available"}</MenuItem>
+                        }
                     </Select>
                     <FormHelperText></FormHelperText>
                 </FormControl>
-
-                <Box sx={{ my: 2 }}>
-                    <DateTimePicker onChange={handleDateTime} name="scheduled_start" value={form.scheduled_start} label="Scheduled Game Start" />
-                </Box>
-
-                <Box sx={{ m: 2 }}>
-                    <FormControl>
-                        <FormLabel id="game-progression-option-label">Game Progression Mode</FormLabel>
-                        <RadioGroup
-                            row
-                            aria-labelledby="game-progression-option-label"
-                            name="progression"
-                            value={form.progression}
-                            onChange={handleChange}
-                        >
-                            <FormControlLabel value="auto" control={<Radio />} label="Auto" />
-                            <FormControlLabel value="manual" control={<Radio />} label="Manual" />
-                        </RadioGroup>
-                    </FormControl>
-                </Box>
-
-                <Box sx={{ m: 2 }}>
-                    <FormGroup>
-                        <FormControlLabel control={<Checkbox />}
-                            name="is_multi_player"
-                            checked={form.is_multi_player}
-                            label="Is multi-player mode"
-                            title='subscribe to the server for content'
-                            onChange={handleChecked} />
-                        <FormControlLabel control={<Checkbox />}
-                            name="can_navigate_back"
-                            checked={form.can_navigate_back}
-                            label="Can navigate back"
-                            title='allow a participant to move back and forth in the questions'
-                            onChange={handleChecked} />
-                        <FormControlLabel control={<Checkbox />}
-                            name="server_push_mode"
-                            checked={form.server_push_mode}
-                            label="Server push mode"
-                            title='server sets the cadence of the game through a timer'
-                            onChange={handleChecked} />
-                    </FormGroup>
-                </Box>
-
-                <FormControl fullWidth>
-                    <InputLabel id="select-game-ticker-label">Game Ticker</InputLabel>
-                    <Select
-                        labelId="select-game-ticker-label"
-                        name="game_ticker"
-                        value={form.game_ticker}
-                        label="Game Ticker"
-                        onChange={handleChange}
-                    >
-                        {tickers.map((game) => <MenuItem key={game.ticker_id} value={game.ticker_id}>{game.ticker_title}</MenuItem>)}
-                    </Select>
-                    <FormHelperText></FormHelperText>
-                </FormControl>
-
-                <Box sx={{ my: 2 }}>
-                    <Button variant="contained" fullWidth endIcon={<UpdateIcon />} onClick={applyEngine}>Update</Button>
-                </Box>
             </div>
 
-            <Box>
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
+            <div>
+                <label style={{marginTop: '15px', display: 'inline-block'}} htmlFor={"from_anyone_check"}>
+                    <Checkbox aria-label={"show all questions"} id="from_anyone_check" name="from_anyone" value={criteria.from_anyone.selected} title='questions asked by anyone' onChange={handleCheckCriteria}  />
+                    Show all questions
+                </label>
+            </div>
+
+            <div>
+                <label style={{marginTop: '15px', display: 'inline-block'}} htmlFor={"game_category_check"}>
+                    <Checkbox aria-label={"filter by category"} id="game_category_check" name="game_category" value={criteria.game_category.selected} title='apply category filter' onChange={handleCheckCriteria} />
+                    Filter by Category
+                </label>
+
+                {criteria.game_category.selected && <FormControl sx={{m: 1, minWidth: 120}}>
+                    <InputLabel id="game_category-label">Category</InputLabel>
+                    <Select
+                        labelId="game_category-label"
+                        name="game_category"
+                        value={criteria.game_category.value}
+                        label="Game Category"
+                        onChange={handleChangeCriteria}
                     >
-                        <Typography>Accordion 1</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                            malesuada lacus ex, sit amet blandit leo lobortis eget.
-                        </Typography>
-                    </AccordionDetails>
-                </Accordion>
+                        {Object.entries(GameCategory).map(([key, value]) =>
+                            <MenuItem key={key} value={value}>{key}</MenuItem>)}
+                    </Select>
+                    <FormHelperText></FormHelperText>
+                </FormControl>
+                }
+            </div>
+
+            <div>
+                <label style={{marginTop: '20px', display: 'inline-block'}} htmlFor={"keyword_search_input"}>
+                    <Checkbox aria-label={"filter by keyword"} id="keyword_search_input" name="keyword_search" value={criteria.keyword_search.selected} title='apply keyword filter' onChange={handleCheckCriteria} />
+                    Filter by keyword
+                </label>
+
+                {criteria.keyword_search.selected && <TextField
+                    error={false}
+                    id="keyword-helper-text"
+                    name={"keyword_search"}
+                    label="Keyword Search"
+                    placeholder="Keyword"
+                    value={criteria.keyword_search.value}
+                    helperText=""
+                    onChange={handleChangeCriteria}
+                />
+                }
+            </div>
+
+            <SortableTable title={'Available Questions'} head={head} rows={questions} editable={editable} setEditable={setEditable} />
+
+            <Box sx={{my: 2}}>
+                <Button variant="contained" fullWidth endIcon={<UpdateIcon/>} onClick={applyLayout}>Update</Button>
             </Box>
+
         </Box>
     );
 }

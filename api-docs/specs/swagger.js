@@ -156,13 +156,13 @@ const options = {
             },
           },
         },
-        Ticker: {
+        Clock: {
           type: "object",
           description: "Describe the characteristics of how to manage time for an auto-progressing game",
           properties: {
-            ticker_id: {
+            clock_id: {
               type: "string",
-              description: "The user-provided id of the ticker definition"
+              description: "The user-provided id of the clock definition"
             },
             duration: {
               type: "integer",
@@ -178,7 +178,7 @@ const options = {
             },
           },
           example: {
-            ticker_id: "the 3 seconds delay",
+            clock_id: "the 3 seconds delay",
             duration: 12000,
             delay: 2000,
             period: 500,

@@ -30,7 +30,7 @@ import {
     ON_SNACK_BREAK_EVENT,
     ON_BREAK_ENDING_EVENT,
     ON_ANSWER_POSTED_EVENT,
-    ON_PLACARD_POSTED_EVENT,
+    ON_MESSAGE_POSTED_EVENT,
     ON_UPDATED_TALLIES_EVENT,
 }
     from './triviaActions';
@@ -46,7 +46,7 @@ export const initialTrivia = {
     layout: null,
     engine: null,
     driver: null,
-    ticker: null,
+    clock: null,
     question: null,
     queIndex: 0,
     listing: [],
@@ -67,8 +67,8 @@ export const triviaReducer = (game, action) => {
             return ({ ...game, info, organizer, title });
         }
         case FETCH_PROGRESSION: {
-            const { ticker } = action;
-            return ({ ...game, ticker });
+            const { clock } = action;
+            return ({ ...game, clock });
         }
         case FETCH_GAME_LAYOUT: {
             const { layout } = action;
@@ -184,30 +184,15 @@ export const triviaReducer = (game, action) => {
             console.log('score', score);
             return ({...game, progression: {...game.progression, score}});
         }
-        case ON_PLACARD_POSTED_EVENT: {
-            const placard = action.data;
-            console.log('placard', placard);
-            return ({...game, progression: {...game.progression, type: 'placard', placard}});
+        case ON_MESSAGE_POSTED_EVENT: {
+            const message = action.data;
+            console.log('message', message);
+            return ({...game, progression: {...game.progression, type: 'message', message}});
         }
         case ON_AFTER_QUESTION_EVENT: {
             const {post_countdown_delay} = action;
             console.log('post_countdown_delay', post_countdown_delay);
             return ({...game, progression: {...game.progression, post_countdown_delay}});
-        }
-        case ON_BREAK_STARTING_EVENT: {
-            const {pre_break_delay} = action;
-            console.log('pre_break_delay', pre_break_delay);
-            return ({...game, progression: {...game.progression, pre_break_delay}});
-        }
-        case ON_SNACK_BREAK_EVENT: {
-            const {snack_break_duration} = action;
-            console.log('snack_break_duration', snack_break_duration);
-            return ({...game, progression: {...game.progression, snack_break_duration}});
-        }
-        case ON_BREAK_ENDING_EVENT: {
-            const {post_break_delay} = action;
-            console.log('post_break_delay', post_break_delay);
-            return ({...game, progression: {...game.progression, post_break_delay}});
         }
         case ON_UPDATED_TALLIES_EVENT: {
             const tallies = action.data;

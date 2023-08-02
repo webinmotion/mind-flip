@@ -37,20 +37,7 @@ import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import FormGroup from "@mui/material/FormGroup";
 import IconButton from "@mui/material/IconButton";
-
-const GameCategory = {
-    GENERAL: 'general',
-    SCIENCE: 'science',
-    GEOGRAPHY: 'geography',
-    HISTORY: 'history',
-    MUSIC: 'music',
-    MOVIES: 'movies',
-    TELEVISION: 'television',
-    SPORTS: 'sports',
-    FOOD: 'food',
-    TRAVEL: 'travel',
-    POLITICS: 'politics',
-}
+import {GameCategory} from "../../App/Constants";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {

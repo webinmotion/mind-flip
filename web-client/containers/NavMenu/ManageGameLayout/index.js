@@ -1,22 +1,98 @@
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import ManageGameLayout from '../../../components/NavMenu/ManageGameLayout';
-import { remoteFetchGamesByOrganizer, remoteFetchGameTickers, remoteCreateGameLayout } from '../../../services/trivia';
+import { remoteFetchGamesByOrganizer, remoteFetchGameClocks, remoteCreateGameLayout } from '../../../services/trivia';
 
-const initialGameLayout = {
-    scheduled_start: dayjs().add(1, 'day'),
-    progression: 'manual',
-    is_multi_player: false,
-    can_navigate_back: false,
-    server_push_mode: true,
-    game_ticker: 300,
+const initialCriteria = {
+    from_anyone: {value: false, selected: false},
+    game_category: {value: '', selected: false},
+    keyword_search: {value: '', selected: false}
+}
+
+const initialForm = {
+    game_id: '',
+    que_id: '',
+    question: '',
+    game_category: '',
+    que_section: 0,
+    ordinal_idx: 0,
+    score_strategy: '',
 };
+
+const head = [
+    {
+        id: 'question',
+        numeric: false,
+        disablePadding: true,
+        label: 'Question',
+    },
+    {
+        id: 'game_category',
+        numeric: false,
+        disablePadding: false,
+        label: 'Category',
+    },
+    {
+        id: 'que_section',
+        numeric: true,
+        disablePadding: true,
+        label: 'Round #',
+    },
+    {
+        id: 'ordinal_idx',
+        numeric: true,
+        disablePadding: true,
+        label: 'Ordinal',
+    },
+    {
+        id: 'score_strategy',
+        numeric: false,
+        disablePadding: false,
+        label: 'Scoring',
+    },
+];
+
+const initialEditable = {
+    "que_section": {control: "input"},
+    "ordinal_idx": {control: "input"},
+    "score_strategy": {control: "select"},
+}
+
+function createData(que_id, question, game_category, que_section, ordinal_idx, score_strategy, ) {
+    return ({
+        que_id,
+        question,
+        game_category,
+        que_section,
+        ordinal_idx,
+        score_strategy,
+    });
+}
+
+const rows = [
+    createData(1, 'What is the capital of Turkey', 'Geography', 0, 0, '',),
+    createData(2, 'What is the capital of Iran', 'Science', 0, 0, ''),
+    createData(3, 'What is the capital of Kuwait', 'Math', 0, 0, ''),
+    createData(4, 'What is the capital of Greece', 'Geography', 0, 0, ''),
+    createData(5, 'What is the capital of Austria', 'Science', 0, 0, ''),
+    createData(6, 'What is the capital of Syria', 'Movies', 0, 0, ''),
+    createData(7, 'What is the capital of Lebanon', 'Music', 0, 0, ''),
+    createData(8, 'What is the capital of Sudan', 'Politics', 0, 0, ''),
+    createData(9, 'What is the capital of Zambia', 'Movies', 0, 0, ''),
+    createData(10, 'What is the capital of Madagascar', 'Music', 0, 0, ''),
+    createData(11, 'What is the capital of Zanzibar', 'Geography', 0, 0, ''),
+    createData(12, 'What is the capital of Yemen', 'Science', 0, 0, ''),
+    createData(13, 'What is the capital of Qatar', 'History', 0, 0, ''),
+    createData(14, 'What is the capital of Cambodia', 'History', 0, 0, ''),
+    createData(15, 'What is the capital of Nicaragua', 'Science', 0, 0, ''),
+];
 
 function ManageGameLayoutContainer({ player, showAlert }) {
 
     const [games, setGames] = useState([]);
-    const [tickers, setTickers] = useState([]);
-    const [form, setForm] = useState(initialGameLayout);
+    const [form, setForm] = useState(initialForm);
+    const [criteria, setCriteria] = useState(initialCriteria);
+    const [editable, setEditable] = useState(initialEditable);
 
     useEffect(() => {
         if (player) {
@@ -24,24 +100,19 @@ function ManageGameLayoutContainer({ player, showAlert }) {
         }
     }, [player]);
 
-
-    useEffect(() => {
-        remoteFetchGameTickers().then(setTickers)
-    }, []);
-
     const handleSelected = e => {
         const selected = e.target.value;
-        const { game_info: { game_id }, engine_info: { progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker } } = 
+        const { game_info: { game_id }, engine_info: { progression, is_multi_player, can_navigate_back, server_push_mode, game_clock } } = 
             games.find(g => g.game_info.game_id === selected);
-        setForm(form => ({ ...form, game_id, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker }));
+        setForm(form => ({ ...form, game_id, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock }));
     }
 
-    const handleChange = e => {
-        setForm(form => ({ ...form, [e.target.name]: e.target.value }));
+    const handleChangeCriteria = e => {
+        setCriteria(criteria => ({ ...criteria, [e.target.name]: {...criteria[e.target.name], value: e.target.value }}));
     }
 
-    const handleChecked = e => {
-        setForm(form => ({ ...form, [e.target.name]: e.target.checked }));
+    const handleCheckCriteria = e => {
+        setCriteria(criteria => ({ ...criteria, [e.target.name]: {...criteria[e.target.name], selected: e.target.checked }}));
     }
 
     const handleDateTime = e => {
@@ -49,38 +120,24 @@ function ManageGameLayoutContainer({ player, showAlert }) {
         setForm(form => ({ ...form, 'scheduled_start': dayjs($d) }));
     }
 
-    const handleApplyEngine = async () => {
-        if (form.game_id) {
-            const data = await remoteCreateGameEngine(form.game_id, { ...form, scheduled_start: form?.scheduled_start.toISOString() });
-            setGames(games => {
-                return games.map(g => {
-                    if (g.game_info.game_id === data?.game_fk) {
-                        const { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker, } = data;
-                        return ({ ...g, engine_info: { ...g.engine_info, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker, } })
-                    }
-                    return g;
-                })
-            });
-        }
-        else {
-            showAlert({
-                message: "There is no game to apply the engine",
-                autoClose: true,
-                severity: 'warning',
-            })
-        }
+    const handleLayout = () => {
+        console.log('happy to handle layout changes');
     }
 
     return (
         <ManageGameLayout
             games={games}
-            tickers={tickers}
             form={form}
+            questions={rows}
+            head={head}
+            criteria={criteria}
+            editable={editable}
+            setEditable={setEditable}
             handleSelected={handleSelected}
-            handleChange={handleChange}
-            handleChecked={handleChecked}
+            handleChangeCriteria={handleChangeCriteria}
+            handleCheckCriteria={handleCheckCriteria}
             handleDateTime={handleDateTime}
-            applyEngine={handleApplyEngine}
+            applyLayout={handleLayout}
         />
     )
 }

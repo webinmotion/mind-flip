@@ -42,7 +42,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-export default function ManageGameTicker({ tickers, form, updateTickers, handleChange, handleSelect, handleDelete }) {
+export default function ManageGameClock({ clocks, form, updateClocks, handleChange, handleSelect, handleDelete }) {
 
     return (
         <Box
@@ -55,35 +55,35 @@ export default function ManageGameTicker({ tickers, form, updateTickers, handleC
         >
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <FormControl fullWidth sx={{ m: 1 }}>
-                    <InputLabel htmlFor="ticker_id">ID</InputLabel>
+                    <InputLabel htmlFor="clock_id">ID</InputLabel>
                     <OutlinedInput
-                        id="ticker_id"
-                        aria-describedby="ticker-id-error-text"
+                        id="clock_id"
+                        aria-describedby="clock-id-error-text"
                         startAdornment={<InputAdornment position="start"><FingerprintIcon /></InputAdornment>}
                         label="ID"
-                        value={form.ticker_id}
+                        value={form.clock_id}
                         onChange={handleChange}
                         type='number'
                         required
                     />
-                    <FormHelperText id="ticker-id-error-text">
-                        ticker id is a required field
+                    <FormHelperText id="clock-id-error-text">
+                        clock id is a required field
                     </FormHelperText>
                 </FormControl>
 
                 <FormControl fullWidth sx={{ m: 1 }}>
-                    <InputLabel htmlFor="ticker_title">Title</InputLabel>
+                    <InputLabel htmlFor="clock_title">Title</InputLabel>
                     <OutlinedInput
-                        id="ticker_title"
-                        aria-describedby="ticker-title-error-text"
+                        id="clock_title"
+                        aria-describedby="clock-title-error-text"
                         startAdornment={<InputAdornment position="start"><TocIcon /></InputAdornment>}
                         label="Title"
-                        value={form.ticker_title}
+                        value={form.clock_title}
                         onChange={handleChange}
                         required
                     />
-                    <FormHelperText id="ticker-title-error-text">
-                        ticker title is a required field
+                    <FormHelperText id="clock-title-error-text">
+                        clock title is a required field
                     </FormHelperText>
                 </FormControl>
 
@@ -123,14 +123,14 @@ export default function ManageGameTicker({ tickers, form, updateTickers, handleC
                     />
                 </FormControl>
 
-                <Button variant="contained" sx={{ mt: 2 }} fullWidth endIcon={<UpdateIcon />} onClick={updateTickers}>Update</Button>
+                <Button variant="contained" sx={{ mt: 2 }} fullWidth endIcon={<UpdateIcon />} onClick={updateClocks}>Update</Button>
             </Box>
 
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 700, mt: 4 }} aria-label="table of existing tickers">
+                <Table sx={{ minWidth: 700, mt: 4 }} aria-label="table of existing clocks">
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell>Game Ticker/Clock</StyledTableCell>
+                            <StyledTableCell>Game Clock/Clock</StyledTableCell>
                             <StyledTableCell align="right">Title</StyledTableCell>
                             <StyledTableCell align="right">Pre Coutdown delay&nbsp;(ms)</StyledTableCell>
                             <StyledTableCell align="right">Countdown duration&nbsp;(ms)</StyledTableCell>
@@ -138,12 +138,12 @@ export default function ManageGameTicker({ tickers, form, updateTickers, handleC
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {tickers.map(({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay }) => (
-                            <StyledTableRow key={ticker_id} sx={{ cursor: 'pointer' }} onClick={(event) => handleSelect(event, ticker_id)}>
+                        {clocks.map(({ clock_id, clock_title, pre_countdown_delay, countdown_duration, post_countdown_delay }) => (
+                            <StyledTableRow key={clock_id} sx={{ cursor: 'pointer' }} onClick={(event) => handleSelect(event, clock_id)}>
                                 <StyledTableCell component="th" scope="row">
-                                    <Tooltip title="Delete" arrow><Button onClick={() => handleDelete(ticker_id)}>{ticker_id}</Button></Tooltip>
+                                    <Tooltip title="Delete" arrow><Button onClick={() => handleDelete(clock_id)}>{clock_id}</Button></Tooltip>
                                 </StyledTableCell>
-                                <StyledTableCell align="left">{ticker_title}</StyledTableCell>
+                                <StyledTableCell align="left">{clock_title}</StyledTableCell>
                                 <StyledTableCell align="right">{pre_countdown_delay}</StyledTableCell>
                                 <StyledTableCell align="right">{countdown_duration}</StyledTableCell>
                                 <StyledTableCell align="right">{post_countdown_delay}</StyledTableCell>

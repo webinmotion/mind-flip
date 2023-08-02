@@ -12,7 +12,7 @@ const fetchGamesListing = async () => {
         const {
             game_id, title, description, game_status,
             player_id, organizer, email_address, screen_name, player_type, city, state, country,
-            scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker,
+            scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock,
         } = record;
 
         return ({
@@ -33,7 +33,7 @@ const fetchGamesListing = async () => {
                 is_multi_player,
                 can_navigate_back,
                 server_push_mode,
-                game_ticker,
+                game_clock,
             }
         });
     });
@@ -51,7 +51,7 @@ const fetchGamesByOrganizer = async (player_id) => {
         const {
             game_id, title, description, game_status,
             player_id, organizer, email_address, screen_name, player_type, city, state, country,
-            scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker,
+            scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock,
         } = record;
 
         return ({
@@ -72,14 +72,14 @@ const fetchGamesByOrganizer = async (player_id) => {
                 is_multi_player,
                 can_navigate_back,
                 server_push_mode,
-                game_ticker,
+                game_clock,
             }
         });
     });
 }
 
-const fetchGameTickers = async () => {
-    return await execute("select * from tbl_ticker", []);
+const fetchGameClocks = async () => {
+    return await execute("select * from tbl_game_clock", []);
 }
 
 const fetchGameInfo = async (title, organizer) => {
@@ -106,22 +106,20 @@ const fetchGameInfoById = async (game) => {
     });
 }
 
-const fetchProgression = async (ticker_id) => {
-    let result = await execute("select * from tbl_ticker where ticker_id = $1", [ticker_id]);
+const fetchProgression = async (clock_id) => {
+    let result = await execute("select * from tbl_game_clock where clock_id = $1", [clock_id]);
     const {
-        ticker_title,
+        clock_title,
         pre_countdown_delay,
         post_countdown_delay,
-        snack_break_duration,
         countdown_duration,
         countdown_interval,
     } = result[0];
     return {
-        ticker_id,
-        ticker_title,
+        clock_id,
+        clock_title,
         pre_countdown_delay,
         post_countdown_delay,
-        snack_break_duration,
         countdown_duration,
         countdown_interval,
     };
@@ -143,24 +141,24 @@ const fetchQuestionChoices = async (que_id) => {
     return await execute("select * from tbl_choice tc where question_fk = $1::uuid", [que_id]);
 }
 
-const fetchGamePlacards = async (parent_id) => {
+const fetchGameMessages = async (parent_id) => {
     return await execute(`
     with recursive game_extras as (
         select parent.*, 1 as "order"
-        from tbl_game_placard parent
-        where parent.placard_id = $1::uuid
+        from tbl_game_message parent
+        where parent.message_id = $1::uuid
 
         union all
 
         select child.*, (p."order" + 1)
-        from tbl_game_placard child, game_extras p
-        where child.placard_id = p.followed_by
+        from tbl_game_message child, game_extras p
+        where child.message_id = p.followed_by
     ) select * from game_extras;`, [parent_id])
 }
 
 const fetchGameEngine = async (game_fk) => {
     let results = await execute(`select * from tbl_game_engine te 
-    inner join tbl_ticker tt on tt.ticker_id = te.game_ticker 
+    inner join tbl_game_clock tt on tt.clock_id = te.game_clock 
     where te.game_fk = $1::uuid`, [game_fk]);
     const {
         scheduled_start,
@@ -170,7 +168,7 @@ const fetchGameEngine = async (game_fk) => {
         can_navigate_back,
         is_multi_player,
         server_push_mode,
-        ticker_title,
+        clock_title,
         pre_countdown_delay,
         countdown_duration,
         countdown_interval,
@@ -185,7 +183,7 @@ const fetchGameEngine = async (game_fk) => {
         can_navigate_back,
         is_multi_player,
         server_push_mode,
-        ticker_title,
+        clock_title,
         pre_countdown_delay,
         countdown_duration,
         countdown_interval,
@@ -229,13 +227,13 @@ const deleteGameHandle = async (game_id) => {
     return { rows: result };
 }
 
-const createGameEngine = async (game_id, { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker }) => {
+const createGameEngine = async (game_id, { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock }) => {
     let result = await execute(`
-    insert into tbl_game_engine (game_fk, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker) values 
-    ($1::uuid, $2, $3, $4, $5, $6, $7) on conflict (game_fk) do update set scheduled_start = $2, progression = $3, is_multi_player = $4, can_navigate_back = $5, server_push_mode =$6, game_ticker = $7 returning *`,
-        [game_id, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker]);
+    insert into tbl_game_engine (game_fk, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock) values 
+    ($1::uuid, $2, $3, $4, $5, $6, $7) on conflict (game_fk) do update set scheduled_start = $2, progression = $3, is_multi_player = $4, can_navigate_back = $5, server_push_mode =$6, game_clock = $7 returning *`,
+        [game_id, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock]);
     const { game_fk, current_section, section_index } = result[0];
-    return { game_fk, scheduled_start, current_section, section_index, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker };
+    return { game_fk, scheduled_start, current_section, section_index, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock };
 }
 
 const updateGameEngine = async (game_id, { current_section, section_index }) => {
@@ -328,33 +326,33 @@ const searchQuestions = async (criteria) => {
     return await execute(query.join(" "), [category, author_screen_name, author_username, created_before, created_after, has_choices, min_points, start_from, fetch_size,]);
 }
 
-const upsertGameTicker = async ({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, }) => {
-    let result = await execute(`insert into tbl_ticker (ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay) 
-    values ($1, $2, $3, $4, $5) on conflict (ticker_id) do update set ticker_title = $2, pre_countdown_delay = $3, countdown_duration = $4, post_countdown_delay = $5 
+const upsertGameClock = async ({ clock_id, clock_title, pre_countdown_delay, countdown_duration, post_countdown_delay, }) => {
+    let result = await execute(`insert into tbl_game_clock (clock_id, clock_title, pre_countdown_delay, countdown_duration, post_countdown_delay) 
+    values ($1, $2, $3, $4, $5) on conflict (clock_id) do update set clock_title = $2, pre_countdown_delay = $3, countdown_duration = $4, post_countdown_delay = $5 
     returning *`,
-        [ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay]);
+        [clock_id, clock_title, pre_countdown_delay, countdown_duration, post_countdown_delay]);
     return result[0];
 }
 
-const deleteGameTicker = async (ticker_id) => {
-    let result = await execute(`delete from tbl_ticker where ticker_id = $1 returning ticker_id`, [ticker_id,]);
+const deleteGameClock = async (clock_id) => {
+    let result = await execute(`delete from tbl_game_clock where clock_id = $1 returning clock_id`, [clock_id,]);
     return result[0];
 }
 
-const fetchAllGamePlacards = async () => {
-    return await execute(`select * from tbl_game_placard`, []);
+const fetchAllGameMessages = async () => {
+    return await execute(`select * from tbl_game_message`, []);
 }
 
-const upsertGamePlacard = async ({ placard_content, display_duration, followed_by, content_type, }) => {
-    let result = await execute(`insert into tbl_game_placard (placard_content, display_duration, followed_by, content_type) 
-    values ($1, $2, $3::uuid, $4) on conflict (placard_content) do update set display_duration = $2, followed_by = $3::uuid, content_type = $4 
+const upsertGameMessage = async ({ message_content, display_duration, followed_by, content_type, }) => {
+    let result = await execute(`insert into tbl_game_message (message_content, display_duration, followed_by, content_type) 
+    values ($1, $2, $3::uuid, $4) on conflict (message_content) do update set display_duration = $2, followed_by = $3::uuid, content_type = $4 
     returning *`,
-        [placard_content, display_duration, followed_by, content_type,]);
+        [message_content, display_duration, followed_by, content_type,]);
     return result[0];
 }
 
-const deleteGamePlacard = async (placard_id) => {
-    let result = await execute(`delete from tbl_game_placard where placard_id = $1::uuid returning placard_id`, [placard_id,]);
+const deleteGameMessage = async (message_id) => {
+    let result = await execute(`delete from tbl_game_message where message_id = $1::uuid returning message_id`, [message_id,]);
     return result[0];
 }
 
@@ -410,7 +408,7 @@ const deleteGameChoice = async(choice_id) => {
 module.exports = {
     fetchGamesListing,
     fetchGamesByOrganizer,
-    fetchGameTickers,
+    fetchGameClocks,
     fetchGameInfo,
     fetchGameInfoById,
     fetchProgression,
@@ -421,7 +419,7 @@ module.exports = {
     fetchGameEngine,
     fetchPlayerById,
     fetchPlayerByEmail,
-    fetchGamePlacards,
+    fetchGameMessages,
     createGameHandle,
     updateGameStatus,
     deleteGameHandle,
@@ -435,11 +433,11 @@ module.exports = {
     saveResponseToQuestion,
     updateHighestScore,
     searchQuestions,
-    upsertGameTicker,
-    deleteGameTicker,
-    fetchAllGamePlacards,
-    upsertGamePlacard,
-    deleteGamePlacard,
+    upsertGameClock,
+    deleteGameClock,
+    fetchAllGameMessages,
+    upsertGameMessage,
+    deleteGameMessage,
     fetchQuestionsByAuthor,
     upsertGameQuestion,
     deleteGameQuestion,

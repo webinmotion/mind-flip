@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import ManageGameEngine from '../../../components/NavMenu/ManageGameEngine';
-import { remoteFetchGamesByOrganizer, remoteFetchGameTickers, remoteCreateGameEngine } from '../../../services/trivia';
+import { remoteFetchGamesByOrganizer, remoteFetchGameClocks, remoteCreateGameEngine } from '../../../services/trivia';
 
 const initialGameEngine = {
     scheduled_start: dayjs().add(1, 'day'),
@@ -9,13 +9,13 @@ const initialGameEngine = {
     is_multi_player: false,
     can_navigate_back: false,
     server_push_mode: true,
-    game_ticker: 300,
+    game_clock: 300,
 };
 
 function ManageGameEngineContainer({ player, showAlert }) {
 
     const [games, setGames] = useState([]);
-    const [tickers, setTickers] = useState([]);
+    const [clocks, setClocks] = useState([]);
     const [form, setForm] = useState(initialGameEngine);
 
     useEffect(() => {
@@ -26,14 +26,14 @@ function ManageGameEngineContainer({ player, showAlert }) {
 
 
     useEffect(() => {
-        remoteFetchGameTickers().then(setTickers)
+        remoteFetchGameClocks().then(setClocks)
     }, []);
 
     const handleSelected = e => {
         const selected = e.target.value;
-        const { game_info: { game_id }, engine_info: { progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker } } = 
+        const { game_info: { game_id }, engine_info: { progression, is_multi_player, can_navigate_back, server_push_mode, game_clock } } = 
             games.find(g => g.game_info.game_id === selected);
-        setForm(form => ({ ...form, game_id, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker }));
+        setForm(form => ({ ...form, game_id, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock }));
     }
 
     const handleChange = e => {
@@ -55,8 +55,8 @@ function ManageGameEngineContainer({ player, showAlert }) {
             setGames(games => {
                 return games.map(g => {
                     if (g.game_info.game_id === data?.game_fk) {
-                        const { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker, } = data;
-                        return ({ ...g, engine_info: { ...g.engine_info, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker, } })
+                        const { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock, } = data;
+                        return ({ ...g, engine_info: { ...g.engine_info, scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock, } })
                     }
                     return g;
                 })
@@ -74,7 +74,7 @@ function ManageGameEngineContainer({ player, showAlert }) {
     return (
         <ManageGameEngine
             games={games}
-            tickers={tickers}
+            clocks={clocks}
             form={form}
             handleSelected={handleSelected}
             handleChange={handleChange}

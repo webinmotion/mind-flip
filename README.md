@@ -29,7 +29,15 @@ to create a random sequence of characters, like secrets, you can use the _crypto
 
 ```js
 node
-require('crypto').randomBytes(64).toString('hex');
+require('crypto').randomBytes(64).toString('hex')
+.exit
+```
+
+to create a password for testing purposes
+```js
+node
+const bcrypt = require("bcryptjs")
+bcrypt.hash("PASSWORD_TO_ENCRYPT", 10).then(async (hash) => console.log(hash))
 .exit
 ```
 

@@ -1,7 +1,7 @@
 const {
     fetchGamesListing,
     fetchGamesByOrganizer,
-    fetchGameTickers,
+    fetchGameClocks,
     fetchGameInfo,
     fetchGameInfoById,
     fetchProgression,
@@ -24,11 +24,11 @@ const {
     saveResponseToQuestion,
     updateHighestScore,
     searchQuestions,
-    upsertGameTicker,
-    deleteGameTicker,
-    fetchAllGamePlacards,
-    upsertGamePlacard,
-    deleteGamePlacard,
+    upsertGameClock,
+    deleteGameClock,
+    fetchAllGameMessages,
+    upsertGameMessage,
+    deleteGameMessage,
     fetchQuestionsByAuthor,
     upsertGameQuestion,
     deleteGameQuestion,
@@ -59,10 +59,10 @@ const handleFetchGamesByOrganizer = async function (req, res, next) {
     }
 }
 
-const handleFetchGameTickers = async function (req, res, next) {
+const handleFetchGameClocks = async function (req, res, next) {
     try {
-        const tickers = await fetchGameTickers();
-        res.json(tickers);
+        const clocks = await fetchGameClocks();
+        res.json(clocks);
     } catch (e) {
         next(e);
     }
@@ -91,8 +91,8 @@ const handleFetchGameInfoById = async function (req, res, next) {
 
 const handleFetchProgression = async function (req, res, next) {
     try {
-        const ticker_id = req.params.ticker;
-        const result = await fetchProgression(ticker_id);
+        const clock_id = req.params.clock;
+        const result = await fetchProgression(clock_id);
         res.json(result);
     } catch (e) {
         next(e);
@@ -206,8 +206,8 @@ const handleDeleteGameHandle = async function (req, res, next) {
 const handleCreateGameEngine = async function (req, res, next) {
     try {
         const game_id = req.params.game;
-        const { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker } = req.body;
-        const result = await createGameEngine(game_id, { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker });
+        const { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock } = req.body;
+        const result = await createGameEngine(game_id, { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock });
         res.json(result);
     } catch (e) {
         next(e);
@@ -358,11 +358,11 @@ const handleSearchQuestions = async function (req, res, next) {
     }
 }
 
-const handleUpsertGameTicker = async function (req, res, next) {
+const handleUpsertGameClock = async function (req, res, next) {
     try {
-        const { ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, } = req.body;
-        const result = await upsertGameTicker({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, });
-        console.log('result from creating a ticker', result);
+        const { clock_id, clock_title, pre_countdown_delay, countdown_duration, post_countdown_delay, } = req.body;
+        const result = await upsertGameClock({ clock_id, clock_title, pre_countdown_delay, countdown_duration, post_countdown_delay, });
+        console.log('result from creating a clock', result);
         res.json(result);
     }
     catch (e) {
@@ -370,11 +370,11 @@ const handleUpsertGameTicker = async function (req, res, next) {
     }
 }
 
-const handleDeleteGameTicker = async function (req, res, next) {
+const handleDeleteGameClock = async function (req, res, next) {
     try {
-        const { ticker_id, } = req.params;
-        const result = await deleteGameTicker(ticker_id);
-        console.log('result from deleting a ticker', result);
+        const { clock_id, } = req.params;
+        const result = await deleteGameClock(clock_id);
+        console.log('result from deleting a clock', result);
         res.json(result);
     }
     catch (e) {
@@ -382,10 +382,10 @@ const handleDeleteGameTicker = async function (req, res, next) {
     }
 }
 
-const handleFetchAllGamePlacards = async function (req, res, next) {
+const handleFetchAllGameMessages = async function (req, res, next) {
     try {
-        const result = await fetchAllGamePlacards();
-        console.log('result from fetching all placards', result);
+        const result = await fetchAllGameMessages();
+        console.log('result from fetching all messages', result);
         res.json(result);
     }
     catch (e) {
@@ -393,11 +393,11 @@ const handleFetchAllGamePlacards = async function (req, res, next) {
     }
 }
 
-const handleUpsertGamePlacard = async function (req, res, next) {
+const handleUpsertGameMessage = async function (req, res, next) {
     try {
-        const { placard_content, display_duration, followed_by, content_type, } = req.body;
-        const result = await upsertGamePlacard({ placard_content, display_duration, followed_by, content_type, });
-        console.log('result from updating placard', result);
+        const { message_content, display_duration, followed_by, content_type, } = req.body;
+        const result = await upsertGameMessage({ message_content, display_duration, followed_by, content_type, });
+        console.log('result from updating message', result);
         res.json(result);
     }
     catch (e) {
@@ -405,11 +405,11 @@ const handleUpsertGamePlacard = async function (req, res, next) {
     }
 }
 
-const handleDeleteGamePlacard = async function (req, res, next) {
+const handleDeleteGameMessage = async function (req, res, next) {
     try {
-        const { placard_id, } = req.params;
-        const result = await deleteGamePlacard(placard_id);
-        console.log('result from deleting a placard', result);
+        const { message_id, } = req.params;
+        const result = await deleteGameMessage(message_id);
+        console.log('result from deleting a message', result);
         res.json(result);
     }
     catch (e) {
@@ -478,7 +478,7 @@ const handleDeleteGameChoice = async function(req, res, next) {
 module.exports = {
     fetchGamesListing: handleFetchGamesListing,
     fetchGamesByOrganizer: handleFetchGamesByOrganizer,
-    fetchGameTickers: handleFetchGameTickers,
+    fetchGameClocks: handleFetchGameClocks,
     fetchGameInfo: handleFetchGameInfo,
     fetchGameInfoById: handleFetchGameInfoById,
     fetchProgression: handleFetchProgression,
@@ -502,11 +502,11 @@ module.exports = {
     updateHighestScore: handleUpdateHighestScore,
     updateParticipantAnswer: handleUpdateParticipantAnswer,
     searchQuestions: handleSearchQuestions,
-    upsertGameTicker: handleUpsertGameTicker,
-    deleteGameTicker: handleDeleteGameTicker,
-    fetchAllGamePlacards: handleFetchAllGamePlacards,
-    upsertGamePlacard: handleUpsertGamePlacard,
-    deleteGamePlacard: handleDeleteGamePlacard,
+    upsertGameClock: handleUpsertGameClock,
+    deleteGameClock: handleDeleteGameClock,
+    fetchAllGameMessages: handleFetchAllGameMessages,
+    upsertGameMessage: handleUpsertGameMessage,
+    deleteGameMessage: handleDeleteGameMessage,
     fetchQuestionsByAuthor: handleFetchQuestionsByAuthor,
     upsertGameQuestion: handleUpsertGameQuestion,
     upsertQuestionChoices: handleUpsertQuestionChoices,

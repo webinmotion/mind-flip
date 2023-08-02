@@ -10,8 +10,8 @@ import GameMultiPlay from '../../containers/Trivia/GameMultiPlay';
 import ProgressBar from '../Layout/ProgressBar';
 import ManageGameEngine from "../../containers/NavMenu/ManageGameEngine";
 import ManageGameLayout from "../../containers/NavMenu/ManageGameLayout";
-import ManageGameTicker from "../../containers/NavMenu/ManageGameTicker";
-import ManageGamePlacard from "../../containers/NavMenu/ManageGamePlacard";
+import ManageGameClock from "../../containers/NavMenu/ManageGameClock";
+import ManageGameMessage from "../../containers/NavMenu/ManageGameMessage";
 import ManageGameQuestion from "../../containers/NavMenu/ManageGameQuestion";
 
 export default function App({ ...rest }) {
@@ -44,8 +44,8 @@ export default function App({ ...rest }) {
                 <Route path={"/profile"} element={<PlayerProfile player={trivia.player} accessToken={auth?.accessToken} />} />
                 <Route path={"/engine"} element={<ManageGameEngine player={visitor.authentication?.authUser?.player_id} showAlert={showAlert} />} />
                 <Route path={"/layout"} element={<ManageGameLayout player={visitor.authentication?.authUser?.player_id} showAlert={showAlert} />} />
-                <Route path={"/ticker"} element={<ManageGameTicker showAlert={showAlert} />} />
-                <Route path={"/placard"} element={<ManageGamePlacard />} />
+                <Route path={"/clock"} element={<ManageGameClock showAlert={showAlert} />} />
+                <Route path={"/message"} element={<ManageGameMessage />} />
                 <Route path={"/question"} element={<ManageGameQuestion player={visitor.authentication?.authUser?.player_id} />} showAlert={showAlert} />
                 <Route path={"/*"} element={<Trivia {...rest} />} />
             </Routes>

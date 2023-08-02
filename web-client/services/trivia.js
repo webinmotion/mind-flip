@@ -10,8 +10,8 @@ export const remoteFetchGamesByOrganizer = async (organizer) => {
         .then(resp => resp.data);
 }
 
-export const remoteFetchGameTickers = async () => {
-    return await axios.get(`${serverUrl()}/trivia/ticker`)
+export const remoteFetchGameClocks = async () => {
+    return await axios.get(`${serverUrl()}/trivia/clock`)
         .then(resp => resp.data);
 }
 
@@ -25,8 +25,8 @@ export const remoteFetchGameInfoById = async (game_id) => {
         .then(resp => resp.data);
 }
 
-export const remoteFetchProgression = async (ticker) => {
-    return await axios.get(`${serverUrl()}/trivia/ticker/${ticker}`)
+export const remoteFetchProgression = async (clock) => {
+    return await axios.get(`${serverUrl()}/trivia/clock/${clock}`)
         .then(resp => resp.data);
 }
 
@@ -84,9 +84,9 @@ export const remoteDeleteGameHandle = async (game_id) => {
 }
 
 export const remoteCreateGameEngine = async (game, {
-    scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker }) => {
+    scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock }) => {
     return await axios.post(`${serverUrl()}/trivia/engine/${game}`,
-        { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_ticker },
+        { scheduled_start, progression, is_multi_player, can_navigate_back, server_push_mode, game_clock },
         {
             headers: {
                 'Content-Type': 'application/json'
@@ -160,10 +160,10 @@ export const remoteSearchQuestionsByCriteria = async (start_from = 1, fetch_size
     }).then(resp => resp.data);
 }
 
-export const remoteUpsertGameTicker = async ({ ticker_id, ticker_title, pre_countdown_delay, countdown_duration,
+export const remoteUpsertGameClock = async ({ clock_id, clock_title, pre_countdown_delay, countdown_duration,
     post_countdown_delay }) => {
-    return await axios.post(`${serverUrl()}/trivia/ticker`,
-        { ticker_id, ticker_title, pre_countdown_delay, countdown_duration, post_countdown_delay, },
+    return await axios.post(`${serverUrl()}/trivia/clock`,
+        { clock_id, clock_title, pre_countdown_delay, countdown_duration, post_countdown_delay, },
         {
             headers: {
                 "Content-Type": "application/json"
@@ -172,18 +172,18 @@ export const remoteUpsertGameTicker = async ({ ticker_id, ticker_title, pre_coun
         .then(resp => resp.data);
 }
 
-export const remoteDeleteGameTicker = async (ticker_id) => {
-    return await axios.delete(`${serverUrl()}/trivia/ticker/${ticker_id}`)
+export const remoteDeleteGameClock = async (clock_id) => {
+    return await axios.delete(`${serverUrl()}/trivia/clock/${clock_id}`)
         .then(resp => resp.data);
 }
 
-export const remoteFetchAllGamePlacards = async () => {
-    return await axios.get(`${serverUrl()}/trivia/placard`)
+export const remoteFetchAllGameMessages = async () => {
+    return await axios.get(`${serverUrl()}/trivia/message`)
         .then(resp => resp.data);
 }
 
-export const remoteUpsertGamePlacard = async ({ placard_content, display_duration, followed_by, content_type }) => {
-    return await axios.post(`${serverUrl()}/trivia/placard`, { placard_content, display_duration, followed_by, content_type, },
+export const remoteUpsertGameMessage = async ({ message_content, display_duration, followed_by, content_type }) => {
+    return await axios.post(`${serverUrl()}/trivia/message`, { message_content, display_duration, followed_by, content_type, },
         {
             headers: {
                 "Content-Type": "application/json"
@@ -192,8 +192,8 @@ export const remoteUpsertGamePlacard = async ({ placard_content, display_duratio
         .then(resp => resp.data);
 }
 
-export const remoteDeleteGamePlacard = async (placard_id) => {
-    return await axios.delete(`${serverUrl()}/trivia/placard/${placard_id}`).then(resp => resp.data);
+export const remoteDeleteGameMessage = async (message_id) => {
+    return await axios.delete(`${serverUrl()}/trivia/message/${message_id}`).then(resp => resp.data);
 }
 
 export const remoteFetchQuestionsByAuthor = async (author_id) => {

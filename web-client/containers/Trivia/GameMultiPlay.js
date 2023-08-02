@@ -3,7 +3,7 @@ import GameMultiPlay from "../../components/Trivia/GameMultiPlay";
 import {serverUrl} from "../../services/request";
 import {useNavigate, useParams} from "react-router-dom";
 import {remoteSendResponseToQuestion} from "../../services/playtime";
-import GamePlacard from "../../components/Trivia/GamePlacard";
+import GameMessage from "../../components/Trivia/GameMessage";
 
 export default function GameMultiPlayContainer(props) {
 
@@ -32,11 +32,11 @@ export default function GameMultiPlayContainer(props) {
     }, [props.trivia?.progression?.question?.number]);
 
     useEffect(() => {
-        if (props.progress?.hasOwnProperty("placard") && props.trivia?.progression?.placard?.number > 0) {
+        if (props.progress?.hasOwnProperty("message") && props.trivia?.progression?.message?.number > 0) {
             const {pre_delay, duration, interval, post_delay, number, points} = props.progress;
             setCounterOnTimeout({pre_delay, duration, interval, post_delay, number, points});
         }
-    }, [props.trivia?.progression?.placard?.number]);
+    }, [props.trivia?.progression?.message?.number]);
 
     const setCounterOnTimeout = ({pre_delay, duration, interval, post_delay, number, points}) => {
         //fire up progress indicator
@@ -97,5 +97,5 @@ export default function GameMultiPlayContainer(props) {
             submitChoice={submitChoice}
             {...props} />
         :
-        <GamePlacard progression={props.trivia.progression}/>
+        <GameMessage progression={props.trivia.progression}/>
 }

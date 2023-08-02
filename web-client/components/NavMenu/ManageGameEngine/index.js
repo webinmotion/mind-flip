@@ -15,7 +15,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
-export default function ManageGameEngine({ games, tickers, form, handleSelected, handleChange, handleChecked, handleDateTime, applyEngine, }) {
+export default function ManageGameEngine({ games, clocks, form, handleSelected, handleChange, handleChecked, handleDateTime, applyEngine, }) {
 
     return (
         <Box
@@ -109,15 +109,15 @@ export default function ManageGameEngine({ games, tickers, form, handleSelected,
                 </Box>
 
                 <FormControl fullWidth>
-                    <InputLabel id="select-game-ticker-label">Game Ticker</InputLabel>
+                    <InputLabel id="select-game-clock-label">Game Clock</InputLabel>
                     <Select
-                        labelId="select-game-ticker-label"
-                        name="game_ticker"
-                        value={form.game_ticker}
-                        label="Game Ticker"
+                        labelId="select-game-clock-label"
+                        name="game_clock"
+                        value={form.game_clock}
+                        label="Game Clock"
                         onChange={handleChange}
                     >
-                        {tickers.map((game) => <MenuItem key={game.ticker_id} value={game.ticker_id}>{game.ticker_title}</MenuItem>)}
+                        {clocks.map((game) => <MenuItem key={game.clock_id} value={game.clock_id}>{game.clock_title}</MenuItem>)}
                     </Select>
                     <FormHelperText></FormHelperText>
                 </FormControl>

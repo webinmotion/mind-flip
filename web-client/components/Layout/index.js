@@ -85,13 +85,13 @@ function Layout({ children }) {
         handleClose();
     };
 
-    const handleGameTicker = () => {
-        setCurrentRoute('ticker');
+    const handleGameClock = () => {
+        setCurrentRoute('clock');
         handleClose();
     }
 
-    const handleGamePlacard = () => {
-        setCurrentRoute('placard');
+    const handleGameMessage = () => {
+        setCurrentRoute('message');
         handleClose();
     }
 
@@ -166,9 +166,9 @@ function Layout({ children }) {
                                     <Divider />
                                     <MenuItem onClick={handleGameEngine}>Game Engine</MenuItem>
                                     <MenuItem onClick={handleGameLayout}>Game Layout</MenuItem>
-                                    <MenuItem onClick={handleGameTicker}>Game Ticker</MenuItem>
+                                    <MenuItem onClick={handleGameClock}>Game Clock</MenuItem>
                                     <Divider />
-                                    <MenuItem onClick={handleGamePlacard}>Game Placard</MenuItem>
+                                    <MenuItem onClick={handleGameMessage}>Game Message</MenuItem>
                                     <MenuItem onClick={handleGameQuestion}>Game Question</MenuItem>
                                     <Divider />
                                     <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>

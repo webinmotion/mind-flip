@@ -55,7 +55,7 @@ export const ON_GAME_ENDING_EVENT = "ON_GAME_ENDING_EVENT";
 export const ON_BEFORE_QUESTION_EVENT = "ON_BEFORE_QUESTION_EVENT";
 export const ON_QUESTION_POSTED_EVENT = "ON_QUESTION_POSTED_EVENT";
 export const ON_ANSWER_POSTED_EVENT = "ON_ANSWER_POSTED_EVENT";
-export const ON_PLACARD_POSTED_EVENT = "ON_PLACARD_POSTED_EVENT";
+export const ON_MESSAGE_POSTED_EVENT = "ON_MESSAGE_POSTED_EVENT";
 export const ON_AFTER_QUESTION_EVENT = "ON_AFTER_QUESTION_EVENT";
 export const ON_BREAK_STARTING_EVENT = "ON_BREAK_STARTING_EVENT";
 export const ON_SNACK_BREAK_EVENT = "ON_SNACK_BREAK_EVENT";
@@ -78,9 +78,9 @@ export const fetchGameInfoAction = dispatch => (title, organizer) => {
     });
 }
 
-export const fetchProgressionAction = dispatch => (time_ticker) => {
-    remoteFetchProgression(time_ticker).then(ticker =>
-        dispatch({type: FETCH_PROGRESSION, ticker}));
+export const fetchProgressionAction = dispatch => (time_clock) => {
+    remoteFetchProgression(time_clock).then(clock =>
+        dispatch({type: FETCH_PROGRESSION, clock}));
 }
 
 export const fetchGameLayoutAction = dispatch => (game) => {
@@ -97,7 +97,7 @@ export const fetchGameEngineAction = dispatch => game => {
     remoteFetchGameEngine(game).then(engine => {
         dispatch({type: FETCH_GAME_ENGINE, engine});
         //fetch progression type
-        fetchProgressionAction(dispatch)(engine.time_ticker);
+        fetchProgressionAction(dispatch)(engine.time_clock);
     });
 }
 
@@ -259,9 +259,9 @@ export const onProgressionEventsAction = dispatch => (evtSource) => {
         dispatch({type: ON_AFTER_QUESTION_EVENT, data: JSON.parse(data)});
     });
 
-    evtSource.addEventListener(ON_PLACARD_POSTED_EVENT, (event) => {
+    evtSource.addEventListener(ON_MESSAGE_POSTED_EVENT, (event) => {
         const {data} = event;
-        dispatch({type: ON_PLACARD_POSTED_EVENT, data: JSON.parse(data)});
+        dispatch({type: ON_MESSAGE_POSTED_EVENT, data: JSON.parse(data)});
     });
 
     evtSource.addEventListener(ON_BREAK_STARTING_EVENT, (event) => {

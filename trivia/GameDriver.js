@@ -3,7 +3,7 @@ const {
     fetchGameLayout,
     fetchGameQuestion,
     updateGameEngine,
-    fetchGamePlacards,
+    fetchGameMessages,
     addGameParticipant,
     fetchPlayerById,
     fetchGameEngine,
@@ -19,9 +19,9 @@ module.exports = class GameDriver {
         this.gameInfo = null;
         this.gameLayout = null;
         this.gameEngine = null;
-        this.gamePlacards = null;
+        this.gameMessages = null;
         this.currentCursor = 0;
-        this.placardCursor = 0;
+        this.messageCursor = 0;
         this.studio = studio;
         this.scorer = scorer;
         this.game_id = game_id;
@@ -64,26 +64,26 @@ module.exports = class GameDriver {
         const current = this.gameLayout[this.currentCursor] || null;
         if (current != null) {
 
-            //check if placards are coming up
-            if (this.gamePlacards) {
-                const placard = this.gamePlacards[this.placardCursor];
+            //check if messages are coming up
+            if (this.gameMessages) {
+                const message = this.gameMessages[this.messageCursor];
 
                 //set delay in game clock
                 const pre_countdown_delay = 5000;
-                const countdown_duration = placard.display_duration;
+                const countdown_duration = message.display_duration;
                 const countdown_interval = 500;
                 const post_countdown_delay = 5000;
                 this.gameClock.delay = (pre_countdown_delay + countdown_duration + post_countdown_delay);
 
                 //notify subscribers of new content
-                this.studio.nextPlacard(this.game_id,
-                    placard,
+                this.studio.nextMessage(this.game_id,
+                    message,
                     this.gameEngine.progression,
                     {
                         show: true,
-                        type: "placard",
+                        type: "message",
                         points: 0,
-                        number: this.placardCursor,
+                        number: this.messageCursor,
                         pre_delay: pre_countdown_delay,
                         duration: countdown_duration,
                         interval: countdown_interval,
@@ -91,12 +91,12 @@ module.exports = class GameDriver {
                     });
 
                 //increment cursor
-                this.placardCursor += 1;
+                this.messageCursor += 1;
 
-                //if end of placards, reset the variable
-                if (!placard.followed_by) {
-                    this.gamePlacards = null;
-                    this.placardCursor = 0;
+                //if end of messages, reset the variable
+                if (!message.followed_by) {
+                    this.gameMessages = null;
+                    this.messageCursor = 0;
                 }
             } else {
                 const gameQuestion = await fetchGameQuestion(current.question_fk);
@@ -144,9 +144,9 @@ module.exports = class GameDriver {
                 //increment cursor
                 this.currentCursor += 1;
 
-                //if there are placards coming up, pull them in
-                if (current.placard_fk) {
-                    this.gamePlacards = await fetchGamePlacards(current.placard_fk);
+                //if there are messages coming up, pull them in
+                if (current.message_fk) {
+                    this.gameMessages = await fetchGameMessages(current.message_fk);
                 }
             }
         } else {
