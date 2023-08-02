@@ -2,7 +2,7 @@ const GameDriver = require('../trivia/GameDriver');
 const ScoreKeeper = require("../trivia/ScoreKeeper");
 const studio = require("../trivia/GameStudio");
 const { ON_GAME_ACCEPTING_EVENT, ON_GAME_CREATED_EVENT, ON_GAME_PLAYING_EVENT, ON_GAME_DELETED_EVENT, ON_SSE_TESTING_EVENT, ON_PARTICIPANT_JOINED, ON_PARTICIPANT_EXITED, ON_GAME_STARTING_EVENT,
-    ON_GAME_ENDING_EVENT, ON_BEFORE_QUESTION_EVENT, ON_QUESTION_POSTED_EVENT, ON_ANSWER_POSTED_EVENT, ON_AFTER_QUESTION_EVENT, ON_BREAK_STARTING_EVENT, ON_SNACK_BREAK_EVENT, ON_BREAK_ENDING_EVENT,
+    ON_GAME_ENDING_EVENT, ON_BEFORE_QUESTION_EVENT, ON_QUESTION_POSTED_EVENT, ON_ANSWER_POSTED_EVENT, ON_AFTER_QUESTION_EVENT,
     ON_MESSAGE_POSTED_EVENT, ON_PROGRESSION_EVENT, ON_UPDATED_TALLIES_EVENT, } = require('../trivia/Constants');
 
 const scorer = new ScoreKeeper();
@@ -131,9 +131,6 @@ async function handleProgressionEvents(req, resp, next) {
         ON_ANSWER_POSTED_EVENT,
         ON_MESSAGE_POSTED_EVENT,
         ON_AFTER_QUESTION_EVENT,
-        ON_BREAK_STARTING_EVENT,
-        ON_SNACK_BREAK_EVENT,
-        ON_BREAK_ENDING_EVENT,
         ON_PROGRESSION_EVENT,
         ON_UPDATED_TALLIES_EVENT,
     ], game, player);
@@ -150,9 +147,6 @@ async function handleProgressionEvents(req, resp, next) {
             ON_ANSWER_POSTED_EVENT,
             ON_MESSAGE_POSTED_EVENT,
             ON_AFTER_QUESTION_EVENT,
-            ON_BREAK_STARTING_EVENT,
-            ON_SNACK_BREAK_EVENT,
-            ON_BREAK_ENDING_EVENT,
             ON_PROGRESSION_EVENT,
             ON_UPDATED_TALLIES_EVENT,
         ], player)
