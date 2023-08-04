@@ -1,4 +1,4 @@
-import axios, { serverUrl } from './request';
+import axios, {serverUrl} from './request';
 
 export const remoteRegisterPlayer = async ({ screen_name, email_address }) => {
     const result = await axios.post(`${serverUrl()}/account/player`,

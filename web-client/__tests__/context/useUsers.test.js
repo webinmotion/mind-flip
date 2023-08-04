@@ -1,4 +1,4 @@
-import { render, screen, within, fireEvent } from '@testing-library/react';
+import {fireEvent, render, screen, within} from '@testing-library/react';
 import useUsers from '../../context/useUsers.js';
 
 function TestComponent() {

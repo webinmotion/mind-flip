@@ -339,8 +339,25 @@ const deleteGameClock = async (clock_id) => {
     return result[0];
 }
 
-const fetchAllGameMessages = async () => {
-    return await execute(`select * from tbl_game_message`, []);
+const fetchRootGameMessages = async () => {
+    const leafRows = await execute(`select message_id from tbl_game_message where followed_by is NULL`, []);
+    return await Promise.all(leafRows.map(async (row) => {
+        const rootRow = await execute(`--recursively get all root rows 
+        with recursive game_extras as ( 
+            --get a leaf row (one not followed by anything else) 
+            select leaf.*, 1 as "order" 
+            from tbl_game_message leaf 
+            where leaf.message_id = $1 
+            
+            union all 
+            
+            select ancestor.*, (child."order" + 1) 
+            from tbl_game_message ancestor, game_extras child 
+            where ancestor.followed_by = child.message_id 
+        ) select * from game_extras order by "order" desc limit 1;`, [row.message_id])
+        // console.log(rootRow);
+        return rootRow[0];
+    }));
 }
 
 const upsertGameMessage = async ({ message_content, display_duration, followed_by, content_type, }) => {
@@ -405,6 +422,45 @@ const deleteGameChoice = async(choice_id) => {
     return result[0];
 }
 
+const ___revisit_at_a_later_time_upsertGameLayout = async ({ records }) => {
+    /**
+     * failing to work when message_fk is either null
+     */
+    const selectStmt = records.map(record => `
+    select '${record.game_fk}'::uuid as game_fk, '${record.question_fk}'::uuid as question_fk, 
+    ${record.current_section} as current_section, ${record.section_index} as section_index, 
+    '${record.content_label}' as content_label, '${record.message_fk}'::uuid as message_fk, 
+    '${record.score_strategy}'::ScoreStrategy as score_strategy
+    `).join("\nunion\n");
+
+    const result = await execute(`
+    MERGE INTO tbl_game_layout gl
+        USING (${selectStmt}) AS t
+        ON t.game_fk = gl.game_fk and t.question_fk = gl.question_fk and t.current_section = gl.current_section
+    WHEN MATCHED THEN
+      UPDATE SET section_index = t.section_index, content_label = t.content_label, score_strategy = t.score_strategy, message_fk = t.message_fk
+    WHEN NOT MATCHED THEN
+      INSERT (game_fk, question_fk, current_section, section_index, content_label, message_fk, score_strategy)
+      VALUES (t.game_fk, t.question_fk, t.current_section, t.section_index, t.content_label, t.message_fk, t.score_strategy)`, []);
+    console.log(result);
+    return result;
+}
+
+const upsertGameLayout = async ({ records }) => {
+    const result = await Promise.all(records.map(async (record) => {
+        const {game_fk, question_fk, current_section, section_index, content_label, message_fk, score_strategy} = record;
+        return await execute(`
+      INSERT INTO tbl_game_layout (game_fk, question_fk, current_section, section_index, content_label, message_fk, score_strategy) 
+      VALUES ($1::uuid, $2::uuid, $3, $4, $5, $6::uuid, $7::ScoreStrategy) 
+      ON CONFLICT (game_fk, question_fk, current_section) do update set 
+      section_index = $4, content_label = $5, message_fk = $6, score_strategy = $7`, [
+            game_fk, question_fk, current_section, section_index, content_label, message_fk, score_strategy
+        ]);
+    }));
+    console.log(result);
+    return result;
+}
+
 module.exports = {
     fetchGamesListing,
     fetchGamesByOrganizer,
@@ -435,7 +491,7 @@ module.exports = {
     searchQuestions,
     upsertGameClock,
     deleteGameClock,
-    fetchAllGameMessages,
+    fetchRootGameMessages,
     upsertGameMessage,
     deleteGameMessage,
     fetchQuestionsByAuthor,
@@ -443,4 +499,5 @@ module.exports = {
     deleteGameQuestion,
     upsertQuestionChoices,
     deleteGameChoice,
+    upsertGameLayout,
 }

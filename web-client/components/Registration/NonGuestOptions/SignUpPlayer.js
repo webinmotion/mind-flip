@@ -8,7 +8,12 @@ import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
 import {ViewNames} from '../../../hooks/usePageForms';
-import {validateUsername, validatePassword, validateEmailAddress, validateScreenName} from "../../../context/formValidation";
+import {
+    validateEmailAddress,
+    validatePassword,
+    validateScreenName,
+    validateUsername
+} from "../../../context/formValidation";
 
 export default function SignUpPlayer({
      showAlert,

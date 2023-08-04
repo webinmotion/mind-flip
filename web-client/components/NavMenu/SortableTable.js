@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {alpha} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -18,7 +19,6 @@ import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import {visuallyHidden} from '@mui/utils';
-import {useEffect, useRef, useState} from "react";
 import {ScoreStrategy} from "../App/Constants";
 
 function descendingComparator(a, b, orderBy) {
@@ -150,7 +150,7 @@ function EnhancedTableToolbar(props) {
 function EditableCell(props){
 
     const {name, value, type, options, control, updateValue} = props;
-    const [input, setInput] = useState(value)
+    const [content, setContent] = useState(value)
     const inputRef = useRef(null);
 
     useEffect(() => {
@@ -160,38 +160,38 @@ function EditableCell(props){
     }, []);
 
     const onBlur = (e) => {
-        updateValue(input);
+        updateValue(content);
     }
 
     switch (control){
         case 'input': {
             return <input name={name}
                           type={type}
-                          value={input}
+                          value={content}
                           ref={inputRef}
                           onBlur={onBlur}
-                          onChange={e => setInput(e.target.value)}
+                          onChange={e => setContent(e.target.value)}
                           style={{ width: '50px', padding: '5px'}}/>
         }
         case 'select': {
             return <select name={name}
-                           value={input}
+                           value={content}
                            ref={inputRef}
                            onBlur={onBlur}
-                           onChange={e => setInput(e.target.value)}
+                           onChange={e => setContent(e.target.value)}
                            style={{ width: '75px', padding: '5px'}}>
                 <option value={''}>{''}</option>
-                {Object.entries(options).map(([key, value]) => <option key={key} value={key} title={value}>{key}</option> )}
+                {Object.entries(options).map(([key, value]) => <option key={key} value={value} title={value}>{value}</option> )}
             </select>
         }
         default: {
-            console.log('control attribute missing. use either "input" or "select"')
+            console.log('The control attribute is missing. Use either "input" or "select"')
             return null
         }
     }
 }
 
-export default function SortableTable({ title, head, rows, editable, setEditable }) {
+export default function SortableTable({ title, head, rows, messages, editable, setEditable }) {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
@@ -316,6 +316,10 @@ export default function SortableTable({ title, head, rows, editable, setEditable
                                             {row.question}
                                         </TableCell>
                                         <TableCell align="left">{row.game_category}</TableCell>
+                                        <TableCell align="left" onClick={() => onEditCell("content_lbl", row.que_id, row.content_lbl, true)}>
+                                            {editable["content_lbl"][row.que_id]?.edit
+                                                ? <EditableCell value={row.content_lbl} name={"content_lbl"} updateValue={value => onEditCell("content_lbl", row.que_id, value, false)} control={editable["content_lbl"]?.control} type={"text"} />
+                                                : editable["content_lbl"][row.que_id]?.value || row.content_lbl }</TableCell>
                                         <TableCell align="right" onClick={() => onEditCell("que_section", row.que_id, row.que_section, true)}>
                                             {editable["que_section"][row.que_id]?.edit
                                                 ? <EditableCell value={row.que_section} name={"que_section"} updateValue={value => onEditCell("que_section", row.que_id, value, false)} control={editable["que_section"]?.control} type={"number"} />
@@ -327,7 +331,11 @@ export default function SortableTable({ title, head, rows, editable, setEditable
                                         <TableCell align="left" onClick={() => onEditCell("score_strategy", row.que_id, row.score_strategy, true)} title={ScoreStrategy[editable["score_strategy"][row.que_id]?.value] || 'No strategy selected'}>
                                             {editable["score_strategy"][row.que_id]?.edit
                                                 ? <EditableCell value={row.score_strategy} name={"score_strategy"} updateValue={value => onEditCell("score_strategy", row.que_id, value, false)} control={editable["score_strategy"]?.control} options={ScoreStrategy} />
-                                                : editable["score_strategy"][row.id]?.value || row.score_strategy}</TableCell>
+                                                : editable["score_strategy"][row.que_id]?.value || row.score_strategy}</TableCell>
+                                        <TableCell align="left" onClick={() => onEditCell("message_fk", row.que_id, row.message_fk, true)} >
+                                            {editable["message_fk"][row.que_id]?.edit
+                                                ? <EditableCell value={row.message_fk} name={"message_fk"} updateValue={value => onEditCell("message_fk", row.que_id, value, false)} control={editable["message_fk"]?.control} options={messages.reduce((acc, msg) => { acc[msg.message_id] = msg.message_content; return acc;}, {})} />
+                                                : editable["message_fk"][row.que_id]?.value || row.message_fk}</TableCell>
                                     </TableRow>
                                 );
                             })}

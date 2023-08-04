@@ -312,7 +312,7 @@ insert into tbl_account (username, userpass, player_fk) values ('thirsty_whale',
 with author2 as (select player_id from tbl_player where email_address = 'kadzoe@email.com')
 insert into tbl_account (username, userpass, player_fk) values ('rustic_beaver', '$2a$10$mh5CP7uoJuYESWOSCmrJ5Ogn95m5NwWGLtNQ/ZWfVIiofSNRsUV86', (select player_id from author2));
 
---create a question
+--create questions by jimmy@email.com
 with author as (select player_id from tbl_player where email_address = 'jimmy@email.com')
 insert into tbl_question (que_value, que_answer, answer_reason, has_choices, max_points, asked_by) values
                                                                                                        ('Are you ready?', '', '', true, 0, (select player_id from author)),
@@ -367,6 +367,26 @@ insert into tbl_choice ( question_fk, is_correct, choice_value, clue) values
                                                                           ((select que_id from question), true, 0, 'third time is a charm'),
                                                                           ((select que_id from question), false, 4, 'quad is an offroad vehicle');
 
+--create more questions by jimmy@email.com
+with author as (select player_id from tbl_player where email_address = 'jimmy@email.com')
+insert into tbl_question (que_value, que_answer, answer_reason, has_choices, max_points, asked_by) values
+                                                                                                       ('What is the capital of Turkey?', 'Ankara', 'Ankara, formerly known as Ancyra and Angora, is the capital of Turkey, located in Central Anatolia. With a population of 4,587,558 in the urban centre (2014) and 5,150,072 in its province (2015), it is Turkey''s second largest city behind Istanbul.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Iran?', 'Tehran', 'Tehran is the capital of Iran and Tehran Province. With a population of around 9 million in the city and 16 million in the wider metropolitan area, Tehran is the most populous city in Iran and Western Asia, and the second-largest metropolitan area in the Middle East.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Kuwait?', 'Kuwait City', 'Kuwait City is the capital and largest city of Kuwait', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Greece?', 'Athens', 'Athens is the capital and largest city of Greece. Athens dominates the Attica region and is one of the world''s oldest cities, with its recorded history spanning approximately 3,400 years.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Austria?', 'Vienna', 'Vienna is the capital and largest city of Austria, and one of the nine states of Austria. Vienna is Austria''s primary city, with a population of about 1.757 million (2.4 million within the metropolitan area, more than 20% of Austria''s population), and its cultural, economic, and political centre.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Syria?', 'Damascus', 'Damascus is the capital of the Syrian Arab Republic; it is likely also the country''s largest city, following the decline in population of Aleppo due to the battle for the city. It is colloquially known in Syria as ash-Sham and titled the City of Jasmine.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Lebanon?', 'Beirut', 'Beirut is the capital city of Lebanon and located on a peninsula at the midpoint of its Mediterranean coast. Beirut is the country''s largest and main seaport and is one of the oldest cities in the world, inhabited more than 5,000 years ago.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Sudan?', 'Khartoum', 'Khartoum or Khartum is the capital and largest city of Sudan. With a population of 1,974,647, its metropolitan area is the largest in Sudan.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Zambia?', 'Lusaka', 'Lusaka, city, capital of Zambia. It is situated in the south-central part of the country on a limestone plateau 4,198 feet (1,280 metres) above sea level.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Madagascar?', 'Antananarivo', 'Antananarivo (formerly known as “Analamanga” and “Tananarive”) is the capital of the Republic of Madagascar and its largest city.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Zanzibar?', 'Zanzibar City', 'The capital is Zanzibar City, located on the island of Unguja. Its historic centre is Stone Town, a World Heritage Site.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Yemen?', 'Sanaa', 'Sanaa also spelled Sanaʽa and Sana, is the capital and largest city in Yemen and the centre of Sanaa Governorate.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Qatar?', 'Doha', 'Doha is the capital and most populous city of the State of Qatar. Doha has a population of 1,351,000 in the city proper with the overall population close to 1.5 million. The city is located on the coast of the Persian Gulf in the east of the country.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Cambodia?', 'Phnom Penh', 'With breathtaking architecture, waterside attractions and unique traditions, Cambodia''s capital city Phnom Penh offers an unforgettable immersion into a rich cultural history.', false, 5000, (select player_id from author)),
+                                                                                                       ('What is the capital of Nicaragua?', 'Managua City', 'Managua, city, capital of Nicaragua, lying amid small crater lakes on the southern shore of Lake Managua. The city is only 163 feet (50 metres) above sea level and is one of Central America''s warmest capitals.', false, 5000, (select player_id from author));
+
+--create questions by kadzoe@email.com
 with author as (select player_id from tbl_player where email_address = 'kadzoe@email.com')
 insert into tbl_question (que_value, que_answer, answer_reason, has_choices, max_points, asked_by) values
                                                                                                        ('What are the five largest states in the US?', 'Alaska, Texas, California, Montana, New Mexico', '
@@ -478,6 +498,28 @@ insert into tbl_game_layout (game_fk, question_fk, current_section, section_inde
                                                                                                                                    (select message_id from tbl_game_message where message_content = 'Taking a snack break')),
                                                                                                                                   ((select game_id from game2), (select que_id from tbl_question tq where tq.que_value = 'What are the five deepest lakes in the world?'), 2, 1, '3', 'LIST_OF_CORRECT_VALUES', null),
                                                                                                                                   ((select game_id from game2), (select que_id from tbl_question tq where tq.que_value = 'What are the five most populous countries on earth?'), 2, 2, '4', 'LIST_OF_CORRECT_VALUES',
+                                                                                                                                   (select message_id from tbl_game_message where message_content = 'It was great having you here'));
+
+with game3 as (select game_id from tbl_game where title = 'around and about')
+insert into tbl_game_layout (game_fk, question_fk, current_section, section_index, content_label, score_strategy, message_fk) values
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'Are you ready?'), 1, 1, '', 'NON_SCORING_STRATEGY', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Turkey?'), 1, 2, '1', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Iran?'), 1, 3, '2', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Kuwait?'), 1, 4, '3', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Greece?'), 1, 5, '4', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Austria?'), 1, 6, '5', 'CLOCK_COUNTDOWN',
+                                                                                                                                   (select message_id from tbl_game_message where message_content = 'Taking a snack break')),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Syria?'), 2, 1, '6', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Lebanon?'), 2, 2, '7', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Sudan?'), 2, 3, '8', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Zambia?'), 2, 4, '9', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Madagascar?'), 5, 2, '10', 'CLOCK_COUNTDOWN',
+                                                                                                                                   (select message_id from tbl_game_message where message_content = 'Taking a snack break')),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Zanzibar?'), 3, 1, '11', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Yemen?'), 3, 2, '12', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Qatar?'), 3, 3, '13', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Cambodia?'), 3, 4, '14', 'CLOCK_COUNTDOWN', null),
+                                                                                                                                  ((select game_id from game3), (select que_id from tbl_question tq where tq.que_value = 'What is the capital of Nicaragua?'), 3, 5, '15', 'CLOCK_COUNTDOWN',
                                                                                                                                    (select message_id from tbl_game_message where message_content = 'It was great having you here'));
 
 --join game1 to participate
@@ -597,14 +639,49 @@ group by gt.participant_fk;
 
 --recursive query for related rows
 with recursive game_extras as (
+--get parent row
     select parent.*, 1 as "order"
     from tbl_game_message parent
     where parent.message_content = 'Taking a snack break'
 
     union all
 
+--navigate to the hierarchy with 'parent' as the root
     select child.*, (p."order" + 1)
     from tbl_game_message child, game_extras p
     where child.message_id = p.followed_by
 
 ) select * from game_extras;
+
+--recursively get all root rows
+with recursive game_extras as (
+--get a leaf row (one not followed by anything else)
+    select leaf.*, 1 as "order"
+    from tbl_game_message leaf
+--	where leaf.message_content = 'It was great having you here'
+    where leaf.followed_by is null
+
+    union all
+
+    select ancestor.*, (child."order" + 1)
+    from tbl_game_message ancestor, game_extras child
+    where ancestor.followed_by = child.message_id
+
+) select * from game_extras order by "order" desc limit 1;
+
+--multiple rows upsert
+--MERGE INTO tbl_game_layout gl
+--USING (
+--	select '9b9af036-3168-11ee-8f23-0242ac110002'::uuid as game_fk, '9b966ac0-3168-11ee-8f23-0242ac110002'::uuid as question_fk, 1 as current_section, 1 as section_index, 'A' as content_label
+--	union
+--	select '9b9af036-3168-11ee-8f23-0242ac110002'::uuid as game_fk, '9b96747a-3168-11ee-8f23-0242ac110002'::uuid as question_fk, 1 as current_section, 2 as section_index, 'B' as content_label
+--	union
+--	select '9b9af036-3168-11ee-8f23-0242ac110002'::uuid as game_fk, '9b96754c-3168-11ee-8f23-0242ac110002'::uuid as question_fk, 1 as current_section, 3 as section_index, 'C' as content_label
+--) AS t
+--ON t.game_fk = gl.game_fk and t.question_fk = gl.question_fk and t.current_section = gl.current_section
+--WHEN MATCHED THEN
+--  UPDATE SET content_label = t.content_label
+--WHEN NOT MATCHED THEN
+--  INSERT (game_fk, question_fk, current_section, section_index, content_label)
+--  VALUES (t.game_fk, t.question_fk, t.current_section, t.section_index, t.content_label);
+--

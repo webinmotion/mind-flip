@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import {useEffect} from "react";
 import GamesAccepting from "../../components/Trivia/GamesAccepting";
-import { serverUrl } from "../../services/request";
-import { useParams } from "react-router-dom";
+import {serverUrl} from "../../services/request";
+import {useParams} from "react-router-dom";
 
 export default function GameAcceptingContainer(props) {
 

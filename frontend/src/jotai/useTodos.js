@@ -1,4 +1,4 @@
-import { atom, useAtom } from 'jotai'
+import {atom, useAtom} from 'jotai'
 import initialState, {newTodo} from "../context/initialState";
 
 // global atom, accessible for any component, without prop-drilling

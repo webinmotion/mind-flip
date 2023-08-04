@@ -1,6 +1,6 @@
-import { Fragment, useState } from "react";
+import {Fragment, useState} from "react";
 import Modal from "./Modal";
-import { NavLink } from "react-router-dom";
+import {NavLink} from "react-router-dom";
 
 export default function GameCard() {
   const [showModal, setShowModal] = useState(false);

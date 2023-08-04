@@ -1,4 +1,4 @@
-import { TOGGLE_TODO, CREATE_TODO, REMOVE_TODO} from './todosActions';
+import {CREATE_TODO, REMOVE_TODO, TOGGLE_TODO} from './todosActions';
 
 export const todosReducer = (todos, action) => {
     console.log('reducer todos', todos, 'action', action)

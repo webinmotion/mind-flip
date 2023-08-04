@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { render, screen, within } from '@testing-library/react';
+import {useEffect, useState} from 'react';
+import {render, screen, within} from '@testing-library/react';
 
 function TestComponent() {
     return (

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 
 export const ON_PROGRESSION_EVENT = "ON_PROGRESSION_EVENT";
 

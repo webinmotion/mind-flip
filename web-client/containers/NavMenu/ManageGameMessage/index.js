@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import ManageGameMessage from '../../../components/NavMenu/ManageGameMessage';
-import { remoteFetchAllGameMessages, remoteUpsertGameMessage, remoteDeleteGameMessage, } from '../../../services/trivia';
+import {remoteDeleteGameMessage, remoteFetchRootGameMessages, remoteUpsertGameMessage,} from '../../../services/trivia';
 
 const initialGameMessage = {
     message_id: '',
@@ -16,7 +16,7 @@ function ManageGameMessageContainer() {
     const [form, setForm] = useState(initialGameMessage);
 
     useEffect(() => {
-        remoteFetchAllGameMessages().then(setMessages)
+        remoteFetchRootGameMessages().then(setMessages)
     }, []);
 
     const handleChange = e => {

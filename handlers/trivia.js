@@ -26,7 +26,7 @@ const {
     searchQuestions,
     upsertGameClock,
     deleteGameClock,
-    fetchAllGameMessages,
+    fetchRootGameMessages,
     upsertGameMessage,
     deleteGameMessage,
     fetchQuestionsByAuthor,
@@ -34,6 +34,7 @@ const {
     deleteGameQuestion,
     upsertQuestionChoices,
     deleteGameChoice,
+    upsertGameLayout,
 } = require('../service/trivia');
 
 const studio = require("../trivia/GameStudio");
@@ -382,9 +383,9 @@ const handleDeleteGameClock = async function (req, res, next) {
     }
 }
 
-const handleFetchAllGameMessages = async function (req, res, next) {
+const handleFetchRootGameMessages = async function (req, res, next) {
     try {
-        const result = await fetchAllGameMessages();
+        const result = await fetchRootGameMessages();
         console.log('result from fetching all messages', result);
         res.json(result);
     }
@@ -475,6 +476,17 @@ const handleDeleteGameChoice = async function(req, res, next) {
     }
 }
 
+const handleUpsertGameLayout = async function(req, res, next) {
+    try{
+        const records = req.body;
+        const result = await upsertGameLayout(records);
+        res.json(result);
+    }
+    catch (e) {
+        next(e);
+    }
+}
+
 module.exports = {
     fetchGamesListing: handleFetchGamesListing,
     fetchGamesByOrganizer: handleFetchGamesByOrganizer,
@@ -504,7 +516,7 @@ module.exports = {
     searchQuestions: handleSearchQuestions,
     upsertGameClock: handleUpsertGameClock,
     deleteGameClock: handleDeleteGameClock,
-    fetchAllGameMessages: handleFetchAllGameMessages,
+    fetchRootGameMessages: handleFetchRootGameMessages,
     upsertGameMessage: handleUpsertGameMessage,
     deleteGameMessage: handleDeleteGameMessage,
     fetchQuestionsByAuthor: handleFetchQuestionsByAuthor,
@@ -512,4 +524,5 @@ module.exports = {
     upsertQuestionChoices: handleUpsertQuestionChoices,
     deleteGameChoice: handleDeleteGameChoice,
     deleteGameQuestion: handleDeleteGameQuestion,
+    upsertGameLayout: handleUpsertGameLayout
 }

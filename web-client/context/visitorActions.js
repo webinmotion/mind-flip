@@ -1,16 +1,16 @@
 import {
-    remoteRegisterPlayer,
-    remoteVerifyEmailAddr,
-    remoteRegisterGuest,
-    remoteDropGuestPlayer,
-    remoteAccountSignUp,
     remoteAccountSignIn,
     remoteAccountSignOut,
+    remoteAccountSignUp,
+    remoteDropGuestPlayer,
+    remoteFetchPlayerById,
+    remoteRegisterGuest,
+    remoteRegisterPlayer,
     remoteResetPassword,
     remoteResetVerification,
-    remoteFetchPlayerById,
+    remoteVerifyEmailAddr,
 } from '../services/account';
-import { extractErrorText } from './alertActions';
+import {extractErrorText} from './alertActions';
 
 export const REGISTER_PLAYER = "REGISTER_PLAYER";
 export const REGISTER_GUEST = "REGISTER_GUEST";

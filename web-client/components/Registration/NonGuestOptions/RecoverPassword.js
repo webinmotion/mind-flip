@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { ViewNames } from '../../../hooks/usePageForms';
+import {ViewNames} from '../../../hooks/usePageForms';
 import {validateEmailAddress} from "../../../context/formValidation";
 
 export default function RecoverPassword({ showAlert, recoveryForm, setRecoveryForm, setSignUpForm, recoverPassword, toggleCurrentView }) {

@@ -1,6 +1,5 @@
-import supertest from 'supertest';
 import app from '../app';
-import { request } from 'express';
+import {request} from 'express';
 
 describe("Registering a new player", () => {
 

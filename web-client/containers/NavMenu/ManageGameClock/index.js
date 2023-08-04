@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import ManageGameClock from '../../../components/NavMenu/ManageGameClock';
-import { remoteFetchGameClocks, remoteUpsertGameClock, remoteDeleteGameClock, } from '../../../services/trivia';
+import {remoteDeleteGameClock, remoteFetchGameClocks, remoteUpsertGameClock,} from '../../../services/trivia';
 
 const initialGameClock = {
     clock_id: '',

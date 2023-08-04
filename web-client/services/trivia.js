@@ -1,4 +1,4 @@
-import axios, { serverUrl } from './request';
+import axios, {serverUrl} from './request';
 
 export const remoteFetchGamesListing = async () => {
     return await axios.get(`${serverUrl()}/trivia/listing`)
@@ -177,7 +177,7 @@ export const remoteDeleteGameClock = async (clock_id) => {
         .then(resp => resp.data);
 }
 
-export const remoteFetchAllGameMessages = async () => {
+export const remoteFetchRootGameMessages = async () => {
     return await axios.get(`${serverUrl()}/trivia/message`)
         .then(resp => resp.data);
 }
@@ -228,4 +228,12 @@ export const remoteUpsertQuestionChoices = async ({ question_fk, choice_value, c
 
 export const remoteDeleteGameChoice = async (choice_id) => {
     return await axios.delete(`${serverUrl()}/trivia/question/choices/${choice_id}`).then(resp => resp.data);
+}
+
+export const remoteUpsertGameLayout = async (records) => {
+    return await axios.post(`${serverUrl()}/trivia/layout`, {records}, {
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then(resp => resp.data)
 }

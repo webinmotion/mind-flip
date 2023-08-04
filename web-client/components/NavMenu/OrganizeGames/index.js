@@ -18,7 +18,7 @@ import FiberNewIcon from '@mui/icons-material/FiberNew';
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import Forward10Icon from '@mui/icons-material/Forward10';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import { orange, green, red } from '@mui/material/colors';
+import {green, orange, red} from '@mui/material/colors';
 
 export const GameStatus = {
   CREATED: "Created",

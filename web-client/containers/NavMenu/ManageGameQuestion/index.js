@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import ManageGameQuestion from '../../../components/NavMenu/ManageGameQuestion';
-import { remoteFetchQuestionsByAuthor, remoteUpsertGameQuestion, remoteDeleteGameQuestion,
-    remoteUpsertQuestionChoices, remoteDeleteGameChoice, } from '../../../services/trivia';
+import {
+    remoteDeleteGameChoice,
+    remoteDeleteGameQuestion,
+    remoteFetchQuestionsByAuthor,
+    remoteUpsertGameQuestion,
+    remoteUpsertQuestionChoices,
+} from '../../../services/trivia';
 
 const initialQuestion = {
     que_id: '',

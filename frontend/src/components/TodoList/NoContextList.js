@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './todolist.module.css';
 import TaskForm from "./TaskForm";
 import TasksList from "./TasksList";
-import {useAppContext} from "../../reducer/appContext";
 import useTodos from "../../reducer/useTodos";
 
 export default function NoContextList (){

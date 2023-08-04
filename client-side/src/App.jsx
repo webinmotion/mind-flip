@@ -1,6 +1,6 @@
 // import "./App.css";
-import { ChakraProvider } from "@chakra-ui/react";
-import { Route, Routes } from "react-router-dom";
+import {ChakraProvider} from "@chakra-ui/react";
+import {Route, Routes} from "react-router-dom";
 import Footer from "./components/Footer";
 import "./index.css";
 // import Guest from "./routes/guest/Guest";
@@ -8,8 +8,9 @@ import Login from "./routes/Login";
 import Faqs from "./routes/faqs/Faqs";
 import HomePage from "./components/HomePage";
 import Registration from "./routes/Register";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import StepperPage from "./components/GameDetailPage";
+
 function App() {
   const [theme, setTheme] = useState("light");
 

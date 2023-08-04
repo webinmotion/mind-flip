@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import OrganizeGames from '../../../components/NavMenu/OrganizeGames';
 
 function OrganizeGamesContainer({ games, player, createGame, updateGame, deleteGame, }) {

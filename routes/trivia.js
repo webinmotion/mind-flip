@@ -28,7 +28,7 @@ const {
     searchQuestions,
     upsertGameClock,
     deleteGameClock,
-    fetchAllGameMessages,
+    fetchRootGameMessages,
     upsertGameMessage,
     deleteGameMessage,
     fetchQuestionsByAuthor,
@@ -36,6 +36,7 @@ const {
     deleteGameQuestion,
     upsertQuestionChoices,
     deleteGameChoice,
+    upsertGameLayout,
 } = require('../handlers/trivia');
 const { validateAccessToken } = require('../middleware/authorize');
 
@@ -93,7 +94,7 @@ router.post('/clock', upsertGameClock);
 
 router.delete('/clock/:clock_id', deleteGameClock);
 
-router.get('/message', fetchAllGameMessages);
+router.get('/message', fetchRootGameMessages);
 
 router.post('/message', upsertGameMessage);
 
@@ -108,5 +109,7 @@ router.delete('/question/:question_id', deleteGameQuestion);
 router.post('/question/:question_id/choices', upsertQuestionChoices);
 
 router.delete('/question/choices/:choice_id', deleteGameChoice);
+
+router.post('/layout', upsertGameLayout);
 
 module.exports = router;

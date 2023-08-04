@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, {useEffect, useState} from 'react'
 import PlayerProfile from '../../../components/NavMenu/PlayerProfile';
-import { remoteFetchPlayerById, remoteUpdatePlayerInfo } from '../../../services/account';
+import {remoteFetchPlayerById, remoteUpdatePlayerInfo} from '../../../services/account';
 
 function PlayerProfileContainer({ player, accessToken, }) {
 

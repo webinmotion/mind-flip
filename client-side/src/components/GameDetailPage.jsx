@@ -1,7 +1,7 @@
-import { useState } from "react";
+import {useState} from "react";
 import Stepper from "./Stepper";
 import StepperControl from "./StepperControl";
-import { UseContextProvider } from "../contexts/StepperContext";
+import {UseContextProvider} from "../contexts/StepperContext";
 
 import Account from "./steps/Account";
 import Details from "./steps/Detail";

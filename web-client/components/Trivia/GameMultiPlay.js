@@ -1,11 +1,11 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import {useEffect} from "react";
 
 export default function GameMultiPlay({ progression: { question, ending_message, }, navigate, submitAnswer, submitChoice, }) {
 

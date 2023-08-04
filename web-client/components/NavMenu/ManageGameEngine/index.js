@@ -13,7 +13,7 @@ import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import {DateTimePicker} from '@mui/x-date-pickers/DateTimePicker';
 
 export default function ManageGameEngine({ games, clocks, form, handleSelected, handleChange, handleChecked, handleDateTime, applyEngine, }) {
 

@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import {render, screen, within} from '@testing-library/react';
 import ParticipantsList from '../../../components/ParticipantsList';
 
 describe("testing ParticipantsList component", () => {

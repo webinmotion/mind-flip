@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import styles from './userprofile.module.css';
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools'
+import {ReactQueryDevtools} from 'react-query/devtools'
 import profileFaker from "../../repository/profile-faker";
 
 const queryClient = new QueryClient();

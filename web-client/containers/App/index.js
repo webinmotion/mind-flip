@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
-import { useAppContext } from '../../context/appContext';
+import React, {useEffect} from 'react';
+import {useNavigate} from "react-router-dom";
+import {useAppContext} from '../../context/appContext';
 import App from '../../components/App';
-import { serverUrl } from '../../services/request';
+import {serverUrl} from '../../services/request';
 
 function AppContainer() {
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import dayjs from 'dayjs';
 import ManageGameEngine from '../../../components/NavMenu/ManageGameEngine';
-import { remoteFetchGamesByOrganizer, remoteFetchGameClocks, remoteCreateGameEngine } from '../../../services/trivia';
+import {remoteCreateGameEngine, remoteFetchGameClocks, remoteFetchGamesByOrganizer} from '../../../services/trivia';
 
 const initialGameEngine = {
     scheduled_start: dayjs().add(1, 'day'),

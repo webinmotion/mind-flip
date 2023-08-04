@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import NonGuestOptions from '../../../components/Registration/NonGuestOptions';
-import { useAppContext } from '../../../context/appContext';
-import { ViewNames } from '../../../hooks/usePageForms';
+import {useAppContext} from '../../../context/appContext';
+import {ViewNames} from '../../../hooks/usePageForms';
 
 function NonGuestOptionsContainer() {
 

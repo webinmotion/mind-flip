@@ -1,8 +1,4 @@
-import {
-    SHOW_ALERT_MESSAGE,
-    CLEAR_ALERT_MESSAGE,
-}
-    from './alertActions';
+import {CLEAR_ALERT_MESSAGE, SHOW_ALERT_MESSAGE,} from './alertActions';
 
 export const initialAlert = {
     show: false,

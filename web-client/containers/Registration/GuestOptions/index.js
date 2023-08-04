@@ -1,6 +1,6 @@
 import React from 'react'
 import GuestOptions from '../../../components/Registration/GuestOptions';
-import { useAppContext } from '../../../context/appContext';
+import {useAppContext} from '../../../context/appContext';
 
 function GuestOptionsContainer() {
 

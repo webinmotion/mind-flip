@@ -11,8 +11,9 @@ import Select from '@mui/material/Select';
 import {GameCategory} from "../../App/Constants";
 import SortableTable from '../SortableTable';
 import TextField from "@mui/material/TextField";
+import {grey} from "@mui/material/colors";
 
-export default function ManageGameLayout({games, form, questions, head, criteria, editable, setEditable, handleSelected, handleChangeCriteria, handleCheckCriteria, applyLayout,}) {
+export default function ManageGameLayout({games, selectedGame, setSelectedGame, questions, head, criteria, messages, editable, setEditable, handleChangeCriteria, handleCheckCriteria, applyLayout,}) {
 
     return (
         <Box
@@ -29,9 +30,9 @@ export default function ManageGameLayout({games, form, questions, head, criteria
                     <Select
                         labelId="select-game-label"
                         name="game_id"
-                        value={form.game_id}
+                        value={selectedGame}
                         label="Game ID"
-                        onChange={handleSelected}
+                        onChange={(e) => setSelectedGame(e.target.value)}
                     >
                         {games?.length > 0
                             ? games.map(({game_info}) => <MenuItem key={game_info?.game_id} value={game_info?.game_id}>{game_info?.title}</MenuItem>)
@@ -91,7 +92,14 @@ export default function ManageGameLayout({games, form, questions, head, criteria
                 }
             </div>
 
-            <SortableTable title={'Available Questions'} head={head} rows={questions} editable={editable} setEditable={setEditable} />
+            {questions.length > 0
+                ? <SortableTable title={'Available Questions'} head={head} rows={questions} messages={messages} editable={editable} setEditable={setEditable} />
+                : <Box sx={{my: 2, p:2, color: 'black', backgroundColor: grey[300], '&:hover': {
+                        color: 'white',
+                        backgroundColor: grey[500],
+                        opacity: [0.9, 0.8, 0.7],
+                    }}}>No questions available at this time</Box>
+            }
 
             <Box sx={{my: 2}}>
                 <Button variant="contained" fullWidth endIcon={<UpdateIcon/>} onClick={applyLayout}>Update</Button>

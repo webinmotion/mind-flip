@@ -1,24 +1,46 @@
-import { createContext, useContext, useReducer } from "react";
+import {createContext, useContext, useReducer} from "react";
 import {
-    fetchGamesListingAction, fetchGameInfoAction, fetchProgressionAction, fetchGameLayoutAction,
-    fetchGameQuestionAction, fetchGameEngineAction, fetchPlayerByEmailAction, createGameEngineAction,
-    updateGameEngineAction, addGameParticipantAction, fetchParticipantTallyAction,
-    updateHighestScoreAction, onGameListingEventsAction, onParticipantEventsAction, onProgressionEventsAction,
-    fetchGameParticipantsAction, createGameHandleAction, updateGameStatusAction, deleteGameHandleAction, 
-    fetchGameTalliesAction, 
+    addGameParticipantAction,
+    createGameEngineAction,
+    createGameHandleAction,
+    deleteGameHandleAction,
+    fetchGameEngineAction,
+    fetchGameInfoAction,
+    fetchGameLayoutAction,
+    fetchGameParticipantsAction,
+    fetchGameQuestionAction,
+    fetchGamesListingAction,
+    fetchGameTalliesAction,
+    fetchParticipantTallyAction,
+    fetchPlayerByEmailAction,
+    fetchProgressionAction,
+    onGameListingEventsAction,
+    onParticipantEventsAction,
+    onProgressionEventsAction,
+    updateGameEngineAction,
+    updateGameStatusAction,
+    updateHighestScoreAction,
 } from './triviaActions';
-import { triviaReducer, initialTrivia } from './triviaReducer';
+import {initialTrivia, triviaReducer} from './triviaReducer';
 import {
-    accountSignUpAction, accountSignInAction, accountSignOutAction, resetPasswordAction, resetVerificationAction,
-    registerPlayerAction, registerGuestAction, verifyEmailAddressAction, dropGuestPlayerAction, recoverPasswordAction,
+    accountSignInAction,
+    accountSignOutAction,
+    accountSignUpAction,
+    dropGuestPlayerAction,
+    recoverPasswordAction,
+    registerGuestAction,
+    registerPlayerAction,
+    resetPasswordAction,
+    resetVerificationAction,
+    verifyEmailAddressAction,
     verifyRecoveryCodeAction,
 } from './visitorActions';
-import { visitorReducer, initialRegistration, initialAuthentication } from './visitorReducer';
-import { showAlertAction, clearAlertAction, } from "./alertActions";
-import { alertReducer, initialAlert,  } from './alertReducer';
-import { usePageForms } from "../hooks/usePageForms";
-import { useLocalState } from "../hooks/useLocalState";
-import { useProgression } from '../hooks/useProgression';
+import {initialAuthentication, initialRegistration, visitorReducer} from './visitorReducer';
+import {clearAlertAction, showAlertAction,} from "./alertActions";
+import {alertReducer, initialAlert,} from './alertReducer';
+import {usePageForms} from "../hooks/usePageForms";
+import {useLocalState} from "../hooks/useLocalState";
+import {useProgression} from '../hooks/useProgression';
 
 const AppContext = createContext();
 

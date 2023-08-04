@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, } from 'react-router-dom';
+import {Route, Routes,} from 'react-router-dom';
 import Trivia from '../Trivia';
 import AlertMessage from '../Layout/AlertMessage';
 import GameSinglePlay from '../../containers/Trivia/GameSinglePlay';

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { localState } from '../hooks/useLocalState';
+import {localState} from '../hooks/useLocalState';
 
 export const serverUrl = () => window.location.origin.replace(/(:\d+)/, `:${process.env.REACT_APP_SERVER_PORT}`)
 

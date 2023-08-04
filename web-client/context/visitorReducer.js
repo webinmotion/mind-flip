@@ -1,17 +1,16 @@
-import { localState } from '../hooks/useLocalState';
+import {localState} from '../hooks/useLocalState';
 import {
-    REGISTER_PLAYER,
-    REGISTER_GUEST,
-    DROP_GUEST_PLAYER,
-    VERIFY_EMAIL_ADDRESS,
-    ACCOUNT_SIGN_UP,
     ACCOUNT_SIGN_IN,
     ACCOUNT_SIGN_OUT,
-    RESET_VERIFICATION,
+    ACCOUNT_SIGN_UP,
+    DROP_GUEST_PLAYER,
+    REGISTER_GUEST,
+    REGISTER_PLAYER,
     RESET_PASSWORD,
+    RESET_VERIFICATION,
+    VERIFY_EMAIL_ADDRESS,
     VERIFY_RECOVER_CODE,
-}
-    from './visitorActions';
+} from './visitorActions';
 
 export const initialRegistration = {
     screen_name: '',

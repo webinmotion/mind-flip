@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import {useRef} from 'react';
 
 const REGISTRATION_KEY = 'registration';
 const AUTHENTICATION_KEY = 'authentication';

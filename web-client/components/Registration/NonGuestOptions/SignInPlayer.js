@@ -9,7 +9,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockIcon from '@mui/icons-material/Lock';
 import Typography from '@mui/material/Typography';
-import { ViewNames } from '../../../hooks/usePageForms';
+import {ViewNames} from '../../../hooks/usePageForms';
 
 export default function SignInPlayer({ showAlert, signInForm, setSignInForm, setSignUpForm, accountSignIn, toggleCurrentView, }) {
 
