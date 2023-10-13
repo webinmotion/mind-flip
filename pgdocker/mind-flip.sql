@@ -81,7 +81,7 @@ create table if not exists tbl_Playbook (
                                             playbook_id UUID default uuid_generate_v1(),
                                             play_title varchar(32) not null,
                                             best_fit varchar(128),
-                                            description varchar(1024) not null,
+                                            description varchar(4096) not null,
                                             date_created date default now()
 );
 
@@ -218,7 +218,7 @@ create table if not exists tbl_High_Scores (
 insert into tbl_Playbook (play_title, best_fit, description) values
                                                                  (
                                                                      'free_form_forward_only',
-                                                                     'question not having multiple choices - the question has a free-form response that requres typing, like with a quiz or exam',
+                                                                     'question not having multiple choices - the question has a free-form response that requires typing, like with a quiz or exam',
                                                                      'The response should match the correct answer as closely as possible, as defined by the response criteria.
 
                                                                      - question does not have multiple choices.
@@ -228,7 +228,7 @@ insert into tbl_Playbook (play_title, best_fit, description) values
                                                                  ),
                                                                  (
                                                                      'free_form_free_flow',
-                                                                     'question not having multiple choices - the question has a free-form response that requres typing, like with a quiz or exam',
+                                                                     'question not having multiple choices - the question has a free-form response that requires typing, like with a quiz or exam',
                                                                      'The response should match the correct answer as closely as possible, as defined by the response criteria.
 
                                                                      - question does not have multiple choices.
@@ -257,7 +257,7 @@ insert into tbl_Playbook (play_title, best_fit, description) values
                                                                  (
                                                                      'elimination_clues',
                                                                      'question having multiple choices only',
-                                                                     'Clues for the incorrect choices are **_swopped_** in
+                                                                     'Clues for the incorrect choices are **_swiped_** in
 
                                                                      - Each clue is associated with exactly one choice.
                                                                      - Each clue informs whether the choice is correct or incorrect.
@@ -277,14 +277,14 @@ insert into tbl_Playbook (play_title, best_fit, description) values
                                                                  (
                                                                      'closest_but_not_over',
                                                                      'question having numeric answer only',
-                                                                     'The anwser to thie question must to be a numeric value
+                                                                     'The answer to this question must to be a numeric value
 
                                                                      - Answers that match the exact numeric value get maximum points.
-                                                                     - Points decrease with increasing distacne from the correct value.
+                                                                     - Points decrease with increasing distance from the correct value.
                                                                      - Any answer above correct value gets no points.
                                                                      - Any answer below 1 percent of the correct value gets no points either.
 
-                                                                     The UI is very similar to that of free_form except that the response submited can ONLY be a numeric value.'
+                                                                     The UI is very similar to that of free_form except that the response submitted can ONLY be a numeric value.'
                                                                  ),
                                                                  (
                                                                      'choice_matcher',
@@ -304,11 +304,11 @@ insert into tbl_player (email_address, screen_name, player_type) values ('kadzoe
 insert into tbl_player (email_address, screen_name) values ('wakili@email.com', 'dancing fish');
 insert into tbl_player (email_address, screen_name) values ('julisha@email.com', 'laughing hyena');
 
---register an account (raw password is 's3cr3ts!)
+--register an account (raw password is 's3cr3ts!')
 with author1 as (select player_id from tbl_player where email_address = 'jimmy@email.com')
 insert into tbl_account (username, userpass, player_fk) values ('thirsty_whale', '$2a$10$xL8RP8xH8H7.WSKsCaFN2O82mHBPrjAZ5wbuKfCjGy0IvIpSB2G1m', (select player_id from author1));
 
---register a 2nd account (raw password is 's3cr3ts!)
+--register a 2nd account (raw password is 's3cr3ts!')
 with author2 as (select player_id from tbl_player where email_address = 'kadzoe@email.com')
 insert into tbl_account (username, userpass, player_fk) values ('rustic_beaver', '$2a$10$mh5CP7uoJuYESWOSCmrJ5Ogn95m5NwWGLtNQ/ZWfVIiofSNRsUV86', (select player_id from author2));
 

@@ -49,6 +49,8 @@ export const ON_GAME_DELETED_EVENT = "ON_GAME_DELETED_EVENT";
 //players joining and leaving
 export const ON_PARTICIPANT_JOINED = "ON_PARTICIPANT_JOINED";
 export const ON_PARTICIPANT_EXITED = "ON_PARTICIPANT_EXITED";
+//players posting content
+export const ON_PARTICIPANT_POSTED = "ON_PARTICIPANT_POSTED";
 //game progression events
 export const ON_GAME_STARTING_EVENT = "ON_GAME_STARTING_EVENT";
 export const ON_GAME_ENDING_EVENT = "ON_GAME_ENDING_EVENT";

@@ -68,7 +68,12 @@ function Layout({ children }) {
     }
 
     const handleMenu = (event) => {
-        setAnchorEl(event.currentTarget);
+        if(visitor?.authentication?.authUser?.is_active) {
+            setAnchorEl(event.currentTarget);
+        }
+        else{
+            setCurrentRoute('registration');
+        }
     };
 
     const handleClose = () => {
@@ -100,6 +105,11 @@ function Layout({ children }) {
         handleClose();
     }
 
+    const handleQuickVote = () => {
+        setCurrentRoute('quickvote');
+        handleClose();
+    }
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box
@@ -116,7 +126,6 @@ function Layout({ children }) {
                     elevation={0}
                     sx={{
                         position: 'relative',
-                        borderBottom: (t) => `1px solid ${t.palette.divider}`,
                     }}
                 >
                     <Toolbar>
@@ -133,48 +142,47 @@ function Layout({ children }) {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             Mind Flip
                         </Typography>
-                        {visitor?.authentication?.authUser?.is_active && (
-                            <div>
-                                <IconButton
-                                    size="large"
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleMenu}
-                                    color="inherit"
-                                >
-                                    <AccountCircle />
-                                </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    keepMounted
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    open={Boolean(anchorEl)}
-                                    onClose={handleClose}
-                                >
-                                    
-                                    <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                                    <MenuItem onClick={handleOrganize}>Organize Game</MenuItem>
-                                    <Divider />
-                                    <MenuItem onClick={handleGameEngine}>Game Engine</MenuItem>
-                                    <MenuItem onClick={handleGameLayout}>Game Layout</MenuItem>
-                                    <MenuItem onClick={handleGameClock}>Game Clock</MenuItem>
-                                    <Divider />
-                                    <MenuItem onClick={handleGameMessage}>Game Message</MenuItem>
-                                    <MenuItem onClick={handleGameQuestion}>Game Question</MenuItem>
-                                    <Divider />
-                                    <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
-                                </Menu>
-                            </div>
-                        )}
+
+                        <div>
+                            <IconButton
+                                size="large"
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                onClick={handleMenu}
+                                color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorEl}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                            >
+                                <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                                <MenuItem onClick={handleQuickVote}>Run Quick Vote</MenuItem>
+                                <MenuItem onClick={handleOrganize}>Organize Game</MenuItem>
+                                <Divider />
+                                <MenuItem onClick={handleGameEngine}>Game Engine</MenuItem>
+                                <MenuItem onClick={handleGameLayout}>Game Layout</MenuItem>
+                                <MenuItem onClick={handleGameClock}>Game Clock</MenuItem>
+                                <Divider />
+                                <MenuItem onClick={handleGameMessage}>Game Message</MenuItem>
+                                <MenuItem onClick={handleGameQuestion}>Game Question</MenuItem>
+                                <Divider />
+                                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+                            </Menu>
+                        </div>
                     </Toolbar>
                 </AppBar>
 

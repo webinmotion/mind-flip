@@ -14,14 +14,18 @@ import {Route, Routes, useNavigate} from 'react-router-dom';
 
 const steps = ['Games Listing', 'Game Details', 'Registration'];
 
-function getStepContent({games, gameStatus, selectedGame, setSelectedGame, playerTypeForm, setPlayerTypeForm,}) {
+function getStepContent({games, gameStatus, selectedGame, setSelectedGame, playerTypeForm, setPlayerTypeForm, useQuickCode, setUseQuickCode, navigateTo,}) {
     return (
         <Routes>
             <Route path="/" element={<GamesListing
                 games={games}
                 gameStatus={gameStatus}
                 selectedGame={selectedGame}
-                setSelectedGame={setSelectedGame}/>}/>
+                setSelectedGame={setSelectedGame}
+                useQuickCode={useQuickCode}
+                setUseQuickCode={setUseQuickCode}
+                navigateTo={navigateTo}/>
+            }/>
 
             <Route path="/details" element={<GameDetails
                 {...games.find(game => game.game_info.game_id === selectedGame)}
@@ -51,6 +55,7 @@ export default function Trivia({
 
     const {listing: games, gameStatus} = trivia;
     const [activeStep, setActiveStep] = useState(0);
+    const [useQuickCode, setUseQuickCode] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -124,6 +129,10 @@ export default function Trivia({
         setActiveStep(activeStep - 1);
     };
 
+    const navigateTo = query => {
+        navigate(`/attendee?${query}`);
+    }
+
     return (
         <Paper variant="outlined" sx={{my: {xs: 3, md: 6}, p: {xs: 2, md: 3}}}>
             <Typography component="h1" variant="h4" align="center">
@@ -139,7 +148,7 @@ export default function Trivia({
             {
                 <React.Fragment>
                     {getStepContent({
-                        games, gameStatus, selectedGame, setSelectedGame, playerTypeForm, setPlayerTypeForm,
+                        games, gameStatus, selectedGame, setSelectedGame, playerTypeForm, setPlayerTypeForm, useQuickCode, setUseQuickCode, navigateTo,
                     })}
                     <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
                         {activeStep !== 0 && (

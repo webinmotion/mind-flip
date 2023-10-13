@@ -2,6 +2,7 @@ import axios from 'axios';
 import {localState} from '../hooks/useLocalState';
 
 export const serverUrl = () => window.location.origin.replace(/(:\d+)/, `:${process.env.REACT_APP_SERVER_PORT}`)
+export const wserverUrl = () => window.location.origin.replace(/(http)/, 'ws').replace(/(:\d+)/, `:${process.env.REACT_APP_SERVER_PORT}`)
 
 const refreshTokenEndpoint = `${serverUrl()}/auth/refresh-token`;
 

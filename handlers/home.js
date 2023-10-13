@@ -3,7 +3,7 @@ const path = require('path');
 
 function homePage(req, res, next) {
   try {
-    const content = fs.readFileSync(path.join(process.cwd(), 'build/index.html'), { encoding: 'utf8', flag: 'r' })
+    const content = fs.readFileSync(path.join(process.cwd(), `${process.env.CONTENT_DIR.trim()}/index.html`), { encoding: 'utf8', flag: 'r' })
     res.send(content);
   }
   catch (e) {

@@ -10,6 +10,11 @@ import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import Forward10Icon from '@mui/icons-material/Forward10';
 import IconButton from '@mui/material/IconButton';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
+import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import {useRef} from "react";
 
 function selectIcon(status) {
     switch (status) {
@@ -22,13 +27,35 @@ function selectIcon(status) {
     }
 }
 
-export default function GamesListing({games, gameStatus, selectedGame, setSelectedGame}) {
+export default function GamesListing({games, gameStatus, selectedGame, setSelectedGame, useQuickCode, setUseQuickCode, navigateTo}) {
+
+    const quickCodeRef = useRef(null);
 
     return (
         <React.Fragment>
             <Typography variant="h6" gutterBottom>
                 Available to join
             </Typography>
+
+            <Box component="form"
+                 sx={{ '& .MuiTextField-root': { m: 1, width: '35ch' },}}
+                 noValidate>
+                <div>
+                    <label htmlFor={"use-quick-vote"} style={{display: "inline-block", marginTop: "15px"}}>
+                        <Checkbox id={'use-quick-vote'} checked={useQuickCode} onChange={e => { setUseQuickCode(e.target.checked); setSelectedGame(''); }}  />
+                        Use a quick vote code
+                    </label>
+                    {useQuickCode ?
+                        <>
+                            <TextField id="quick-vote-code" label="Quick Code Vote" variant="outlined" inputRef={quickCodeRef}  />
+                            <Button variant="outlined" sx={{mb: 1}} onClick={() => {
+                                navigateTo(encodeURIComponent(btoa(`organizer=false&${quickCodeRef.current.value}`)))
+                            }}>Let's go!</Button>
+                        </>
+                        : null
+                    }
+                </div>
+            </Box>
             <List>
                 {gameStatus.map(status => (
                     <ListItem key={status}>
@@ -41,7 +68,7 @@ export default function GamesListing({games, gameStatus, selectedGame, setSelect
                                 }>
                                     <ListItemButton
                                         selected={selectedGame === game_info.game_id}
-                                        onClick={(e) => setSelectedGame(game_info.game_id)}
+                                        onClick={() => {setSelectedGame(game_info.game_id); setUseQuickCode(false); }}
                                     >
                                         <ListItemIcon>
                                             {selectIcon(game_info.game_status)}

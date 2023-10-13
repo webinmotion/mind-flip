@@ -1,35 +1,25 @@
 #!/usr/bin/env node
 
 /**
- * Load env variables
- */
-const env = require('../environment');
-env();
-
-/**
  * Module dependencies.
  */
-const app = require('../app');
-const debug = require('debug')('mind-flip:server');
-const http = require('http');
-const gameSocket = require('../trivia/GameSocket')
 
-/**
- * Turn on swagger ui in development mode
- */
-const docs = require('../api-docs/specs/swagger');
-docs(app);
+var app = require('../app');
+var debug = require('debug')('previewer:server');
+var http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort(process.env.PORT || '3000');
+
+var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-const server = http.createServer(app);
+
+var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -40,16 +30,11 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 /**
- * Attach websocket
- */
-gameSocket(server);
-
-/**
  * Normalize a port into a number, string, or false.
  */
 
 function normalizePort(val) {
-  const port = parseInt(val, 10);
+  var port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -73,9 +58,9 @@ function onError(error) {
     throw error;
   }
 
-  const bind = typeof port === 'string'
-      ? 'Pipe ' + port
-      : 'Port ' + port;
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -97,9 +82,9 @@ function onError(error) {
  */
 
 function onListening() {
-  const addr = server.address();
-  const bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }

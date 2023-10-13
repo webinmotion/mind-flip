@@ -13,6 +13,8 @@ import ManageGameLayout from "../../containers/NavMenu/ManageGameLayout";
 import ManageGameClock from "../../containers/NavMenu/ManageGameClock";
 import ManageGameMessage from "../../containers/NavMenu/ManageGameMessage";
 import ManageGameQuestion from "../../containers/NavMenu/ManageGameQuestion";
+import ManageQuickVote from "../../containers/NavMenu/ManageQuickVote";
+import AttendQuickVote from "../../containers/AttendeeQuickVote"
 
 export default function App({ ...rest }) {
 
@@ -40,6 +42,8 @@ export default function App({ ...rest }) {
                     <Route path={"subscribe/:gameId/player/:playerId"} element={<GameMultiPlay {...rest} />} />
                     <Route path={"prescribe/:gameId/player/:playerId"} element={<GameSinglePlay participant={trivia?.participant} showProgress={showProgress} />} />
                 </Route>
+                <Route path={"/quickvote"} element={<ManageQuickVote showAlert={showAlert} />} />
+                <Route path={"/attendee"} element={<AttendQuickVote />} />
                 <Route path={"/organize"} element={<OrganizeGames games={trivia.listing} player={trivia.player} createGame={createGameHandle} updateGame={updateGameStatus} deleteGame={deleteGameHandle} />} />
                 <Route path={"/profile"} element={<PlayerProfile player={trivia.player} accessToken={auth?.accessToken} />} />
                 <Route path={"/engine"} element={<ManageGameEngine player={visitor.authentication?.authUser?.player_id} showAlert={showAlert} />} />

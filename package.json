@@ -10,14 +10,13 @@
     "start:mobile": "concurrently \"npm run serve:mobile\" \"npm run start:watch\"",
     "serve": "npm run --prefix frontend start",
     "build": "npm run --prefix frontend build",
-    "serve:client": "npm run --prefix web-client start",
+    "serve:client": "concurrently \"npm run --prefix web-client start\" \"set PORT=5000 && set NODE_ENV=development && set CONTENT_DIR=web-client/dist && nodemon ./bin/www\"",
     "build:client": "npm run --prefix web-client build:dev",
     "start:client": "concurrently \"npm run serve:client\" \"npm run start:watch\"",
     "test": "jest",
     "sample": "node trivia/sample"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.0.2",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
@@ -26,9 +25,12 @@
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "imap": "^0.8.17",
     "jsonwebtoken": "^9.0.0",
+    "mailparser": "^3.6.5",
     "moment": "^2.29.4",
     "morgan": "^1.10.0",
+    "nodemailer": "^6.9.6",
     "pg": "^8.11.0",
     "sib-api-v3-sdk": "^8.5.0",
     "swagger-jsdoc": "^6.2.8",
@@ -43,6 +45,7 @@
     "@babel/core": "^7.22.1",
     "@babel/preset-env": "^7.22.4",
     "@babel/preset-react": "^7.22.3",
+    "@faker-js/faker": "^8.0.2",
     "@flydotio/dockerfile": "^0.2.14",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
@@ -54,7 +57,7 @@
     "jest-css-modules-transform": "^4.4.2",
     "jest-environment-jsdom": "^29.5.0",
     "jest-environment-node": "^29.5.0",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.0.1",
     "supertest": "^6.3.3"
   }
 }

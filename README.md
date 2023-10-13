@@ -51,10 +51,46 @@ or
 
 ## Database deployment notes
 
-```bash
-docker pg client
+### Starting Postgres container
 
-docker run -it --rm jbergknoff/postgresql-client postgres://postgres:4dA6nkzWKpo4N3d@mind-flip-db.flycast:5432
+create a network
+
+```bash 
+docker network create pgnetwork
+```
+
+build a custom docker image (having initialization scripts)
+
+```bash
+cd pgdocker
+./build-img.sh
+```
+
+start a postgres container using the custom docker image
+
+```bash
+cd pgdocker
+./start-pg.sh
+```
+
+connect to the container using a docker pg client
+
+```bash
+docker run -it --rm --network pgnetwork postgres psql -h mind-flip-postgres -d mind-flip -U postgres
+```
+
+> When connected to the database, you can now execute the initialization scripts _(mind-flip.sql)_
+
+exec into the container to inspect files (if need be)
+
+```
+docker exec -it <container hash> bash
+```
+
+## Accessing fly.io postgres instance using a docker pg client
+
+```bash
+docker run -it --rm jbergknoff/postgresql-client postgres://postgres:<password>@mind-flip-db.flycast:5432
 ```
 
 ## connect to fly.io postgres
@@ -114,14 +150,14 @@ Some properties also apply to only a specific deployment environment and not nec
 It contains the following fields
 
 - progression - this will turn ON/OFF the progress bar. When ON (auto), it means that the question should be answered 
-within the countdown duration to be eligible for scoring points. It applies to both multi-player ans single-player mode.
+within the countdown duration to be eligible for scoring points. It applies to both multi-player and single-player mode.
 - is_multi_player - this will instruct the front-end to use either the MultiPlay or the SinglePlay component. The 
-difference is that MultiPLay will subscribe for content from the server, while SinglePlay will request content from the 
-server.
+difference is that MultiPlay will subscribe for content from the server (server push model), while SinglePlay will 
+request content from the server (client pull model).
 - server_push_mode - this will instruct the server to register a GameDriver which will manage pushing content 
 automatically to all subscribed participants. Because of this, the game has to use a progress bar (progression MUST be 
-auto) otherwise, the participants would have no clue when the next question will show up. When OFF, the organizer is 
-responsible for triggering the server to push content.
+auto) otherwise, the participants would have no clue when the next question will show up. When OFF, the organizer (the 
+client in this case) is responsible for triggering the server to push content (specifically, the client pull model).
 - can_navigate_back - (not yet implemented) this will allow a participant to navigate back and forth through the 
 questions. Because of this, the game cannot use a progress bar (progression MUST be manual)
 
@@ -140,7 +176,7 @@ questions. Because of this, the game cannot use a progress bar (progression MUST
 - Zustand
 - Qwik/Astro/SolidJS
 - Axios interceptors - refreshing API token
-- Detect user leaving page to save state to locastorage
+- Detect user leaving page to save state to localstorage
 - jsonwebtoken docs
 - Nodemailer
 - Mailersend
